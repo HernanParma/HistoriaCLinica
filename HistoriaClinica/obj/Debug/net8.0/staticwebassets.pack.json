@@ -1,0 +1,61 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\herna\\source\\repos\\HistoriaClinica\\HistoriaClinica\\wwwroot\\agregar.html",
+      "PackagePath": "staticwebassets\\agregar.html"
+    },
+    {
+      "Id": "C:\\Users\\herna\\source\\repos\\HistoriaClinica\\HistoriaClinica\\wwwroot\\bd.xlsx",
+      "PackagePath": "staticwebassets\\bd.xlsx"
+    },
+    {
+      "Id": "C:\\Users\\herna\\source\\repos\\HistoriaClinica\\HistoriaClinica\\wwwroot\\css\\styles.css",
+      "PackagePath": "staticwebassets\\css\\styles.css"
+    },
+    {
+      "Id": "C:\\Users\\herna\\source\\repos\\HistoriaClinica\\HistoriaClinica\\wwwroot\\historia.html",
+      "PackagePath": "staticwebassets\\historia.html"
+    },
+    {
+      "Id": "C:\\Users\\herna\\source\\repos\\HistoriaClinica\\HistoriaClinica\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "C:\\Users\\herna\\source\\repos\\HistoriaClinica\\HistoriaClinica\\wwwroot\\js\\app.js",
+      "PackagePath": "staticwebassets\\js\\app.js"
+    },
+    {
+      "Id": "C:\\Users\\herna\\source\\repos\\HistoriaClinica\\HistoriaClinica\\wwwroot\\js\\config.js",
+      "PackagePath": "staticwebassets\\js\\config.js"
+    },
+    {
+      "Id": "C:\\Users\\herna\\source\\repos\\HistoriaClinica\\HistoriaClinica\\wwwroot\\js\\historia.js",
+      "PackagePath": "staticwebassets\\js\\historia.js"
+    },
+    {
+      "Id": "C:\\Users\\herna\\source\\repos\\HistoriaClinica\\HistoriaClinica\\wwwroot\\login.html",
+      "PackagePath": "staticwebassets\\login.html"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.HistoriaClinica.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.HistoriaClinica.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.HistoriaClinica.props",
+      "PackagePath": "build\\HistoriaClinica.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.HistoriaClinica.props",
+      "PackagePath": "buildMultiTargeting\\HistoriaClinica.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.HistoriaClinica.props",
+      "PackagePath": "buildTransitive\\HistoriaClinica.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

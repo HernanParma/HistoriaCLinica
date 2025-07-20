@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historia Clínica del Paciente</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <h1>Historia Clínica</h1>
+            </div>
+            <nav class="nav">
+                <!-- Información del usuario logueado -->
+                <div id="user-info" class="user-info">
+                    <div class="user-greeting">
+                        <span id="userGreeting">Hola!</span>
+                        <div class="user-menu">
+                            <button id="userMenuBtn" class="user-menu-btn">
+                                <i class="fas fa-user-circle"></i>
+                                <span id="userName">Usuario</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div id="userDropdown" class="user-dropdown hidden">
+                                <button id="logoutBtnNav" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Cerrar Sesión
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="newPatientBtnNav" class="nav-btn btn-primary">
+                        <i class="fas fa-user-plus"></i>
+                        Registrar Nuevo Paciente
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="form-container full-width">
+                <div id="hc-card" class="form-card hidden">
+                    <div class="form-header">
+                        <h2 id="hc-patient-name"><i class="fas fa-user-injured"></i> Paciente</h2>
+                        <a href="index.html" class="btn-back">
+                            <i class="fas fa-arrow-left"></i> Volver al listado
+                        </a>
+                    </div>
+                    <div id="hc-body" class="hc-body">
+                        <!-- La historia clínica se cargará dinámicamente aquí -->
+                        <div id="loading-hc" class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>Cargando historia clínica...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/historia.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Redirigir a login.html si no está autenticado
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if (!isLoggedIn) {
+            window.location.href = 'login.html';
+            return;
+        }
+        var btnNav = document.getElementById('newPatientBtnNav');
+        if (btnNav) {
+            btnNav.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'agregar.html';
+            });
+        }
+        // Lógica de logout
+        var logoutBtn = document.getElementById('logoutBtnNav');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                window.location.replace('login.html');
+            });
+        }
+        // Redirección al hacer clic en logo o título
+        var logo = document.querySelector('.logo');
+        if (logo) {
+            logo.style.cursor = 'pointer';
+            logo.addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+        }
+    });
+    </script>
+</body>
+</html> 
