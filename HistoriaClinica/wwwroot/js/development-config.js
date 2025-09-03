@@ -1,11 +1,8 @@
 // js/development-config.js
-// Configuración específica para desarrollo con Live Server
+// Configuración específica para desarrollo local
 if (typeof CONFIG === 'undefined') {
-    // Detecta si estás en Live Server (127.0.0.1:5500 / localhost:5500)
-    const isLiveServer = /(^http:\/\/(127\.0\.0\.1|localhost):5500)/i.test(window.location.origin);
-  
-    // Si es Live Server, usa el puerto HTTPS típico de .NET; si no, usa el propio origin
-    const API_BASE_URL = isLiveServer ? 'https://localhost:7229' : window.location.origin;
+    // En desarrollo, usar localhost
+    const API_BASE_URL = 'http://localhost:5000';
   
     var CONFIG = {
       API_BASE_URL,

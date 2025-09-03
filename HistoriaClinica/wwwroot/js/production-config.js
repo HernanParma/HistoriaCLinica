@@ -1,8 +1,8 @@
 // js/production-config.js
 // Configuración específica para producción con HTTPS
 if (typeof CONFIG === 'undefined') {
-    // En producción, siempre usar el mismo protocolo y host
-    const API_BASE_URL = window.location.origin;
+    // En producción, usar la URL específica
+    const API_BASE_URL = 'https://historia.runasp.net';
   
     var CONFIG = {
       API_BASE_URL,

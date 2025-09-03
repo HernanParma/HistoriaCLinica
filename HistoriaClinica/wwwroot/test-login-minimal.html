@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login Minimal</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 300px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        .message { margin-top: 15px; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h2>Test Login Minimal</h2>
+    
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="username">Usuario:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Ingresar</button>
+    </form>
+    
+    <div id="message"></div>
+
+    <script>
+        // Configuración básica
+        const CONFIG = {
+            API_BASE_URL: 'https://historia.runasp.net'
+        };
+
+        // Función para mostrar mensajes
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+        }
+
+        // Manejar el envío del formulario
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            console.log('Intentando login con:', { username, password });
+            console.log('API URL:', CONFIG.API_BASE_URL + '/api/usuarios/login');
+            
+            try {
+                const response = await fetch(CONFIG.API_BASE_URL + '/api/usuarios/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        NombreUsuario: username, 
+                        Contrasena: password 
+                    })
+                });
+                
+                console.log('Respuesta del servidor:', response);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Datos de respuesta:', data);
+                    
+                    if (data.token) {
+                        localStorage.setItem('userToken', data.token);
+                        localStorage.setItem('username', username);
+                        showMessage('¡Login exitoso! Redirigiendo...', 'success');
+                        
+                        // Redirigir después de un breve delay
+                        setTimeout(() => {
+                            window.location.replace('index.html');
+                        }, 1000);
+                    } else {
+                        showMessage('Respuesta del servidor sin token', 'error');
+                    }
+                } else {
+                    const errorData = await response.json();
+                    console.log('Error del servidor:', errorData);
+                    showMessage(errorData.message || 'Error en el login', 'error');
+                }
+            } catch (error) {
+                console.error('Error en la petición:', error);
+                showMessage('Error de conexión. Intente nuevamente.', 'error');
+            }
+        });
+        
+        console.log('Script de login cargado correctamente');
+    </script>
+</body>
+</html>
+

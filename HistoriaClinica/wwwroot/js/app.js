@@ -1,7 +1,7 @@
-image.png// Asegurar que CONFIG exista
+// Asegurar que CONFIG exista
 if (typeof CONFIG === 'undefined') {
     var CONFIG = { API_BASE_URL: window.location.origin };
-  }
+}
   
   // Estado global
   let isLoggedIn = false;
@@ -199,7 +199,7 @@ if (typeof CONFIG === 'undefined') {
           const resp = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombreUsuario: username, contrasena: password })
+            body: JSON.stringify({ NombreUsuario: username, Contrasena: password })
           });
   
           if (resp.ok) {
@@ -283,7 +283,7 @@ if (typeof CONFIG === 'undefined') {
         const resp = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/registrar`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombreUsuario: username, contrasena: password })
+          body: JSON.stringify({ NombreUsuario: username, Contrasena: password })
         });
   
         if (resp.ok) {
@@ -1559,7 +1559,7 @@ if (typeof CONFIG === 'undefined') {
           const resp = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/solicitar-reset`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombreUsuario: username })
+            body: JSON.stringify({ NombreUsuario: username })
           });
 
           if (resp.ok) {
@@ -1888,9 +1888,9 @@ if (typeof CONFIG === 'undefined') {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
-              nombreUsuario: username,
-              codigoVerificacion: verificationCode,
-              nuevaContrasena: newPassword 
+              NombreUsuario: username,
+              CodigoVerificacion: verificationCode,
+              NuevaContrasena: newPassword 
             })
           });
 

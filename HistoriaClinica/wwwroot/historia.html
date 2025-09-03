@@ -650,37 +650,142 @@
         font-family: inherit !important;
     }
 
-    .btn-save-field {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    /* ===== NUEVO SISTEMA DE EDICIÓN POR SECCIONES ===== */
+    
+    /* Encabezado de sección con botón de editar */
+    .section-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-bottom: 15px !important;
+        padding-bottom: 10px !important;
+        border-bottom: 2px solid #e2e8f0 !important;
+    }
+    
+    .section-header h4 {
+        margin: 0 !important;
+        background: none !important;
+        color: #1e293b !important;
+        padding: 0 !important;
+        font-size: 1.2em !important;
+        font-weight: 600 !important;
+        text-shadow: none !important;
+        border: none !important;
+    }
+    
+    /* Botón de editar sección */
+    .btn-edit-section {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
         color: white !important;
         border: none !important;
-        border-radius: 6px !important;
-        padding: 8px 12px !important;
-        font-size: 0.8em !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+        font-size: 0.9em !important;
         font-weight: 600 !important;
         cursor: pointer !important;
         transition: all 0.3s ease !important;
         display: inline-flex !important;
         align-items: center !important;
-        gap: 6px !important;
-        align-self: flex-end !important;
-        min-width: 80px !important;
+        gap: 8px !important;
+        min-width: 100px !important;
         justify-content: center !important;
     }
-
-    .btn-save-field:hover {
+    
+    .btn-edit-section:hover {
         transform: translateY(-2px) !important;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
     }
-
-    .btn-save-field:disabled {
-        opacity: 0.7 !important;
+    
+    .btn-edit-section.editing {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    }
+    
+    .btn-edit-section.editing:hover {
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+    }
+    
+    /* Contenedor de acciones de sección */
+    .section-actions {
+        display: flex !important;
+        justify-content: center !important;
+        margin-top: 20px !important;
+        padding-top: 15px !important;
+        border-top: 1px solid #e2e8f0 !important;
+    }
+    
+    .section-actions.hidden {
+        display: none !important;
+    }
+    
+    /* Botón de guardar sección */
+    .btn-save-section {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 12px 24px !important;
+        font-size: 1em !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        min-width: 120px !important;
+        justify-content: center !important;
+    }
+    
+    .btn-save-section:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+    }
+    
+    /* Estilos para campos deshabilitados */
+    .editable-field input:disabled,
+    .editable-field textarea:disabled {
+        background-color: #f8fafc !important;
+        color: #64748b !important;
+        border-color: #e2e8f0 !important;
         cursor: not-allowed !important;
-        transform: none !important;
     }
-
-    .btn-save-field i {
-        font-size: 0.9em !important;
+    
+    .editable-field input:disabled::placeholder,
+    .editable-field textarea:disabled::placeholder {
+        color: #94a3b8 !important;
+    }
+    
+    /* Mensajes de éxito y error */
+    .success-message {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+        color: #065f46 !important;
+        border: 1px solid #10b981 !important;
+        border-radius: 8px !important;
+        padding: 12px 16px !important;
+        margin-bottom: 20px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        font-weight: 500 !important;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1) !important;
+    }
+    
+    .error-message {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important;
+        color: #991b1b !important;
+        border: 1px solid #ef4444 !important;
+        border-radius: 8px !important;
+        padding: 12px 16px !important;
+        margin-bottom: 20px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        font-weight: 500 !important;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1) !important;
+    }
+    
+    /* Clase para ocultar elementos */
+    .hidden {
+        display: none !important;
     }
 
     /* Optimizaciones adicionales para mejor uso del espacio */

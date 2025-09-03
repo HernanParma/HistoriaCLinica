@@ -76,82 +76,278 @@ function showHCLoading() {
     `;
 }
 
-// Render de datos del paciente con campos editables
+// Render de datos del paciente con nuevo sistema de edición por secciones
 function renderPatientSidebar(p) {
     const box = document.getElementById('sidebar-content');
     if (!box) return;
     box.innerHTML = `
         <div class="patient-data-container">
-            <div class="patient-section">
-                <h4><i class="fas fa-user"></i> Información Personal</h4>
+            <div class="patient-section" data-section="personal">
+                <div class="section-header">
+                    <h4><i class="fas fa-user"></i> Información Personal</h4>
+                    <button class="btn-edit-section" onclick="toggleEditMode('personal')">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                </div>
                 <div class="editable-field">
                     <label>Nombre:</label>
-                    <input type="text" id="edit-nombre" value="${p.nombre || p.Nombre || ''}" placeholder="Nombre del paciente">
-                    <button class="btn-save-field" onclick="savePatientField('nombre', 'edit-nombre')">
-                        <i class="fas fa-save"></i>
-                    </button>
+                    <input type="text" id="edit-nombre" value="${p.nombre || p.Nombre || ''}" placeholder="Nombre del paciente" disabled>
                 </div>
                 <div class="editable-field">
                     <label>Apellido:</label>
-                    <input type="text" id="edit-apellido" value="${p.apellido || p.Apellido || ''}" placeholder="Apellido del paciente">
-                    <button class="btn-save-field" onclick="savePatientField('apellido', 'edit-apellido')">
-                        <i class="fas fa-save"></i>
-                    </button>
+                    <input type="text" id="edit-apellido" value="${p.apellido || p.Apellido || ''}" placeholder="Apellido del paciente" disabled>
                 </div>
                 <div class="editable-field">
                     <label>DNI:</label>
-                    <input type="text" id="edit-dni" value="${p.dni || p.DNI || ''}" placeholder="DNI del paciente">
-                    <button class="btn-save-field" onclick="savePatientField('dni', 'edit-dni')">
-                        <i class="fas fa-save"></i>
-                    </button>
+                    <input type="text" id="edit-dni" value="${p.dni || p.DNI || ''}" placeholder="DNI del paciente" disabled>
                 </div>
                 <div class="editable-field">
                     <label>N° Afiliado:</label>
-                    <input type="text" id="edit-numeroAfiliado" value="${p.numeroAfiliado || p.NumeroAfiliado || ''}" placeholder="Número de afiliado">
-                    <button class="btn-save-field" onclick="savePatientField('numeroAfiliado', 'edit-numeroAfiliado')">
-                        <i class="fas fa-save"></i>
-                    </button>
+                    <input type="text" id="edit-numeroAfiliado" value="${p.numeroAfiliado || p.NumeroAfiliado || ''}" placeholder="Número de afiliado" disabled>
                 </div>
                 <div class="editable-field">
                     <label>Obra Social:</label>
-                    <input type="text" id="edit-obraSocial" value="${p.obraSocial || p.ObraSocial || ''}" placeholder="Obra social">
-                    <button class="btn-save-field" onclick="savePatientField('obraSocial', 'edit-obraSocial')">
-                        <i class="fas fa-save"></i>
-                    </button>
+                    <input type="text" id="edit-obraSocial" value="${p.obraSocial || p.ObraSocial || ''}" placeholder="Obra social" disabled>
                 </div>
                 <div class="editable-field">
                     <label>Teléfono:</label>
-                    <input type="tel" id="edit-telefono" value="${p.telefono || p.Telefono || ''}" placeholder="Teléfono">
-                    <button class="btn-save-field" onclick="savePatientField('telefono', 'edit-telefono')">
-                        <i class="fas fa-save"></i>
+                    <input type="tel" id="edit-telefono" value="${p.telefono || p.Telefono || ''}" placeholder="Teléfono" disabled>
+                </div>
+                <div class="section-actions hidden">
+                    <button class="btn-save-section" onclick="saveSection('personal')">
+                        <i class="fas fa-save"></i> Guardar
                     </button>
                 </div>
             </div>
             
-            <div class="patient-section">
-                <h4><i class="fas fa-pills"></i> Medicación Actual</h4>
+            <div class="patient-section" data-section="medicacion">
+                <div class="section-header">
+                    <h4><i class="fas fa-pills"></i> Medicación Actual</h4>
+                    <button class="btn-edit-section" onclick="toggleEditMode('medicacion')">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                </div>
                 <div class="editable-field">
                     <label>Medicación:</label>
-                    <textarea id="edit-medicacion" placeholder="Medicación actual del paciente">${p.medicacion || p.Medicacion || ''}</textarea>
-                    <button class="btn-save-field" onclick="savePatientField('medicacion', 'edit-medicacion')">
-                        <i class="fas fa-save"></i>
+                    <textarea id="edit-medicacion" placeholder="Medicación actual del paciente" disabled>${p.medicacion || p.Medicacion || ''}</textarea>
+                </div>
+                <div class="section-actions hidden">
+                    <button class="btn-save-section" onclick="saveSection('medicacion')">
+                        <i class="fas fa-save"></i> Guardar
                     </button>
                 </div>
             </div>
             
-            <div class="patient-section">
-                <h4><i class="fas fa-history"></i> Antecedentes Médicos</h4>
+            <div class="patient-section" data-section="antecedentes">
+                <div class="section-header">
+                    <h4><i class="fas fa-history"></i> Antecedentes Médicos</h4>
+                    <button class="btn-edit-section" onclick="toggleEditMode('antecedentes')">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                </div>
                 <div class="editable-field">
                     <label>Antecedentes:</label>
-                    <textarea id="edit-antecedentes" placeholder="Antecedentes médicos del paciente">${p.antecedentes || p.Antecedentes || ''}</textarea>
-                    <button class="btn-save-field" onclick="savePatientField('antecedentes', 'edit-antecedentes')">
-                        <i class="fas fa-save"></i>
+                    <textarea id="edit-antecedentes" placeholder="Antecedentes médicos del paciente" disabled>${p.antecedentes || p.Antecedentes || ''}</textarea>
+                </div>
+                <div class="section-actions hidden">
+                    <button class="btn-save-section" onclick="saveSection('antecedentes')">
+                        <i class="fas fa-save"></i> Guardar
                     </button>
                 </div>
             </div>
         </div>
     `;
+    
+    // Configurar eventos de edición
+    setupEditEvents();
 }
+
+// ===== NUEVO SISTEMA DE EDICIÓN POR SECCIONES =====
+
+// Configurar eventos de edición para todas las secciones
+function setupEditEvents() {
+    console.log('🔧 Configurando eventos de edición...');
+}
+
+// Alternar modo de edición para una sección específica
+function toggleEditMode(section) {
+    console.log(`🔄 Alternando modo de edición para sección: ${section}`);
+    
+    const sectionElement = document.querySelector(`[data-section="${section}"]`);
+    
+    if (!sectionElement) {
+        console.error(`❌ No se encontró la sección: ${section}`);
+        return;
+    }
+    
+    const editButton = sectionElement.querySelector('.btn-edit-section');
+    const saveButton = sectionElement.querySelector('.section-actions');
+    const fields = getSectionFields(section);
+    
+    if (fields.length === 0) {
+        console.error(`❌ No se encontraron campos para la sección: ${section}`);
+        return;
+    }
+    
+    const isEditing = !fields[0].disabled;
+    
+    if (isEditing) {
+        // Cancelar edición
+        fields.forEach(field => field.disabled = true);
+        editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
+        editButton.classList.remove('editing');
+        saveButton.classList.add('hidden');
+        console.log(`❌ Edición cancelada para sección: ${section}`);
+    } else {
+        // Activar edición
+        fields.forEach(field => field.disabled = false);
+        editButton.innerHTML = '<i class="fas fa-times"></i> Cancelar';
+        editButton.classList.add('editing');
+        saveButton.classList.remove('hidden');
+        console.log(`✏️ Edición activada para sección: ${section}`);
+    }
+}
+
+// Obtener todos los campos de una sección específica
+function getSectionFields(section) {
+    let fields = [];
+    
+    switch (section) {
+        case 'personal':
+            fields = [
+                document.getElementById('edit-nombre'),
+                document.getElementById('edit-apellido'),
+                document.getElementById('edit-dni'),
+                document.getElementById('edit-numeroAfiliado'),
+                document.getElementById('edit-obraSocial'),
+                document.getElementById('edit-telefono')
+            ];
+            break;
+        case 'medicacion':
+            fields = [
+                document.getElementById('edit-medicacion')
+            ];
+            break;
+        case 'antecedentes':
+            fields = [
+                document.getElementById('edit-antecedentes')
+            ];
+            break;
+        default:
+            console.error(`❌ Sección no reconocida: ${section}`);
+            return [];
+    }
+    
+    // Filtrar campos que existen
+    return fields.filter(field => field !== null);
+}
+
+// Guardar todos los campos de una sección
+async function saveSection(section) {
+    console.log(`💾 Guardando sección: ${section}`);
+    
+    const fields = getSectionFields(section);
+    if (fields.length === 0) {
+        showErrorMessage('No se encontraron campos para guardar');
+        return;
+    }
+    
+    // Recopilar datos de la sección
+    const sectionData = {};
+    const patientId = getPatientIdFromUrl();
+    
+    switch (section) {
+        case 'personal':
+            sectionData.nombre = document.getElementById('edit-nombre')?.value || '';
+            sectionData.apellido = document.getElementById('edit-apellido')?.value || '';
+            sectionData.dni = document.getElementById('edit-dni')?.value || '';
+            sectionData.numeroAfiliado = document.getElementById('edit-numeroAfiliado')?.value || '';
+            sectionData.obraSocial = document.getElementById('edit-obraSocial')?.value || '';
+            sectionData.telefono = document.getElementById('edit-telefono')?.value || '';
+            break;
+        case 'medicacion':
+            sectionData.medicacion = document.getElementById('edit-medicacion')?.value || '';
+            break;
+        case 'antecedentes':
+            sectionData.antecedentes = document.getElementById('edit-antecedentes')?.value || '';
+            break;
+        default:
+            showErrorMessage('Sección no reconocida');
+            return;
+    }
+    
+    try {
+        // Hacer petición PUT para actualizar el paciente
+        const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthHeaders()
+            },
+            body: JSON.stringify(sectionData)
+        });
+        
+        if (response.ok) {
+            showSuccessMessage('Guardado con éxito');
+            // Desactivar modo de edición
+            toggleEditMode(section);
+        } else {
+            const errorData = await response.json();
+            showErrorMessage(errorData.message || 'Error al guardar');
+        }
+    } catch (error) {
+        console.error('❌ Error al guardar:', error);
+        showErrorMessage('Error de conexión al guardar');
+    }
+}
+
+// Mostrar mensaje de éxito
+function showSuccessMessage(message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'success-message';
+    messageDiv.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>${message}</span>
+    `;
+    
+    // Insertar al inicio del contenedor principal
+    const container = document.querySelector('.patient-data-container');
+    if (container) {
+        container.insertBefore(messageDiv, container.firstChild);
+        
+        // Remover después de 3 segundos
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.parentNode.removeChild(messageDiv);
+            }
+        }, 3000);
+    }
+}
+
+// Mostrar mensaje de error
+function showErrorMessage(message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'error-message';
+    messageDiv.innerHTML = `
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>${message}</span>
+    `;
+    
+    // Insertar al inicio del contenedor principal
+    const container = document.querySelector('.patient-data-container');
+    if (container) {
+        container.insertBefore(messageDiv, container.firstChild);
+        
+        // Remover después de 5 segundos
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.parentNode.removeChild(messageDiv);
+            }
+        }, 5000);
+    }
+}
+
+// ===== FIN DEL NUEVO SISTEMA DE EDICIÓN =====
 
 // Obtener ID del paciente de la URL
 function getPatientIdFromUrl() {
@@ -164,6 +360,13 @@ async function loadPatientData(patientId) {
     try {
         const paciente = await apiGet(`/api/pacientes/${patientId}`);
         renderPatientSidebar(paciente);
+        
+        // Mostrar la tarjeta de consultas
+        const hcCard = document.getElementById('hc-card');
+        if (hcCard) {
+            hcCard.classList.remove('hidden');
+        }
+        
         await loadPatientConsultations(patientId);
     } catch (err) {
         console.error('❌ Error al cargar datos del paciente:', err);
