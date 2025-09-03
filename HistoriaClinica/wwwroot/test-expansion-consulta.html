@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Expansión de Consultas</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .debug-info h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+        .debug-info pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🔍 Prueba de Expansión de Consultas</h1>
+        
+        <div class="test-section">
+            <h3>🎯 Problema Identificado y Solucionado</h3>
+            <p><strong>Problema:</strong> La consulta del 22/12/1212 no se expandía para mostrar los datos agregados.</p>
+            <p><strong>Causa:</strong> La función <code>toggleConsultaDetalle</code> no era accesible globalmente.</p>
+            <p><strong>Solución:</strong> Se movió la función al scope global y se mejoró la lógica de expansión.</p>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Cambios Implementados</h3>
+            <ul>
+                <li>✅ <strong>Función global:</strong> <code>toggleConsultaDetalle</code> ahora es accesible desde cualquier lugar</li>
+                <li>✅ <strong>Logs mejorados:</strong> Se agregaron console.log para debugging</li>
+                <li>✅ <strong>Validación de elementos:</strong> Se verifica que existan los elementos antes de manipularlos</li>
+                <li>✅ <strong>Clases CSS:</strong> Se agregan clases <code>expanded</code> y <code>collapsed</code> para estilos</li>
+                <li>✅ <strong>Manejo de contenido vacío:</strong> Se muestra mensaje cuando no hay datos adicionales</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Cómo Funciona Ahora</h3>
+            <ol>
+                <li><strong>Definición global:</strong> La función se define en <code>window.toggleConsultaDetalle</code></li>
+                <li><strong>Validación:</strong> Se verifica que existan los elementos DOM antes de proceder</li>
+                <li><strong>Logs de debug:</strong> Se registra cada acción en la consola del navegador</li>
+                <li><strong>Estado visual:</strong> Se actualizan las clases CSS para indicar el estado</li>
+                <li><strong>Manejo de errores:</strong> Se capturan y registran errores para debugging</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>🐛 Para Debugging</h3>
+            <p>Si una consulta no se expande, abre la consola del navegador (F12) y verifica:</p>
+            <ul>
+                <li><strong>Logs de expansión:</strong> Deberías ver "🔄 Toggle consulta X" y "📖 Expandiendo consulta X"</li>
+                <li><strong>Errores:</strong> Busca mensajes que empiecen con "❌"</li>
+                <li><strong>Elementos DOM:</strong> Verifica que los IDs sean únicos y correctos</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Para Probar la Solución</h3>
+            <ol>
+                <li>Ve a la página de historia clínica de un paciente</li>
+                <li>Haz clic en "CONSULTAS ANTERIORES"</li>
+                <li>Busca la consulta del 22/12/1212</li>
+                <li>Haz clic en su header (donde dice "MOTIOCCCC")</li>
+                <li>Debería expandirse mostrando todos los datos que agregaste</li>
+                <li>Verifica en la consola que aparezcan los logs de expansión</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>💡 Datos que Deberían Aparecer</h3>
+            <p>Cuando expandas la consulta del 22/12/1212, deberías ver:</p>
+            <ul>
+                <li><strong>Recetar:</strong> Si agregaste algún medicamento</li>
+                <li><strong>OME:</strong> Si especificaste una especialidad médica</li>
+                <li><strong>Laboratorio:</strong> Si agregaste resultados de análisis</li>
+                <li><strong>Archivos:</strong> Si adjuntaste algún documento</li>
+                <li><strong>Mensaje alternativo:</strong> "No hay datos adicionales para mostrar" si no hay contenido</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 Verificación Técnica</h3>
+            <div class="debug-info">
+                <h4>Elementos que se verifican:</h4>
+                <pre>✅ Función global: window.toggleConsultaDetalle
+✅ Elementos DOM: consulta-content-{index}
+✅ Iconos: toggle-icon-{index}
+✅ Clases CSS: expanded/collapsed
+✅ Logs de consola: Toggle y expansión
+✅ Manejo de errores: Validación de elementos</pre>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="test-button" onclick="window.location.href='historia.html?id=1'">
+                <i class="fas fa-user-injured"></i> Probar en Historia Clínica
+            </button>
+            <button class="test-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i> Volver al Inicio
+            </button>
+            <button class="test-button" onclick="window.open('test-consultas-expandibles.html', '_blank')">
+                <i class="fas fa-eye"></i> Ver Demo Visual
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Función de prueba para verificar que la funcionalidad esté disponible
+        function testToggleFunction() {
+            if (typeof window.toggleConsultaDetalle === 'function') {
+                console.log('✅ Función toggleConsultaDetalle está disponible globalmente');
+                return true;
+            } else {
+                console.error('❌ Función toggleConsultaDetalle NO está disponible');
+                return false;
+            }
+        }
+
+        // Verificar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 Verificando funcionalidad de expansión...');
+            testToggleFunction();
+        });
+    </script>
+</body>
+</html>
+
+
+

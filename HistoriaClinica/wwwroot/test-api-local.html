@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Local - Paciente 152</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .loading { background-color: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test API Local - Paciente 152</h1>
+    
+    <div class="test-section">
+        <h3>🔧 Configuración</h3>
+        <p><strong>Backend URL:</strong> <span id="backend-url">Verificando...</span></p>
+        <p><strong>Frontend URL:</strong> <span id="frontend-url"></span></p>
+    </div>
+
+    <div class="test-section">
+        <h3>📡 Test de Conexión</h3>
+        <button onclick="testConnection()">Probar Conexión</button>
+        <div id="connection-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>👤 Test Paciente 152</h3>
+        <button onclick="testPatient152()">Obtener Paciente 152</button>
+        <div id="patient-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>📋 Test Consultas del Paciente 152</h3>
+        <button onclick="testConsultas152()">Obtener Consultas</button>
+        <div id="consultas-result"></div>
+    </div>
+
+    <script>
+        // Mostrar URLs
+        document.getElementById('frontend-url').textContent = window.location.origin;
+        
+        // Detectar si estamos en Live Server
+        const isLiveServer = /(^http:\/\/(127\.0\.0\.1|localhost):5500)/i.test(window.location.origin);
+        const API_BASE_URL = isLiveServer ? 'http://localhost:5156' : window.location.origin;
+        document.getElementById('backend-url').textContent = API_BASE_URL;
+
+        async function testConnection() {
+            const resultDiv = document.getElementById('connection-result');
+            resultDiv.innerHTML = '<div class="loading">🔄 Probando conexión...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/pacientes`);
+                if (response.ok) {
+                    resultDiv.innerHTML = '<div class="success">✅ Conexión exitosa! API responde correctamente.</div>';
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Error ${response.status}: ${response.statusText}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error de conexión: ${error.message}</div>`;
+            }
+        }
+
+        async function testPatient152() {
+            const resultDiv = document.getElementById('patient-result');
+            resultDiv.innerHTML = '<div class="loading">🔄 Obteniendo paciente 152...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/pacientes/152`);
+                if (response.ok) {
+                    const paciente = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Paciente encontrado!
+                            <pre>${JSON.stringify(paciente, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `<div class="error">❌ Error ${response.status}: ${errorText}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error de conexión: ${error.message}</div>`;
+            }
+        }
+
+        async function testConsultas152() {
+            const resultDiv = document.getElementById('consultas-result');
+            resultDiv.innerHTML = '<div class="loading">🔄 Obteniendo consultas del paciente 152...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/pacientes/152/consultas`);
+                if (response.ok) {
+                    const consultas = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Consultas encontradas: ${consultas.length}
+                            <pre>${JSON.stringify(consultas, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `<div class="error">❌ Error ${response.status}: ${errorText}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error de conexión: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
+
+

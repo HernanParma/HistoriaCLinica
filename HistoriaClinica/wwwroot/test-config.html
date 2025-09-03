@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Config.js</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Config.js</h1>
+    
+    <div class="test-section">
+        <h3>🔧 Configuración</h3>
+        <p><strong>URL actual:</strong> <span id="current-url"></span></p>
+        <p><strong>Hostname:</strong> <span id="hostname"></span></p>
+        <p><strong>CONFIG disponible:</strong> <span id="config-available"></span></p>
+        <p><strong>API_BASE_URL:</strong> <span id="api-url"></span></p>
+    </div>
+
+    <div class="test-section">
+        <h3>📡 Test de API</h3>
+        <button onclick="testAPI()">Probar API</button>
+        <div id="api-result"></div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar información de la página
+            document.getElementById('current-url').textContent = window.location.href;
+            document.getElementById('hostname').textContent = window.location.hostname;
+            
+            // Verificar CONFIG
+            if (typeof CONFIG !== 'undefined') {
+                document.getElementById('config-available').textContent = '✅ SÍ';
+                document.getElementById('api-url').textContent = CONFIG.API_BASE_URL;
+                
+                console.log('✅ CONFIG cargado correctamente');
+                console.log('🌐 API_BASE_URL:', CONFIG.API_BASE_URL);
+                console.log('🔗 Endpoints:', CONFIG.API_ENDPOINTS);
+            } else {
+                document.getElementById('config-available').textContent = '❌ NO';
+                document.getElementById('api-url').textContent = 'No disponible';
+                
+                console.error('❌ CONFIG no está disponible');
+            }
+        });
+
+        async function testAPI() {
+            const resultDiv = document.getElementById('api-result');
+            
+            if (typeof CONFIG === 'undefined') {
+                resultDiv.innerHTML = '<div class="error">❌ CONFIG no está disponible</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div>🔄 Probando API...</div>';
+            
+            try {
+                const response = await fetch(`${CONFIG.API_BASE_URL}/api/pacientes`);
+                if (response.ok) {
+                    resultDiv.innerHTML = '<div class="success">✅ API responde correctamente</div>';
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Error ${response.status}: ${response.statusText}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error de conexión: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
+
+

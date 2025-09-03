@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Icono Papelera</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .icon-test {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .icon-item {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            min-width: 120px;
+        }
+        .icon-display {
+            font-size: 48px;
+            margin: 10px 0;
+            color: #dc3545;
+        }
+        .icon-name {
+            font-family: monospace;
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+        .button-test {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Prueba de Iconos de Papelera</h1>
+        
+        <div class="button-test">
+            <h3>Botón de Eliminar con Estilos CSS</h3>
+            <button class="btn-eliminar-consulta" title="Eliminar consulta">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+            <p>Este es el botón que debería aparecer en las consultas</p>
+        </div>
+
+        <div class="icon-test">
+            <div class="icon-item">
+                <div class="icon-display">
+                    <i class="fas fa-trash"></i>
+                </div>
+                <div class="icon-name">fa-trash</div>
+            </div>
+            
+            <div class="icon-item">
+                <div class="icon-display">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <div class="icon-name">fa-trash-alt</div>
+            </div>
+            
+            <div class="icon-item">
+                <div class="icon-display">
+                    <i class="fas fa-trash-restore"></i>
+                </div>
+                <div class="icon-name">fa-trash-restore</div>
+            </div>
+            
+            <div class="icon-item">
+                <div class="icon-display">
+                    <i class="fas fa-trash-restore-alt"></i>
+                </div>
+                <div class="icon-name">fa-trash-restore-alt</div>
+            </div>
+        </div>
+
+        <div class="button-test">
+            <h3>Botones de Prueba con Diferentes Iconos</h3>
+            <button class="btn-eliminar-consulta" style="margin: 10px;">
+                <i class="fas fa-trash"></i>
+            </button>
+            <button class="btn-eliminar-consulta" style="margin: 10px;">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+            <button class="btn-eliminar-consulta" style="margin: 10px;">
+                <i class="fas fa-trash-restore"></i>
+            </button>
+            <button class="btn-eliminar-consulta" style="margin: 10px;">
+                <i class="fas fa-trash-restore-alt"></i>
+            </button>
+        </div>
+
+        <div class="button-test">
+            <h3>Verificación de Font Awesome</h3>
+            <p>Si ves los iconos arriba, Font Awesome está funcionando correctamente.</p>
+            <p>Si no ves los iconos, hay un problema con la carga de Font Awesome.</p>
+            <p><strong>Icono actual en el botón:</strong> <code>fa-trash-alt</code></p>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="window.location.href='historia.html?id=1'" style="background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer;">
+                Probar en Historia Clínica
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 Página de prueba de iconos cargada');
+            
+            // Verificar que Font Awesome esté cargado
+            const testIcon = document.querySelector('.fas');
+            if (testIcon) {
+                console.log('✅ Font Awesome está cargado correctamente');
+                console.log('📱 Iconos disponibles:', testIcon.className);
+            } else {
+                console.error('❌ Font Awesome NO está cargado');
+            }
+            
+            // Verificar que el botón tenga el icono correcto
+            const deleteButton = document.querySelector('.btn-eliminar-consulta');
+            if (deleteButton) {
+                const icon = deleteButton.querySelector('i');
+                if (icon) {
+                    console.log('✅ Botón de eliminar encontrado con icono:', icon.className);
+                } else {
+                    console.error('❌ Botón de eliminar NO tiene icono');
+                }
+            } else {
+                console.error('❌ Botón de eliminar NO encontrado');
+            }
+        });
+    </script>
+</body>
+</html>

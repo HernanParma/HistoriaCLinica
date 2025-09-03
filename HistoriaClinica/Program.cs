@@ -1,87 +1,146 @@
 using HistoriaClinica.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Agregar servicio de DB Context
+// NUNCA fuerces el environment aquí. Déjalo a cargo de dotnet/launchSettings/env del SO.
+// Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Production");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configurar CORS para permitir el origen del frontend
+// CORS: en dev podés permitir Live Server; en prod, restringí a tu dominio real.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()  // Permite cualquier método HTTP (GET, POST, etc.)
-              .AllowAnyHeader(); // Permite cualquier cabecera
+        if (builder.Environment.IsDevelopment())
+        {
+            policy.WithOrigins(
+                    "http://127.0.0.1:5500",
+                    "http://localhost:5500"
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
+        else
+        {
+            // En producción, permitir solo HTTPS
+            policy.WithOrigins(
+                    "https://" + builder.Configuration["AllowedHosts"]?.Split(',')[0]?.Trim(),
+                    "https://www." + builder.Configuration["AllowedHosts"]?.Split(',')[0]?.Trim()
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
+        // .AllowCredentials(); // si vas a usar cookies o auth basada en cookies
     });
 });
 
-builder.Services.AddControllers();
+// JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "clave_super_secreta_para_dev";
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+builder.Services.AddControllers().AddJsonOptions(o =>
+{
+    o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Configurar autorización por roles
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
+    options.AddPolicy("MedicoOnly", policy => policy.RequireRole("medico"));
+    options.AddPolicy("EnfermeroOnly", policy => policy.RequireRole("enfermero"));
+    options.AddPolicy("RecepcionistaOnly", policy => policy.RequireRole("recepcionista"));
+    options.AddPolicy("PacienteOnly", policy => policy.RequireRole("paciente"));
+    
+    // Políticas combinadas
+    options.AddPolicy("MedicoOrAdmin", policy => 
+        policy.RequireRole("medico", "admin"));
+    options.AddPolicy("PersonalMedico", policy => 
+        policy.RequireRole("medico", "enfermero", "admin"));
+    options.AddPolicy("PersonalClinica", policy => 
+        policy.RequireRole("medico", "enfermero", "recepcionista", "admin"));
+});
+
 var app = builder.Build();
 
-// Asegurar que la base de datos existe
+// DB ensure + seed (para desarrollo; en prod preferí Migraciones)
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    try
-    {
-        // Crear la base de datos si no existe
-        await context.Database.EnsureCreatedAsync();
-        Console.WriteLine("Base de datos creada/verificada exitosamente");
-        
-        // Inicializar datos semilla
-        await SeedData.Initialize(scope.ServiceProvider);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error al crear/verificar la base de datos: {ex.Message}");
-    }
+    await context.Database.EnsureCreatedAsync();
+    await SeedData.Initialize(scope.ServiceProvider);
 }
 
-// Configurar el pipeline de HTTP en el orden correcto
+// Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Servir archivos estáticos como index.html, css, js
-app.UseStaticFiles();
-
-// Habilitar enrutamiento
-app.UseRouting();
-
-// Aplicar la política de CORS
-app.UseCors("AllowFrontend");
-
-app.UseAuthorization();
-
-// Sembrar la base de datos
-using (var scope = app.Services.CreateScope())
+// Configuración de seguridad para HTTPS
+if (!app.Environment.IsDevelopment())
 {
-    var services = scope.ServiceProvider;
-    try
+    // En producción, forzar HTTPS
+    app.UseHttpsRedirection();
+    
+    // Configurar headers de seguridad
+    app.Use(async (context, next) =>
     {
-        var context = services.GetRequiredService<AppDbContext>();
-        context.Database.EnsureCreated();
-        SeedData.Initialize(context);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
-    }
+        context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+        context.Response.Headers.Add("X-Frame-Options", "DENY");
+        context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+        context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+        context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';");
+        
+        await next();
+    });
 }
 
-// Mapear los controladores de la API
-app.MapControllers();
+app.UseStaticFiles();
+app.UseRouting();
 
-// Configurar ruta por defecto para servir la aplicación de una sola página (SPA)
+app.UseCors("AllowFrontend");
+
+app.UseAuthentication(); // JWT
+app.UseAuthorization();
+
+app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+// Endpoint de prueba DB
+app.MapGet("/test-db", async (AppDbContext context) =>
+{
+    var count = await context.Usuarios.CountAsync();
+    return Results.Ok($"✅ Conexión OK. Total usuarios: {count}");
+});
 
 app.Run();

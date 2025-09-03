@@ -13,8 +13,7 @@ namespace HistoriaClinica.Models
         [Required]
         public string DNI { get; set; }
 
-        [Required]
-        public string NumeroAfiliado { get; set; }
+        public string? NumeroAfiliado { get; set; }
 
         [Required]
         public string Nombre { get; set; }
@@ -22,23 +21,25 @@ namespace HistoriaClinica.Models
         [Required]
         public string Apellido { get; set; }
 
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
-        public string Telefono { get; set; }
+        public string? Telefono { get; set; }
 
-        public string ObraSocial { get; set; }
+        public string? ObraSocial { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime FechaNacimiento { get; set; }
+        public DateTime? FechaNacimiento { get; set; }
+
+        public bool Particular { get; set; } = false;
 
         public decimal? Peso { get; set; } // Peso en kilogramos
         public int? Altura { get; set; } // Altura en centímetros
 
         [Column(TypeName = "nvarchar(MAX)")]
-        public string Antecedentes { get; set; } = string.Empty;
+        public string? Antecedentes { get; set; }
 
         [Column(TypeName = "nvarchar(MAX)")]
-        public string Medicacion { get; set; } = string.Empty;
+        public string? Medicacion { get; set; }
 
         public List<Consulta> Consultas { get; set; } = new List<Consulta>();
     }

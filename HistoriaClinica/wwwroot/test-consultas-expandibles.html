@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Consultas Expandibles</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .demo-consulta {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .demo-consulta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+        .demo-consulta:hover::before {
+            transform: scaleY(1);
+        }
+        .demo-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 20px 25px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        .demo-header:hover {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border-bottom-color: #667eea;
+        }
+        .demo-header h5 {
+            margin: 0;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .demo-header h5 i {
+            color: #667eea;
+        }
+        .demo-motivo {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.95em;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        .demo-toggle {
+            color: #667eea;
+            font-size: 1.1em;
+            transition: transform 0.3s ease;
+            margin-left: auto;
+        }
+        .demo-content {
+            padding: 25px;
+            background: #ffffff;
+            display: none;
+        }
+        .demo-content.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown {
+            from {
+                max-height: 0;
+                opacity: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            to {
+                max-height: 1000px;
+                opacity: 1;
+                padding-top: 25px;
+                padding-bottom: 25px;
+            }
+        }
+        .demo-lab {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 15px;
+            border: 1px solid #bae6fd;
+        }
+        .demo-lab h6 {
+            margin: 0 0 15px 0;
+            color: #0369a1;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .demo-archivos {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 15px;
+            border: 1px solid #fbbf24;
+        }
+        .demo-archivos h6 {
+            margin: 0 0 15px 0;
+            color: #92400e;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🧪 Prueba de Consultas Expandibles</h1>
+        
+        <div class="test-section">
+            <h3>🎯 Nueva Funcionalidad Implementada</h3>
+            <p><strong>Problema resuelto:</strong> Ahora cada consulta individual es expandible al hacer clic en su header.</p>
+            <ul>
+                <li>✅ <strong>Consultas expandibles:</strong> Cada consulta se puede expandir/colapsar individualmente</li>
+                <li>✅ <strong>Icono de expansión:</strong> Flecha que indica el estado y rota al expandir</li>
+                <li>✅ <strong>Animaciones suaves:</strong> Transiciones y efectos visuales mejorados</li>
+                <li>✅ <strong>Interactividad:</strong> Hover effects y feedback visual</li>
+                <li>✅ <strong>Estado persistente:</strong> Cada consulta mantiene su estado independiente</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Cómo Funciona Ahora</h3>
+            <ol>
+                <li><strong>Estado inicial:</strong> Todas las consultas aparecen colapsadas (solo fecha y motivo)</li>
+                <li><strong>Expansión:</strong> Haz clic en el header de cualquier consulta para expandirla</li>
+                <li><strong>Contenido completo:</strong> Se muestran todos los detalles: recetar, OME, laboratorio, archivos</li>
+                <li><strong>Colapso:</strong> Haz clic nuevamente para colapsar la consulta</li>
+                <li><strong>Independencia:</strong> Cada consulta mantiene su propio estado de expansión</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>📱 Demostración Visual</h3>
+            <p>Aquí tienes un ejemplo de cómo se ve una consulta expandible:</p>
+            
+            <div class="demo-consulta">
+                <div class="demo-header" onclick="toggleDemo()">
+                    <h5><i class="fas fa-calendar-alt"></i> 18/8/2025</h5>
+                    <span class="demo-motivo">Consulta de rutina</span>
+                    <i class="fas fa-chevron-down demo-toggle" id="demo-toggle"></i>
+                </div>
+                <div class="demo-content" id="demo-content">
+                    <p><strong>Recetar:</strong> Paracetamol 500mg cada 8 horas</p>
+                    <p><strong>OME:</strong> Cardiología</p>
+                    
+                    <div class="demo-lab">
+                        <h6><i class="fas fa-vials"></i> Laboratorio</h6>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
+                            <div style="background: white; padding: 12px 16px; border-radius: 10px; border: 1px solid #e0f2fe;">
+                                <strong>GR:</strong> 12.4
+                            </div>
+                            <div style="background: white; padding: 12px 16px; border-radius: 10px; border: 1px solid #e0f2fe;">
+                                <strong>HTO:</strong> 12
+                            </div>
+                            <div style="background: white; padding: 12px 16px; border-radius: 10px; border: 1px solid #e0f2fe;">
+                                <strong>HB:</strong> 25.7
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="demo-archivos">
+                        <h6><i class="fas fa-paperclip"></i> Archivos Adjuntos (2)</h6>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div style="background: white; padding: 12px 16px; border-radius: 10px; border: 1px solid #fde68a; display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-file-pdf" style="color: #f59e0b;"></i>
+                                <span style="color: #92400e; font-weight: 500;">Resultados_lab.pdf</span>
+                                <span style="color: #78716c; font-size: 0.9em; margin-left: auto;">245.3 KB</span>
+                            </div>
+                            <div style="background: white; padding: 12px 16px; border-radius: 10px; border: 1px solid #fde68a; display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-image" style="color: #f59e0b;"></i>
+                                <span style="color: #92400e; font-weight: 500;">Radiografia.jpg</span>
+                                <span style="color: #78716c; font-size: 0.9em; margin-left: auto;">1.2 MB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="text-align: center; margin-top: 20px; color: #6b7280; font-style: italic;">
+                <i class="fas fa-mouse-pointer"></i> Haz clic en el header de arriba para probar la funcionalidad
+            </p>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Para Probar en la Aplicación Real</h3>
+            <ol>
+                <li>Ve a la página de historia clínica de un paciente</li>
+                <li>Haz clic en "CONSULTAS ANTERIORES"</li>
+                <li>Verás todas las consultas colapsadas inicialmente</li>
+                <li>Haz clic en el header de cualquier consulta para expandirla</li>
+                <li>Verás todos los detalles: recetar, OME, laboratorio, archivos</li>
+                <li>Haz clic nuevamente para colapsar</li>
+                <li>Puedes expandir múltiples consultas simultáneamente</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>💡 Características Técnicas</h3>
+            <ul>
+                <li><strong>JavaScript:</strong> Función toggleConsultaDetalle() para cada consulta</li>
+                <li><strong>CSS:</strong> Animaciones slideDown y transiciones suaves</li>
+                <li><strong>Estado:</strong> Cada consulta mantiene su estado independiente</li>
+                <li><strong>Iconos:</strong> Flechas que rotan para indicar el estado</li>
+                <li><strong>Responsive:</strong> Funciona en todos los tamaños de pantalla</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="test-button" onclick="window.location.href='historia.html?id=1'">
+                <i class="fas fa-user-injured"></i> Probar en Historia Clínica
+            </button>
+            <button class="test-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i> Volver al Inicio
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function toggleDemo() {
+            const content = document.getElementById('demo-content');
+            const toggle = document.getElementById('demo-toggle');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                toggle.className = 'fas fa-chevron-down demo-toggle';
+                toggle.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('show');
+                toggle.className = 'fas fa-chevron-up demo-toggle';
+                toggle.style.transform = 'rotate(180deg)';
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+

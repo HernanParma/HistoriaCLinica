@@ -27,7 +27,12 @@
                         </div>
                         <div class="form-group">
                             <label for="password">Contraseña:</label>
-                            <input type="password" id="password" name="password" required>
+                            <div style="position: relative;">
+                                <input type="password" id="password" name="password" required style="padding-right: 40px;">
+                                <button type="button" id="togglePassword" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2em;">
+                                    <i class="fas fa-eye" id="eyeIcon"></i>
+                                </button>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-sign-in-alt"></i> Ingresar
@@ -36,6 +41,8 @@
                     <div id="loginMessage" class="message"></div>
                     <div class="register-link">
                         ¿No tienes una cuenta? <a href="#" id="showRegister">Regístrate aquí</a>
+                        <br>
+                        <a href="#" id="showResetPassword">Blanquear clave</a>
                     </div>
                 </div>
             </div>
@@ -68,9 +75,59 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Formulario de Recuperación de Contraseña -->
+            <div id="resetPasswordForm" class="form-container hidden">
+                <div class="form-card">
+                    <h2><i class="fas fa-key"></i> Blanquear Clave</h2>
+                    <form id="resetPasswordFormElement">
+                        <div class="form-group">
+                            <label for="resetUsername">Nombre de Usuario:</label>
+                            <input type="text" id="resetUsername" name="resetUsername" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-paper-plane"></i> Enviar Código de Verificación
+                        </button>
+                    </form>
+                    <div id="resetPasswordMessage" class="message"></div>
+                    <div class="form-switch-link">
+                        <span>¿Recordaste tu contraseña?</span>
+                        <button id="switchToLoginFromResetBtn" class="btn-link" type="button">Inicia sesión</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de Nueva Contraseña -->
+            <div id="newPasswordForm" class="form-container hidden">
+                <div class="form-card">
+                    <h2><i class="fas fa-lock"></i> Nueva Contraseña</h2>
+                    <form id="newPasswordFormElement">
+                        <div class="form-group">
+                            <label for="verificationCode">Código de Verificación:</label>
+                            <input type="text" id="verificationCode" name="verificationCode" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">Nueva Contraseña:</label>
+                            <input type="password" id="newPassword" name="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Confirmación de Clave:</label>
+                            <input type="password" id="confirmNewPassword" name="confirmNewPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Cambiar Contraseña
+                        </button>
+                    </form>
+                    <div id="newPasswordMessage" class="message"></div>
+                    <div class="form-switch-link">
+                        <span>¿Recordaste tu contraseña?</span>
+                        <button id="switchToLoginFromNewPasswordBtn" class="btn-link" type="button">Inicia sesión</button>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
-    <script src="js/config.js"></script>
+    <script src="js/environment-config.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html> 

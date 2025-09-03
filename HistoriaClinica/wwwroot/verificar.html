@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Cuenta - Historia Clínica</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <h1>Historia Clínica</h1>
+            </div>
+        </header>
+        <main class="main-content">
+            <!-- Formulario de Verificación de Código -->
+            <div id="verifyForm" class="form-container">
+                <div class="form-card">
+                    <h2><i class="fas fa-envelope-open-text"></i> Verificar Cuenta</h2>
+                    <p class="verification-info">
+                        Se ha enviado un código de verificación a tu correo electrónico.
+                    </p>
+                    <form id="verifyFormElement">
+                        <div class="form-group">
+                            <label for="username">Usuario:</label>
+                            <input type="text" id="username" name="username" required placeholder="Ingresa tu nombre de usuario">
+                        </div>
+                        <div class="form-group">
+                            <label>Correo electrónico:</label>
+                            <span id="maskedEmail">hernan*****@gmail.com</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="verifyCode">Código de verificación *:</label>
+                            <input type="text" id="verifyCode" name="verifyCode" required placeholder="Ingresa el código de 6 dígitos">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check-circle"></i> Verificar Código
+                        </button>
+                    </form>
+                    <div id="verifyMessage" class="message"></div>
+                    <div class="form-switch-link">
+                        <span>¿Ya tienes una cuenta?</span>
+                        <a href="login.html" class="btn-link">Inicia sesión</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/verificar.js"></script>
+</body>
+</html>

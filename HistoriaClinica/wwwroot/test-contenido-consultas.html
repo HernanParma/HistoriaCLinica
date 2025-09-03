@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Contenido de Consultas</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+        .demo-consulta {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .demo-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .demo-content {
+            padding: 20px;
+            background: #f8f9fa;
+            display: none;
+        }
+        .demo-content.expanded {
+            display: block;
+        }
+        .demo-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .demo-motivo {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 15px;
+        }
+        .demo-toggle {
+            color: white;
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        .demo-toggle.expanded {
+            transform: rotate(180deg);
+        }
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .field-test {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .field-test h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+        .field-test pre {
+            margin: 0;
+            white-space: pre-wrap;
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">📋 Prueba Contenido de Consultas</h1>
+        
+        <div class="test-section">
+            <h3>🎯 Problema Identificado</h3>
+            <p>El contenido de las consultas anteriores no se estaba mostrando correctamente. He implementado una solución que:</p>
+            <ul>
+                <li><strong>Detecta todos los campos:</strong> Recetar, OME, Motivo, Notas, Laboratorio, Archivos</li>
+                <li><strong>Maneja variaciones de nombres:</strong> recetar, Recetar, RECETAR, ome, Ome, OME</li>
+                <li><strong>Muestra expandir/colapsar:</strong> Funcionalidad completa de toggle</li>
+                <li><strong>Incluye botón de eliminar:</strong> Con icono de papelera y funcionalidad</li>
+                <li><strong>Logging detallado:</strong> Para debug y verificación</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>👁️ Vista Previa de Consulta Mejorada</h3>
+            <p>Aquí puedes ver cómo se ve una consulta con todos los campos:</p>
+            
+            <div class="demo-consulta">
+                <div class="demo-header" onclick="toggleDemo()">
+                    <div style="display: flex; align-items: center;">
+                        <h5 style="margin: 0; font-size: 16px; font-weight: 600;">
+                            <i class="fas fa-calendar-alt"></i> 9/9/9999
+                        </h5>
+                        <span class="demo-motivo">MOT</span>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="btn-eliminar-consulta" title="Eliminar consulta" onclick="alert('¡Botón de eliminar funcionando!')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <i class="fas fa-chevron-down demo-toggle" id="demo-toggle"></i>
+                    </div>
+                </div>
+                <div class="demo-content" id="demo-content">
+                    <p><strong>Motivo:</strong> Consulta de control</p>
+                    <p><strong>Recetar:</strong> Paracetamol 500mg cada 8 horas</p>
+                    <p><strong>OME:</strong> Cardiología</p>
+                    <p><strong>Notas:</strong> Paciente presenta mejoría significativa</p>
+                    
+                    <div class="lab-section">
+                        <h6><i class="fas fa-vials"></i> Laboratorio</h6>
+                        <div class="lab-results-grid">
+                            <div class="lab-item"><strong>GR:</strong> 12.4</div>
+                            <div class="lab-item"><strong>HTO:</strong> 12</div>
+                            <div class="lab-item"><strong>HB:</strong> 25.7</div>
+                            <div class="lab-item"><strong>GB:</strong> 1</div>
+                            <div class="lab-item"><strong>ORINA:</strong> ok</div>
+                        </div>
+                    </div>
+                    
+                    <div class="archivos-section">
+                        <h6><i class="fas fa-paperclip"></i> Archivos Adjuntos (1)</h6>
+                        <div class="archivos-lista">
+                            <div class="archivo-item">
+                                <i class="fas fa-image"></i>
+                                <a href="#" class="archivo-link">radiografia.jpg</a>
+                                <span class="archivo-size">2.5 MB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Campos Detectados Automáticamente</h3>
+            <p>El sistema ahora detecta automáticamente estos campos:</p>
+            
+            <div class="field-test">
+                <h4>📝 Campos Básicos</h4>
+                <pre>motivo: Texto del motivo de la consulta
+recetar/Recetar/RECETAR: Medicación recetada
+ome/Ome/OME: Especialidad médica
+notas: Notas adicionales de la consulta</pre>
+            </div>
+            
+            <div class="field-test">
+                <h4>🧪 Campos de Laboratorio</h4>
+                <pre>gr, hto, hb, gb, plaq, gluc, urea, cr, got, gpt, 
+ct, tg, vitd, fal, col, b12, tsh, urico, orina</pre>
+            </div>
+            
+            <div class="field-test">
+                <h4>📁 Archivos Adjuntos</h4>
+                <pre>archivosJson: JSON con información de archivos subidos
+- nombreOriginal: Nombre del archivo
+- rutaArchivo: Ruta para descargar
+- tamañoBytes: Tamaño en bytes
+- extension: Extensión del archivo</pre>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>💡 Cómo Funciona Ahora</h3>
+            <ol>
+                <li><strong>Al cargar consultas:</strong> Se analiza cada campo de cada consulta</li>
+                <li><strong>Detección inteligente:</strong> Se verifican múltiples variaciones de nombres</li>
+                <li><strong>Generación de contenido:</strong> Se crea HTML dinámicamente para cada campo</li>
+                <li><strong>Validación:</strong> Solo se muestran campos con contenido real</li>
+                <li><strong>Fallback:</strong> Si no hay contenido, se muestra mensaje informativo</li>
+                <li><strong>Logging:</strong> Se registra cada paso para debug</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Para Probar en la Aplicación</h3>
+            <ol>
+                <li>Ve a la página de historia clínica de un paciente</li>
+                <li>Haz clic en "CONSULTAS ANTERIORES"</li>
+                <li>Busca cualquier consulta (como la del 9/9/9999)</li>
+                <li>Haz clic en el header de la consulta para expandir</li>
+                <li>Deberías ver todos los campos con contenido</li>
+                <li>Verifica que el botón de eliminar tenga el icono de papelera</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>🐛 Debug y Verificación</h3>
+            <p>Para verificar que todo funciona:</p>
+            <ol>
+                <li><strong>Abre la consola del navegador (F12)</strong></li>
+                <li><strong>Haz clic en "CONSULTAS ANTERIORES"</strong></li>
+                <li><strong>Busca los logs que muestran:</strong>
+                    <ul>
+                        <li>📝 Generando HTML para consulta X</li>
+                        <li>📝 Campos de la consulta</li>
+                        <li>✅ Campo agregado: valor</li>
+                        <li>📊 Contenido generado</li>
+                    </ul>
+                </li>
+                <li><strong>Si no ves logs:</strong> Hay un problema con la carga de JavaScript</li>
+                <li><strong>Si ves logs pero no contenido:</strong> Los campos están vacíos en la base de datos</li>
+            </ol>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="test-button" onclick="window.location.href='historia.html?id=1'">
+                <i class="fas fa-user-injured"></i> Probar en Historia Clínica
+            </button>
+            <button class="test-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i> Volver al Inicio
+            </button>
+            <button class="test-button" onclick="window.open('test-endpoint-delete.html', '_blank')">
+                <i class="fas fa-trash"></i> Probar Endpoint DELETE
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function toggleDemo() {
+            const content = document.getElementById('demo-content');
+            const toggle = document.getElementById('demo-toggle');
+            
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                content.classList.add('expanded');
+                toggle.classList.add('expanded');
+            } else {
+                content.style.display = 'none';
+                content.classList.remove('expanded');
+                toggle.classList.remove('expanded');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 Página de prueba de contenido de consultas cargada');
+            console.log('💡 Haz clic en el header de la consulta para expandir/colapsar');
+            console.log('💡 Verifica que el botón de eliminar tenga el icono de papelera');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Botón Eliminar Mejorado</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+        .demo-consulta {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .demo-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .demo-content {
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .demo-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .demo-motivo {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 15px;
+        }
+        .demo-toggle {
+            color: white;
+            font-size: 14px;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🗑️ Botón Eliminar Mejorado</h1>
+        
+        <div class="test-section">
+            <h3>🎯 Cambios Implementados</h3>
+            <ul>
+                <li><strong>Icono más claro:</strong> Cambié de <code>fa-trash-alt</code> a <code>fa-trash</code> (papelera más reconocible)</li>
+                <li><strong>Tamaño aumentado:</strong> De 32x32px a 36x36px para mejor visibilidad</li>
+                <li><strong>Tooltip visual:</strong> Al hacer hover aparece "Eliminar" debajo del botón</li>
+                <li><strong>Sombras mejoradas:</strong> Mejor efecto visual y profundidad</li>
+                <li><strong>Transiciones suaves:</strong> Animaciones más fluidas al interactuar</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>👁️ Vista Previa del Botón</h3>
+            <p>Aquí puedes ver cómo se ve el botón de eliminar mejorado:</p>
+            
+            <div class="demo-consulta">
+                <div class="demo-header">
+                    <div style="display: flex; align-items: center;">
+                        <h5 style="margin: 0; font-size: 16px; font-weight: 600;">
+                            <i class="fas fa-calendar-alt"></i> 9/9/9999
+                        </h5>
+                        <span class="demo-motivo">MOT</span>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="btn-eliminar-consulta" title="Eliminar consulta" onclick="alert('¡Botón de eliminar funcionando!')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <i class="fas fa-chevron-down demo-toggle"></i>
+                    </div>
+                </div>
+                <div class="demo-content">
+                    <p><strong>Recetar:</strong> Paracetamol 500mg cada 8 horas</p>
+                    <p><strong>OME:</strong> Cardiología</p>
+                    <p><strong>Resultados de Laboratorio:</strong> Hemoglobina: 14.2 g/dL</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Características del Botón Mejorado</h3>
+            <ul>
+                <li><strong>Icono:</strong> <i class="fas fa-trash"></i> Papelera clara y reconocible</li>
+                <li><strong>Tamaño:</strong> 36x36px (más grande y fácil de hacer clic)</li>
+                <li><strong>Color:</strong> Rojo (#dc3545) para indicar acción destructiva</li>
+                <li><strong>Forma:</strong> Circular para destacar del resto de la interfaz</li>
+                <li><strong>Tooltip:</strong> Aparece "Eliminar" al hacer hover</li>
+                <li><strong>Animaciones:</strong> Escala y sombras al interactuar</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>💡 Cómo Funciona Ahora</h3>
+            <ol>
+                <li><strong>Visual:</strong> El botón rojo con papelera es claramente visible</li>
+                <li><strong>Hover:</strong> Al pasar el mouse aparece "Eliminar" como tooltip</li>
+                <li><strong>Clic:</strong> Al hacer clic se muestra confirmación</li>
+                <li><strong>Confirmación:</strong> Si confirmas, se elimina la consulta</li>
+                <li><strong>Feedback:</strong> La consulta desaparece visualmente</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Para Probar en la Aplicación</h3>
+            <ol>
+                <li>Ve a la página de historia clínica de un paciente</li>
+                <li>Haz clic en "CONSULTAS ANTERIORES"</li>
+                <li>Busca cualquier consulta (como la del 9/9/9999)</li>
+                <li>Observa el botón rojo circular con icono de papelera</li>
+                <li>Pasa el mouse sobre él para ver el tooltip "Eliminar"</li>
+                <li>Haz clic para probar la funcionalidad de eliminación</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>🐛 Solución del Error de Eliminación</h3>
+            <p>El error que viste ("Error al eliminar la consulta") indica que:</p>
+            <ul>
+                <li><strong>El botón funciona:</strong> Se está enviando la petición al servidor</li>
+                <li><strong>Problema del servidor:</strong> El endpoint DELETE no está implementado o hay un error</li>
+                <li><strong>Próximos pasos:</strong> Necesitamos implementar el endpoint DELETE en el backend</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="test-button" onclick="window.location.href='historia.html?id=1'">
+                <i class="fas fa-user-injured"></i> Probar en Historia Clínica
+            </button>
+            <button class="test-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i> Volver al Inicio
+            </button>
+            <button class="test-button" onclick="window.open('test-eliminacion-consultas.html', '_blank')">
+                <i class="fas fa-trash"></i> Ver Prueba de Eliminación
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Función para demostrar el tooltip
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 Página de prueba del botón eliminar cargada');
+            console.log('💡 Pasa el mouse sobre el botón rojo para ver el tooltip');
+        });
+    </script>
+</body>
+</html>

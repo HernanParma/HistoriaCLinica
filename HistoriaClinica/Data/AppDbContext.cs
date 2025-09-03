@@ -15,5 +15,13 @@ namespace HistoriaClinica.Data
         public DbSet<Paciente> Pacientes { get; set; }
 
         public DbSet<Consulta> Consultas { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Paciente>()
+                .Property(p => p.Peso)
+                .HasPrecision(5, 2); // 
+        }
     }
 }

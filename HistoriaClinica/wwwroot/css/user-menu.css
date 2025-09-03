@@ -1,0 +1,126 @@
+/* Estilos para el menú de usuario */
+.user-info {
+    display: flex !important;
+    align-items: center !important;
+    gap: 20px !important;
+}
+
+.user-greeting {
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    position: relative !important;
+}
+
+.user-menu {
+    position: relative !important;
+}
+
+.user-menu-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 25px !important;
+    padding: 10px 20px !important;
+    font-size: 0.9em !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    min-width: 140px !important;
+    justify-content: center !important;
+}
+
+.user-menu-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+}
+
+.user-menu-btn.active {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4) !important;
+}
+
+.user-menu-btn i {
+    font-size: 1.1em !important;
+}
+
+.user-dropdown {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    background: white !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid #e2e8f0 !important;
+    min-width: 180px !important;
+    z-index: 1000 !important;
+    margin-top: 8px !important;
+    overflow: hidden !important;
+}
+
+.user-dropdown.hidden {
+    display: none !important;
+}
+
+.dropdown-item {
+    width: 100% !important;
+    padding: 12px 20px !important;
+    border: none !important;
+    background: none !important;
+    text-align: left !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    color: #374151 !important;
+    font-size: 0.9em !important;
+    font-weight: 500 !important;
+}
+
+.dropdown-item:hover {
+    background: #f8fafc !important;
+    color: #667eea !important;
+}
+
+.dropdown-item i {
+    font-size: 1em !important;
+    color: #6b7280 !important;
+}
+
+.dropdown-item:hover i {
+    color: #667eea !important;
+}
+
+/* Estilos para el saludo del usuario */
+#userGreeting {
+    font-weight: 600 !important;
+    color: #374151 !important;
+    font-size: 1em !important;
+}
+
+#userName {
+    font-weight: 600 !important;
+    color: white !important;
+}
+
+/* Responsive para el menú de usuario */
+@media (max-width: 768px) {
+    .user-info {
+        flex-direction: column !important;
+        gap: 15px !important;
+        align-items: stretch !important;
+    }
+    
+    .user-greeting {
+        justify-content: center !important;
+    }
+    
+    .user-menu-btn {
+        min-width: 120px !important;
+        padding: 8px 16px !important;
+    }
+}

@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historia Clínica del Paciente (Local)</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+    /* ESTILOS INLINE PARA CONSULTAS Y FORMULARIO DE ARCHIVOS */
+    
+    /* Contenedor principal */
+    .hc-section {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+        border-radius: 24px !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08) !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        border: 1px solid #e2e8f0 !important;
+        margin: 20px 0 !important;
+        position: relative !important;
+    }
+    
+    .hc-section::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 4px !important;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 0%, #f093fb 100%) !important;
+        z-index: 10 !important;
+    }
+    
+    /* Títulos */
+    .hc-section h3 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        margin: 0 !important;
+        padding: 25px 30px !important;
+        font-size: 1.6em !important;
+        font-weight: 700 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 15px !important;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+        position: relative !important;
+        border: none !important;
+    }
+    
+    .hc-section h4 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        margin: 0 !important;
+        padding: 20px 30px !important;
+        font-size: 1.4em !important;
+        font-weight: 700 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+        position: relative !important;
+        border: none !important;
+    }
+    
+    /* Botón de historial */
+    #btnMostrarHistorial {
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+        border: 2px solid #cbd5e1 !important;
+        color: #475569 !important;
+        padding: 15px 25px !important;
+        border-radius: 16px !important;
+        font-weight: 600 !important;
+        font-size: 1.1em !important;
+        cursor: pointer !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        margin: 20px 30px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+        position: relative !important;
+        overflow: hidden !important;
+        text-decoration: none !important;
+        outline: none !important;
+    }
+    
+    #btnMostrarHistorial:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border-color: #667eea !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+    }
+    
+    /* Consultas individuales */
+    .consulta-item {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+        border-radius: 20px !important;
+        border: 1px solid #e2e8f0 !important;
+        margin: 15px 0 !important;
+        overflow: hidden !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .consulta-item:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .consulta-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        padding: 20px !important;
+        cursor: pointer !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .consulta-header:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%) !important;
+    }
+    
+    .consulta-fecha {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        font-weight: 600 !important;
+        font-size: 1.1em !important;
+    }
+    
+    .consulta-actions {
+        display: flex !important;
+        align-items: center !important;
+        gap: 15px !important;
+    }
+    
+    .btn-eliminar-consulta {
+        background: #dc3545 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        width: 40px !important;
+        height: 40px !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3) !important;
+    }
+    
+    .btn-eliminar-consulta:hover {
+        background: #c82333 !important;
+        transform: scale(1.05) !important;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4) !important;
+    }
+    
+    .toggle-icon {
+        transition: transform 0.3s ease !important;
+        font-size: 1.2em !important;
+    }
+    
+    .consulta-content {
+        padding: 0 !important;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        transition: all 0.3s ease !important;
+        background: white !important;
+    }
+    
+    .consulta-content.expanded {
+        padding: 25px !important;
+        max-height: 1000px !important;
+    }
+    
+    .consulta-content.collapsed {
+        padding: 0 !important;
+        max-height: 0 !important;
+    }
+    
+    .consulta-details {
+        display: grid !important;
+        gap: 15px !important;
+    }
+    
+    .detail-item {
+        padding: 15px !important;
+        background: #f8f9fa !important;
+        border-radius: 10px !important;
+        border-left: 4px solid #667eea !important;
+    }
+    
+    .detail-item strong {
+        color: #495057 !important;
+        display: block !important;
+        margin-bottom: 5px !important;
+    }
+    
+    .no-consultations {
+        text-align: center !important;
+        padding: 40px !important;
+        color: #6c757d !important;
+        font-size: 1.1em !important;
+    }
+    
+    .no-consultations i {
+        font-size: 3em !important;
+        margin-bottom: 20px !important;
+        color: #dee2e6 !important;
+    }
+    
+    .error-message {
+        background: #f8d7da !important;
+        color: #721c24 !important;
+        padding: 15px !important;
+        border-radius: 10px !important;
+        border: 1px solid #f5c6cb !important;
+        text-align: center !important;
+        margin: 20px 0 !important;
+    }
+    
+    .patient-info {
+        padding: 20px !important;
+    }
+    
+    .info-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 15px !important;
+        padding: 12px 0 !important;
+        border-bottom: 1px solid #e9ecef !important;
+    }
+    
+    .info-item:last-child {
+        border-bottom: none !important;
+    }
+    
+    .info-item i {
+        width: 20px !important;
+        color: #667eea !important;
+    }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <nav class="nav">
+                <div class="nav-left">
+                    <div class="logo">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>Historia Clínica</span>
+                    </div>
+                </div>
+                <div class="nav-right">
+                    <div class="user-menu">
+                        <button id="userMenuBtn" class="user-menu-btn">
+                            <i class="fas fa-user-circle"></i>
+                            <span id="userName">Usuario</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="userDropdown" class="user-dropdown hidden">
+                            <button id="logoutBtnNav" class="dropdown-item">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                    <button id="newPatientBtnNav" class="nav-btn btn-primary">
+                        <i class="fas fa-user-plus"></i>
+                        Registrar Nuevo Paciente
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="hc-layout-container">
+                <!-- Columna lateral izquierda con datos del paciente -->
+                <div id="patient-sidebar" class="patient-sidebar-fixed">
+                    <div class="sidebar-header">
+                        <h3 id="sidebar-patient-name"><i class="fas fa-user-circle"></i> Datos del Paciente</h3>
+                    </div>
+                    <div id="sidebar-content" class="sidebar-content">
+                        <!-- Los datos del paciente se cargarán dinámicamente aquí -->
+                        <div id="loading-patient-data" class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>Cargando datos del paciente...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenido principal de la historia clínica -->
+                <div class="hc-main-content">
+                    <div id="hc-card" class="form-card hidden">
+                        <div class="form-header">
+                            <h2><i class="fas fa-stethoscope"></i> Consultas</h2>
+                            <div class="header-buttons">
+                                <a href="index.html" class="btn-back">
+                                    <i class="fas fa-arrow-left"></i> Volver al listado
+                                </a>
+                            </div>
+                        </div>
+                        <div id="hc-body" class="hc-body">
+                            <!-- La historia clínica se cargará dinámicamente aquí -->
+                            <div id="loading-hc" class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Cargando historia clínica...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Configuración directa para localhost - SIN CSP
+        console.log('🔧 Cargando historia-local.html...');
+        
+        // Forzar la URL del backend local
+        window.CONFIG = {
+            API_BASE_URL: 'http://localhost:5156',
+            API_ENDPOINTS: {
+                LOGIN: '/api/usuarios/login',
+                REGISTER: '/api/usuarios/registrar',
+                VERIFY: '/api/usuarios/verificar',
+                PATIENTS: '/api/pacientes'
+            }
+        };
+        
+        console.log('🌐 Configuración forzada:', window.CONFIG);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Página de historia clínica LOCAL cargada');
+            console.log('🌐 API_BASE_URL:', window.CONFIG.API_BASE_URL);
+            
+            const hcCard = document.getElementById('hc-card');
+            const patientNameTitle = document.getElementById('hc-patient-name');
+            const hcBody = document.getElementById('hc-body');
+            const loadingHC = document.getElementById('loading-hc');
+
+            // Función para obtener token de múltiples fuentes y unificarlo
+            function getTokenFromMultipleSources() {
+                console.log('🔍 Buscando token de autenticación...');
+                
+                // Intentar localStorage primero
+                let token = localStorage.getItem('jwtToken');
+                console.log('🔑 Token en localStorage (jwtToken):', token ? 'SÍ' : 'NO');
+                
+                if (!token) {
+                    // Intentar con otras claves posibles
+                    const possibleKeys = ['userToken', 'token', 'authToken', 'accessToken'];
+                    for (const key of possibleKeys) {
+                        token = localStorage.getItem(key);
+                        if (token) {
+                            console.log(`✅ Token encontrado con clave '${key}', unificando a 'jwtToken'`);
+                            localStorage.setItem('jwtToken', token);
+                            // Limpiar claves duplicadas
+                            localStorage.removeItem(key);
+                            break;
+                        }
+                    }
+                }
+                
+                if (!token) {
+                    // Intentar sessionStorage como respaldo
+                    token = sessionStorage.getItem('jwtToken');
+                    if (token) {
+                        console.log('✅ Token encontrado en sessionStorage, copiando a localStorage');
+                        localStorage.setItem('jwtToken', token);
+                    } else {
+                        // Buscar en sessionStorage con otras claves
+                        const possibleKeys = ['userToken', 'token', 'authToken', 'accessToken'];
+                        for (const key of possibleKeys) {
+                            token = sessionStorage.getItem(key);
+                            if (token) {
+                                console.log(`✅ Token encontrado en sessionStorage con clave '${key}', unificando`);
+                                localStorage.setItem('jwtToken', token);
+                                sessionStorage.removeItem(key);
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                console.log('🔑 Token final unificado:', token ? 'SÍ' : 'NO');
+                return token;
+            }
+
+            // Función para limpiar tokens duplicados y unificar en jwtToken
+            function cleanupAndUnifyTokens() {
+                console.log('🧹 Limpiando y unificando tokens...');
+                
+                const token = getTokenFromMultipleSources();
+                if (token) {
+                    // Guardar solo en jwtToken
+                    localStorage.setItem('jwtToken', token);
+                    
+                    // Limpiar todas las otras claves
+                    const keysToClean = ['userToken', 'token', 'authToken', 'accessToken'];
+                    keysToClean.forEach(key => {
+                        localStorage.removeItem(key);
+                        sessionStorage.removeItem(key);
+                    });
+                    
+                    console.log('✅ Tokens unificados en jwtToken');
+                }
+            }
+
+            // Limpiar y unificar tokens al inicio
+            cleanupAndUnifyTokens();
+
+            // Función para obtener headers de autenticación
+            function getAuthHeaders() {
+                const token = localStorage.getItem('jwtToken');
+                if (!token) {
+                    console.warn('⚠️ No hay token de autenticación disponible');
+                    return {};
+                }
+                
+                console.log('🔑 Obteniendo headers de autenticación...');
+                console.log('✅ Token encontrado: SÍ');
+                console.log('🔐 Valor del token:', token.substring(0, 20) + '...');
+                
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                };
+                
+                console.log('📋 Headers de autenticación:', headers);
+                return headers;
+            }
+
+            // Función para obtener el ID del paciente de la URL
+            function getPatientIdFromUrl() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const patientId = urlParams.get('id');
+                console.log('🆔 ID del paciente obtenido de la URL:', patientId);
+                return patientId;
+            }
+
+            // Función para cargar datos del paciente
+            async function loadPatientData(patientId) {
+                try {
+                    console.log(`👤 Cargando datos del paciente ${patientId}...`);
+                    console.log(`🌐 URL de la API: ${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}`);
+                    
+                    const headers = getAuthHeaders();
+                    console.log('📋 Headers enviados:', headers);
+                    
+                    const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}`, {
+                        method: 'GET',
+                        headers: headers
+                    });
+                    
+                    console.log(`📡 Respuesta del servidor: ${response.status}`);
+                    
+                    if (response.ok) {
+                        const paciente = await response.json();
+                        console.log('✅ Paciente cargado exitosamente:', paciente);
+                        
+                        // Mostrar datos del paciente en el sidebar
+                        displayPatientData(paciente);
+                        
+                        // Mostrar la tarjeta de consultas
+                        if (hcCard) {
+                            hcCard.classList.remove('hidden');
+                        }
+                        
+                        // Cargar consultas del paciente
+                        await loadPatientConsultations(patientId);
+                        
+                    } else {
+                        const errorText = await response.text();
+                        console.error(`❌ Error del servidor: ${response.status}`);
+                        console.error('📋 Detalles de la respuesta:', errorText);
+                        
+                        // Mostrar error en la interfaz
+                        const sidebarContent = document.getElementById('sidebar-content');
+                        if (sidebarContent) {
+                            sidebarContent.innerHTML = `
+                                <div class="error-message">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>Error al cargar datos del paciente: ${response.status}</span>
+                                </div>
+                            `;
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Error de conexión:', error);
+                    
+                    // Mostrar error en la interfaz
+                    const sidebarContent = document.getElementById('sidebar-content');
+                    if (sidebarContent) {
+                        sidebarContent.innerHTML = `
+                            <div class="error-message">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Error de conexión: ${error.message}</span>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            // Función para mostrar datos del paciente
+            function displayPatientData(paciente) {
+                const sidebarContent = document.getElementById('sidebar-content');
+                const patientNameTitle = document.getElementById('sidebar-patient-name');
+                
+                if (sidebarContent) {
+                    sidebarContent.innerHTML = `
+                        <div class="patient-info">
+                            <div class="info-item">
+                                <i class="fas fa-user"></i>
+                                <span><strong>Nombre:</strong> ${paciente.Nombre} ${paciente.Apellido}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-id-card"></i>
+                                <span><strong>DNI:</strong> ${paciente.DNI}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-calendar"></i>
+                                <span><strong>Fecha de Nacimiento:</strong> ${paciente.FechaNacimiento ? new Date(paciente.FechaNacimiento).toLocaleDateString() : 'No especificada'}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-weight"></i>
+                                <span><strong>Peso:</strong> ${paciente.Peso ? `${paciente.Peso} kg` : 'No especificado'}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-ruler-vertical"></i>
+                                <span><strong>Altura:</strong> ${paciente.Altura ? `${paciente.Altura} cm` : 'No especificado'}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-envelope"></i>
+                                <span><strong>Email:</strong> ${paciente.Email || 'No especificado'}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <span><strong>Teléfono:</strong> ${paciente.Telefono || 'No especificado'}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if (patientNameTitle) {
+                    patientNameTitle.innerHTML = `<i class="fas fa-user-circle"></i> ${paciente.Nombre} ${paciente.Apellido}`;
+                }
+            }
+
+            // Función para cargar consultas del paciente
+            async function loadPatientConsultations(patientId) {
+                try {
+                    console.log(`📋 Cargando consultas del paciente ${patientId}...`);
+                    
+                    const headers = getAuthHeaders();
+                    const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/consultas`, {
+                        method: 'GET',
+                        headers: headers
+                    });
+                    
+                    if (response.ok) {
+                        const consultas = await response.json();
+                        console.log(`✅ Consultas cargadas: ${consultas.length}`);
+                        
+                        // Mostrar consultas en la interfaz
+                        displayConsultations(consultas);
+                        
+                    } else {
+                        console.error(`❌ Error al cargar consultas: ${response.status}`);
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Error al cargar consultas:', error);
+                }
+            }
+
+            // Función para mostrar consultas
+            function displayConsultations(consultas) {
+                if (!hcBody) return;
+                
+                if (consultas.length === 0) {
+                    hcBody.innerHTML = `
+                        <div class="no-consultations">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>No hay consultas registradas para este paciente</span>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const consultasHtml = consultas.map(consulta => `
+                    <div class="consulta-item">
+                        <div class="consulta-header" onclick="toggleConsultaDetalle(this)">
+                            <div class="consulta-fecha">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>${new Date(consulta.Fecha).toLocaleDateString()}</span>
+                            </div>
+                            <div class="consulta-actions">
+                                <button class="btn-eliminar-consulta" onclick="eliminarConsulta(${consulta.Id})" title="Eliminar consulta">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                            </div>
+                        </div>
+                        <div class="consulta-content collapsed">
+                            <div class="consulta-details">
+                                ${consulta.Motivo ? `<div class="detail-item"><strong>Motivo:</strong> ${consulta.Motivo}</div>` : ''}
+                                ${consulta.Recetar ? `<div class="detail-item"><strong>Recetar:</strong> ${consulta.Recetar}</div>` : ''}
+                                ${consulta.Ome ? `<div class="detail-item"><strong>OME:</strong> ${consulta.Ome}</div>` : ''}
+                                ${consulta.Notas ? `<div class="detail-item"><strong>Notas:</strong> ${consulta.Notas}</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                hcBody.innerHTML = consultasHtml;
+            }
+
+            // Función para alternar detalles de consulta
+            window.toggleConsultaDetalle = function(header) {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.toggle-icon');
+                
+                if (content.classList.contains('collapsed')) {
+                    content.classList.remove('collapsed');
+                    content.classList.add('expanded');
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    content.classList.remove('expanded');
+                    content.classList.add('collapsed');
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            };
+
+            // Función para eliminar consulta
+            window.eliminarConsulta = async function(consultaId) {
+                const patientId = getPatientIdFromUrl();
+                
+                if (!confirm('¿Estás seguro de que quieres eliminar esta consulta?')) {
+                    return;
+                }
+                
+                try {
+                    const headers = getAuthHeaders();
+                    const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/consultas/${consultaId}`, {
+                        method: 'DELETE',
+                        headers: headers
+                    });
+                    
+                    if (response.ok) {
+                        console.log('✅ Consulta eliminada exitosamente');
+                        // Recargar consultas
+                        await loadPatientConsultations(patientId);
+                    } else {
+                        console.error(`❌ Error al eliminar consulta: ${response.status}`);
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Error al eliminar consulta:', error);
+                }
+            };
+
+            // Inicialización
+            const patientId = getPatientIdFromUrl();
+            if (patientId) {
+                await loadPatientData(patientId);
+            } else {
+                console.error('❌ No se encontró ID de paciente en la URL');
+            }
+        });
+
+        // Funcionalidades adicionales
+        document.addEventListener('DOMContentLoaded', function() {
+            // Redirigir a login.html si no está autenticado
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            var btnNav = document.getElementById('newPatientBtnNav');
+            if (btnNav) {
+                btnNav.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = 'agregar.html';
+                });
+            }
+            
+            // Lógica de logout
+            var logoutBtn = document.getElementById('logoutBtnNav');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('username');
+                    window.location.replace('login.html');
+                });
+            }
+            
+            // Redirección al hacer clic en logo o título
+            var logo = document.querySelector('.logo');
+            if (logo) {
+                logo.style.cursor = 'pointer';
+                logo.addEventListener('click', function() {
+                    window.location.href = 'index.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
+

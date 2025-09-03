@@ -14,9 +14,9 @@ body {
 
 .container {
     max-width: 100vw;
-    width: 99%;
-    margin: 0 auto;
-    padding: 20px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 /* Header */
@@ -24,14 +24,16 @@ body {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 15px;
-    padding: 20px 30px;
-    margin-bottom: 30px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 10px;
+    position: relative;
+    z-index: 1000;
 }
 
 .logo {
@@ -83,6 +85,7 @@ body {
 
 .user-menu {
     position: relative;
+    z-index: 10000;
 }
 
 .user-menu-btn {
@@ -129,8 +132,10 @@ body {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     border: 1px solid #e1e5e9;
     min-width: 180px;
-    z-index: 1000;
+    z-index: 9999;
     overflow: hidden;
+    backdrop-filter: blur(10px);
+    padding: 8px 0;
 }
 
 .user-dropdown.hidden {
@@ -145,21 +150,24 @@ body {
     padding: 12px 16px;
     border: none;
     background: none;
-    color: #333;
+    color: #333 !important;
     font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: left;
+    text-decoration: none;
 }
 
 .dropdown-item:hover {
     background: #f8f9fa;
-    color: #dc3545;
+    color: #dc3545 !important;
 }
 
 .dropdown-item i {
     font-size: 1rem;
     width: 16px;
+    color: inherit;
 }
 
 .nav-btn {
@@ -317,6 +325,50 @@ body {
     transform: translateY(-1px);
 }
 
+.btn-debug {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #17a2b8;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-debug:hover {
+    background: #138496;
+    transform: translateY(-1px);
+}
+
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.debug-info {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.debug-info pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
 .form-card h2 {
     text-align: center;
     margin-bottom: 30px;
@@ -421,6 +473,16 @@ body {
 .btn-success:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(86, 171, 47, 0.4);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ff9500 0%, #ffcc02 100%);
+    color: white;
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 149, 0, 0.4);
 }
 
 /* Mensajes */
@@ -652,6 +714,36 @@ body {
     border-bottom: none;
 }
 
+/* Estilos para la columna Particular */
+.patients-table td:nth-child(5) {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.patients-table td:nth-child(5) input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: default;
+    accent-color: #28a745;
+    transform: scale(1.1);
+}
+
+.patients-table td:nth-child(5) input[type="checkbox"]:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+/* Asegurar que todas las columnas tengan el ancho correcto */
+.patients-table th:nth-child(1), .patients-table td:nth-child(1) { width: 10%; } /* DNI */
+.patients-table th:nth-child(2), .patients-table td:nth-child(2) { width: 15%; } /* N° Afiliado */
+.patients-table th:nth-child(3), .patients-table td:nth-child(3) { width: 12%; } /* Apellido */
+.patients-table th:nth-child(4), .patients-table td:nth-child(4) { width: 12%; } /* Nombre */
+.patients-table th:nth-child(5), .patients-table td:nth-child(5) { width: 8%; }  /* Particular */
+.patients-table th:nth-child(6), .patients-table td:nth-child(6) { width: 12%; } /* Teléfono */
+.patients-table th:nth-child(7), .patients-table td:nth-child(7) { width: 12%; } /* Obra Social */
+.patients-table th:nth-child(8), .patients-table td:nth-child(8) { width: 10%; } /* Fecha Nac. */
+.patients-table th:nth-child(9), .patients-table td:nth-child(9) { width: 9%; }  /* Acciones */
+
 .action-buttons {
     display: flex;
     gap: 8px;
@@ -699,6 +791,144 @@ body {
 .btn-delete:hover {
     background: #c82333;
     transform: translateY(-1px);
+}
+
+/* Estilos para la columna PARTICULAR */
+.particular-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #667eea;
+    transition: all 0.2s ease;
+}
+
+.particular-checkbox:hover {
+    transform: scale(1.1);
+}
+
+.particular-checkbox:checked {
+    accent-color: #28a745;
+}
+
+/* Centrar el checkbox en la celda */
+.patients-table td:nth-child(8) {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Estilos para checkbox en formularios */
+.checkbox-group {
+    margin-bottom: 20px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.checkbox-container:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+}
+
+.checkbox-container.checked {
+    border-color: #28a745;
+    background: #f0fff4;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.15);
+}
+
+.custom-checkbox {
+    width: 22px;
+    height: 22px;
+    accent-color: #28a745;
+    cursor: pointer;
+    transform: scale(1.2);
+    transition: all 0.2s ease;
+}
+
+.custom-checkbox:checked {
+    transform: scale(1.3);
+}
+
+.custom-checkbox:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.checkbox-container:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.custom-checkbox:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.checkbox-container.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: #f8f9fa;
+}
+
+
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #495057;
+    font-size: 1rem;
+    margin: 0;
+    user-select: none;
+}
+
+.checkbox-label i {
+    color: #667eea;
+    font-size: 1.1rem;
+}
+
+.form-help {
+    display: block;
+    margin-top: 8px;
+    color: #6c757d;
+    font-size: 0.85rem;
+    font-style: italic;
+    margin-left: 34px;
+}
+
+/* Estilos para checkbox en formularios (mantener compatibilidad) */
+.form-group input[type="checkbox"] {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+    accent-color: #667eea;
+    cursor: pointer;
+}
+
+.form-group input[type="checkbox"]:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.form-group label[for="particular"] {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 500;
 }
 
 .btn-history {
@@ -778,6 +1008,25 @@ body {
         flex-direction: column;
         gap: 4px;
     }
+    
+    /* Responsive para el checkbox */
+@media (max-width: 768px) {
+    .checkbox-container {
+        padding: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .checkbox-label {
+        font-size: 0.95rem;
+    }
+    
+    .form-help {
+        margin-left: 0;
+        text-align: center;
+    }
+}
     
     .btn-action {
         padding: 4px 8px;
@@ -1423,4 +1672,3023 @@ body {
         min-width: 220px;
         max-width: 100%;
     }
+}
+
+/* --- Mensaje informativo para vista "Todos" --- */
+.info-message {
+    background: #e3f2fd !important;
+    color: #1976d2 !important;
+    padding: 12px 16px !important;
+    margin: 16px 0 !important;
+    border-radius: 8px !important;
+    text-align: center !important;
+    font-weight: 500 !important;
+    border: 1px solid #bbdefb !important;
+    box-shadow: 0 2px 4px rgba(25, 118, 210, 0.1) !important;
+    transition: all 0.3s ease !important;
+}
+
+.info-message:hover {
+    background: #bbdefb !important;
+    box-shadow: 0 4px 8px rgba(25, 118, 210, 0.15) !important;
+}
+
+.info-message i {
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+/* ========================================
+   ESTILOS MEJORADOS PARA FORMULARIO DE ARCHIVOS
+   ======================================== */
+
+/* Contenedor principal del formulario de archivos */
+.file-upload-container {
+    margin: 40px 0 !important;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08) !important;
+    overflow: hidden !important;
+    border: 1px solid #e2e8f0 !important;
+    position: relative !important;
+    padding: 0 !important;
+}
+
+.file-upload-container::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 4px !important;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 0%, #f093fb 100%) !important;
+    z-index: 1 !important;
+}
+
+/* Título del formulario de archivos */
+.file-upload-title {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    margin: 0 !important;
+    padding: 25px 30px !important;
+    font-size: 1.5em !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    position: relative !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    border: none !important;
+}
+
+.file-upload-title::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%) !important;
+    pointer-events: none !important;
+}
+
+.file-upload-title i {
+    font-size: 1.3em !important;
+    opacity: 0.95 !important;
+    color: white !important;
+}
+
+.file-upload-subtitle {
+    font-size: 0.75em !important;
+    font-weight: 400 !important;
+    opacity: 0.9 !important;
+    margin-left: auto !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    backdrop-filter: blur(10px) !important;
+    color: white !important;
+}
+
+/* Sección del formulario */
+.file-upload-section {
+    padding: 0 !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+}
+
+/* Área de upload */
+.file-upload-area {
+    border: 3px dashed #e2e8f0 !important;
+    border-radius: 16px !important;
+    padding: 60px 40px !important;
+    text-align: center !important;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    cursor: pointer !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    margin: 30px !important;
+    position: relative !important;
+    min-height: 280px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+}
+
+.file-upload-area::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%) !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+}
+
+.file-upload-area:hover {
+    border-color: #667eea !important;
+    background: linear-gradient(135deg, #f0f4ff 0%, #f8f5ff 100%) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15) !important;
+}
+
+.file-upload-area:hover::before {
+    opacity: 1 !important;
+}
+
+.file-upload-area.dragover {
+    border-color: #10b981 !important;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%) !important;
+    transform: scale(1.02) !important;
+    box-shadow: 0 25px 80px rgba(16, 185, 129, 0.25) !important;
+}
+
+.file-upload-area.dragover::before {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%) !important;
+    opacity: 1 !important;
+}
+
+/* Contenedor del icono */
+.upload-icon-container {
+    position: relative !important;
+    margin-bottom: 25px !important;
+    display: block !important;
+}
+
+.upload-icon {
+    font-size: 5em !important;
+    color: #667eea !important;
+    opacity: 0.9 !important;
+    transition: all 0.3s ease !important;
+    z-index: 2 !important;
+    position: relative !important;
+    filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.2)) !important;
+    display: block !important;
+}
+
+.upload-pulse {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 100px !important;
+    height: 100px !important;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.15) 0%, rgba(102, 126, 234, 0.05) 70%, transparent 100%) !important;
+    border-radius: 50% !important;
+    animation: pulse 3s infinite !important;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 1;
+    }
+}
+
+/* Texto del área de upload */
+.upload-text {
+    display: block !important;
+    width: 100% !important;
+}
+
+.upload-text h3 {
+    font-size: 2.2em !important;
+    font-weight: 800 !important;
+    color: #1e293b !important;
+    margin: 0 0 15px 0 !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    text-shadow: none !important;
+    display: block !important;
+}
+
+.upload-description {
+    font-size: 1.2em !important;
+    color: #64748b !important;
+    margin: 0 0 30px 0 !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+    display: block !important;
+}
+
+/* Información de archivos */
+.upload-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    max-width: 450px !important;
+    margin: 0 auto !important;
+}
+
+.info-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 12px 16px !important;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(102, 126, 234, 0.15) !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.info-item:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%) !important;
+    transform: translateX(8px) !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15) !important;
+}
+
+.info-item i {
+    color: #667eea !important;
+    font-size: 1.2em !important;
+    width: 24px !important;
+    text-align: center !important;
+    filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.2)) !important;
+}
+
+.info-item span {
+    font-size: 1em !important;
+    color: #475569 !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+}
+
+/* Lista de archivos */
+.file-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 18px !important;
+    padding: 0 30px 30px 30px !important;
+    min-height: 120px !important;
+}
+
+.file-list-placeholder {
+    text-align: center !important;
+    padding: 50px 30px !important;
+    color: #94a3b8 !important;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    border-radius: 16px !important;
+    border: 2px dashed #cbd5e1 !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+}
+
+.file-list-placeholder::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.02) 0%, rgba(118, 75, 162, 0.02) 100%) !important;
+    border-radius: 16px !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+}
+
+.file-list-placeholder:hover {
+    border-color: #667eea !important;
+    background: linear-gradient(135deg, #f0f4ff 0%, #f8f5ff 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.1) !important;
+}
+
+.file-list-placeholder:hover::before {
+    opacity: 1 !important;
+}
+
+.file-list-placeholder i {
+    font-size: 3.5em !important;
+    color: #cbd5e1 !important;
+    margin-bottom: 20px !important;
+    display: block !important;
+    transition: all 0.3s ease !important;
+}
+
+.file-list-placeholder:hover i {
+    color: #667eea !important;
+    transform: scale(1.1) !important;
+}
+
+.file-list-placeholder p {
+    font-size: 1.2em !important;
+    font-weight: 600 !important;
+    margin: 0 0 8px 0 !important;
+    color: #64748b !important;
+    display: block !important;
+}
+
+.file-list-placeholder small {
+    font-size: 1em !important;
+    color: #94a3b8 !important;
+    line-height: 1.4 !important;
+    display: block !important;
+}
+
+/* Elementos de archivo */
+.file-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    padding: 20px 25px !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.file-item::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 5px !important;
+    height: 100% !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    transform: scaleY(0) !important;
+    transition: transform 0.3s ease !important;
+}
+
+.file-item:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1) !important;
+    border-color: #667eea !important;
+    transform: translateY(-3px) !important;
+}
+
+.file-item:hover::before {
+    transform: scaleY(1) !important;
+}
+
+.file-item-info {
+    display: flex !important;
+    align-items: center !important;
+    gap: 18px !important;
+    flex: 1 !important;
+}
+
+.file-icon {
+    font-size: 2.5em !important;
+    color: #667eea !important;
+    margin-right: 18px !important;
+    opacity: 0.9 !important;
+    transition: all 0.3s ease !important;
+    filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.2)) !important;
+}
+
+.file-item:hover .file-icon {
+    transform: scale(1.15) !important;
+    color: #764ba2 !important;
+}
+
+.file-details {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+}
+
+.file-name {
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    font-size: 1.1em !important;
+    line-height: 1.3 !important;
+}
+
+.file-size {
+    font-size: 0.95em !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+.file-actions {
+    display: flex !important;
+    gap: 10px !important;
+    align-items: center !important;
+}
+
+.btn-remove-file {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 12px 18px !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    font-size: 0.95em !important;
+    font-weight: 600 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn-remove-file:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4) !important;
+}
+
+.btn-remove-file:active {
+    transform: translateY(0) !important;
+}
+
+/* Barra de progreso */
+.upload-progress {
+    width: 140px !important;
+    height: 10px !important;
+    background: #e2e8f0 !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    position: relative !important;
+}
+
+.upload-progress-bar {
+    height: 100% !important;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%) !important;
+    transition: width 0.3s ease !important;
+    border-radius: 6px !important;
+    position: relative !important;
+}
+
+.upload-progress-bar::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%) !important;
+    animation: shimmer 2s infinite !important;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Animación de éxito para archivos subidos */
+.file-item.upload-success {
+    animation: uploadSuccess 0.5s ease-in-out;
+    border: 2px solid #10b981 !important;
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%) !important;
+}
+
+@keyframes uploadSuccess {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Notificaciones mejoradas */
+.notification {
+    position: fixed !important;
+    top: 25px !important;
+    right: 25px !important;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    border-radius: 16px !important;
+    padding: 20px 25px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+    border-left: 5px solid #667eea !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    z-index: 10000 !important;
+    transform: translateX(450px) !important;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    max-width: 400px !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.notification.show {
+    transform: translateX(0) !important;
+}
+
+.notification-success {
+    border-left-color: #10b981 !important;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%) !important;
+}
+
+.notification-error {
+    border-left-color: #ef4444 !important;
+    background: linear-gradient(135deg, #fef2f2 0%, #fef2f2 100%) !important;
+}
+
+.notification-info {
+    border-left-color: #3b82f6 !important;
+    background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%) !important;
+}
+
+.notification i {
+    font-size: 1.4em !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)) !important;
+}
+
+.notification-success i {
+    color: #10b981 !important;
+}
+
+.notification-error i {
+    color: #ef4444 !important;
+}
+
+.notification-info i {
+    color: #3b82f6 !important;
+}
+
+.notification span {
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    line-height: 1.5 !important;
+    font-size: 1.05em !important;
+}
+
+/* Botón de envío mejorado */
+.submit-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    border: none !important;
+    padding: 18px 35px !important;
+    border-radius: 16px !important;
+    color: white !important;
+    font-size: 1.2em !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin: 30px 0 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.submit-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%) !important;
+    transition: left 0.5s ease !important;
+}
+
+.submit-btn:hover::before {
+    left: 100% !important;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4) !important;
+}
+
+.submit-btn:disabled {
+    background: #94a3b8 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.submit-btn i {
+    font-size: 1.2em !important;
+}
+
+/* Responsive mejorado */
+@media (max-width: 768px) {
+    .file-upload-area {
+        padding: 40px 25px !important;
+        min-height: 240px !important;
+        margin: 20px !important;
+    }
+    
+    .upload-text h3 {
+        font-size: 1.8em !important;
+    }
+    
+    .upload-info {
+        max-width: 100% !important;
+    }
+    
+    .file-item {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 20px !important;
+        padding: 25px !important;
+    }
+    
+    .file-actions {
+        width: 100% !important;
+        justify-content: flex-end !important;
+    }
+    
+    .file-upload-title {
+        padding: 20px 25px !important;
+        font-size: 1.3em !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        text-align: center !important;
+    }
+    
+    .file-upload-subtitle {
+        margin-left: 0 !important;
+    }
+}
+
+/* ========================================
+   ESTILOS MODERNOS PARA CONSULTAS ANTERIORES
+   ======================================== */
+
+/* Contenedor de consultas */
+.hc-section {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border: 1px solid #e2e8f0 !important;
+    margin: 20px 0 !important;
+}
+
+.hc-section h3 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    margin: 0 !important;
+    padding: 25px 30px !important;
+    font-size: 1.6em !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    position: relative !important;
+}
+
+.hc-section h3::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%) !important;
+    pointer-events: none !important;
+}
+
+.hc-section h3 i {
+    font-size: 1.4em !important;
+    opacity: 0.95 !important;
+    color: white !important;
+}
+
+/* Botón de historial mejorado */
+.btn-historial {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+    border: 2px solid #cbd5e1 !important;
+    color: #475569 !important;
+    padding: 15px 25px !important;
+    border-radius: 16px !important;
+    font-weight: 600 !important;
+    font-size: 1.1em !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin: 20px 30px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.btn-historial::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent 0%, rgba(102, 126, 234, 0.1) 50%, transparent 100%) !important;
+    transition: left 0.5s ease !important;
+}
+
+.btn-historial:hover::before {
+    left: 100% !important;
+}
+
+.btn-historial:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border-color: #667eea !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+}
+
+.btn-historial i {
+    font-size: 1.2em !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-historial:hover i {
+    transform: scale(1.1) !important;
+}
+
+/* Contenedor de historial */
+#historialConsultas {
+    padding: 0 30px 30px 30px !important;
+    background: #ffffff !important;
+}
+
+/* Elementos de consulta individuales */
+.consulta-item {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    border-radius: 20px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06) !important;
+    margin-bottom: 25px !important;
+    overflow: hidden !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+}
+
+.consulta-item::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 5px !important;
+    height: 100% !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    transform: scaleY(0) !important;
+    transition: transform 0.3s ease !important;
+}
+
+.consulta-item:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) !important;
+    border-color: #667eea !important;
+}
+
+.consulta-item:hover::before {
+    transform: scaleY(1) !important;
+}
+
+/* Header de consulta */
+.consulta-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    padding: 20px 25px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 15px !important;
+    margin: 0 !important;
+}
+
+.consulta-header > h5 {
+    margin: 0 !important;
+    font-size: 1.3em !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 0 !important;
+}
+
+.consulta-header > h5 > i {
+    color: #667eea !important;
+    font-size: 1.2em !important;
+    filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.2)) !important;
+}
+
+span.consulta-motivo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    padding: 8px 16px !important;
+    border-radius: 20px !important;
+    font-size: 0.95em !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+    display: inline-block !important;
+}
+
+/* Contenido de consulta */
+.consulta-content {
+    padding: 25px !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+}
+
+.consulta-content > p {
+    margin: 0 0 15px 0 !important;
+    font-size: 1.05em !important;
+    line-height: 1.6 !important;
+    color: #475569 !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    padding: 0 !important;
+}
+
+.consulta-content > p:last-child {
+    margin-bottom: 0 !important;
+}
+
+.consulta-content > p > strong {
+    color: #1e293b !important;
+    font-weight: 700 !important;
+    min-width: 80px !important;
+    display: inline-block !important;
+}
+
+/* Sección de laboratorio */
+.lab-section {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    margin: 20px 0 !important;
+    border: 1px solid #bae6fd !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.lab-section::before {
+    content: '🔬' !important;
+    position: absolute !important;
+    top: 15px !important;
+    right: 20px !important;
+    font-size: 1.5em !important;
+    opacity: 0.3 !important;
+}
+
+.lab-section h6 {
+    margin: 0 0 15px 0 !important;
+    font-size: 1.1em !important;
+    font-weight: 700 !important;
+    color: #0369a1 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 0 !important;
+}
+
+.lab-section h6 i {
+    color: #0369a1 !important;
+}
+
+.lab-results-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+    gap: 15px !important;
+    margin: 0 !important;
+}
+
+.lab-item {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    margin: 0 !important;
+}
+
+.lab-item:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    border-color: #667eea !important;
+}
+
+.lab-item span:first-child {
+    font-weight: 600 !important;
+    color: #475569 !important;
+    font-size: 0.95em !important;
+}
+
+.lab-item span:last-child {
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    font-size: 1.05em !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* Sección de archivos adjuntos */
+.archivos-section {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    margin: 20px 0 !important;
+    border: 1px solid #fbbf24 !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.archivos-section::before {
+    content: '📎' !important;
+    position: absolute !important;
+    top: 15px !important;
+    right: 20px !important;
+    font-size: 1.5em !important;
+    opacity: 0.3 !important;
+}
+
+.archivos-section h6 {
+    margin: 0 0 15px 0 !important;
+    font-size: 1.1em !important;
+    font-weight: 700 !important;
+    color: #92400e !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 0 !important;
+}
+
+.archivos-section h6 i {
+    color: #92400e !important;
+}
+
+.archivos-lista {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin: 0 !important;
+}
+
+.archivo-item {
+    background: linear-gradient(135deg, #ffffff 0%, #fefce8 100%) !important;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+    border: 1px solid #fde68a !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    margin: 0 !important;
+}
+
+.archivo-item:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    border-color: #f59e0b !important;
+}
+
+a.archivo-link {
+    color: #667eea !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    font-size: 1em !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+a.archivo-link:hover {
+    color: #764ba2 !important;
+    transform: translateX(5px) !important;
+}
+
+a.archivo-link > i {
+    font-size: 1.1em !important;
+    color: #f59e0b !important;
+}
+
+span.archivo-size {
+    font-size: 0.9em !important;
+    color: #92400e !important;
+    font-weight: 500 !important;
+    background: rgba(251, 191, 36, 0.2) !important;
+    padding: 4px 8px !important;
+    border-radius: 8px !important;
+    display: inline-block !important;
+}
+
+/* Mensajes */
+p.no-consultas {
+    text-align: center !important;
+    padding: 60px 30px !important;
+    color: #94a3b8 !important;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    border-radius: 16px !important;
+    border: 2px dashed #cbd5e1 !important;
+    margin: 20px 0 !important;
+    font-size: 1.1em !important;
+    font-weight: 500 !important;
+}
+
+p.no-consultas::before {
+    content: '📋' !important;
+    display: block !important;
+    font-size: 3em !important;
+    margin-bottom: 15px !important;
+    opacity: 0.5 !important;
+}
+
+p.error {
+    text-align: center !important;
+    padding: 30px !important;
+    color: #ef4444 !important;
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+    border-radius: 16px !important;
+    border: 1px solid #fecaca !important;
+    margin: 20px 0 !important;
+    font-weight: 600 !important;
+}
+
+/* Separador */
+hr {
+    border: none !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%) !important;
+    margin: 30px 0 !important;
+}
+
+/* Formulario de nueva consulta */
+form#nuevaConsultaForm {
+    padding: 30px !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+}
+
+div.form-group {
+    margin-bottom: 25px !important;
+    position: relative !important;
+}
+
+div.form-group > label {
+    display: block !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    font-size: 1.05em !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+div.form-group > input,
+div.form-group > textarea {
+    width: 100% !important;
+    padding: 15px 20px !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    font-size: 1em !important;
+    transition: all 0.3s ease !important;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    outline: none !important;
+}
+
+div.form-group > input:focus,
+div.form-group > textarea:focus {
+    outline: none !important;
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+div.form-group > input:hover,
+div.form-group > textarea:hover {
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Campos específicos con colores */
+div.form-group > input[name="fecha"] {
+    border-color: #ef4444 !important;
+}
+
+div.form-group > input[name="fecha"]:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+div.form-group > input[name="motivo"] {
+    border-color: #ef4444 !important;
+}
+
+div.form-group > input[name="motivo"]:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+div.form-group > input[name="recetar"],
+div.form-group > input[name="ome"] {
+    border-color: #10b981 !important;
+}
+
+div.form-group > input[name="recetar"]:focus,
+div.form-group > input[name="ome"]:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+/* Grid de laboratorio */
+div.lab-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 20px !important;
+    margin-top: 20px !important;
+}
+
+div.lab-grid > div.form-group {
+    margin-bottom: 0 !important;
+}
+
+div.lab-grid > div.form-group.full-width {
+    grid-column: 1 / -1 !important;
+}
+
+/* Mensaje del formulario */
+div#consultaMessage {
+    padding: 15px 20px !important;
+    border-radius: 12px !important;
+    margin: 20px 0 !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+div#consultaMessage.success {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+    color: #065f46 !important;
+    border: 1px solid #a7f3d0 !important;
+}
+
+div#consultaMessage.error {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+    color: #991b1b !important;
+    border: 1px solid #fecaca !important;
+}
+
+/* Botón de envío */
+button.submit-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    border: none !important;
+    padding: 18px 35px !important;
+    border-radius: 16px !important;
+    color: white !important;
+    font-size: 1.2em !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin: 30px 0 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    outline: none !important;
+}
+
+button.submit-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%) !important;
+    transition: left 0.5s ease !important;
+}
+
+button.submit-btn:hover::before {
+    left: 100% !important;
+}
+
+button.submit-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4) !important;
+}
+
+button.submit-btn:disabled {
+    background: #94a3b8 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+button.submit-btn > i {
+    font-size: 1.2em !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    div.consulta-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+    
+    div.lab-results-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    div.consulta-content {
+        padding: 20px !important;
+    }
+    
+    div.consulta-header {
+        padding: 15px 20px !important;
+    }
+    
+    div.hc-section > h3,
+    div.hc-section > h4 {
+        padding: 20px 25px !important;
+        font-size: 1.3em !important;
+    }
+    
+    form#nuevaConsultaForm {
+        padding: 20px !important;
+    }
+    
+    div.lab-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ========================================
+   ESTILOS ULTRA ESPECÍFICOS PARA CONSULTAS
+   ======================================== */
+
+/* Contenedor principal de historial clínico */
+div.hc-section {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border: 1px solid #e2e8f0 !important;
+    margin: 20px 0 !important;
+    position: relative !important;
+}
+
+div.hc-section::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 4px !important;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 0%, #f093fb 100%) !important;
+    z-index: 10 !important;
+}
+
+/* Títulos de sección */
+div.hc-section > h3 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    margin: 0 !important;
+    padding: 25px 30px !important;
+    font-size: 1.6em !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    position: relative !important;
+    border: none !important;
+}
+
+div.hc-section > h3::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%) !important;
+    pointer-events: none !important;
+}
+
+div.hc-section > h3 > i {
+    font-size: 1.4em !important;
+    opacity: 0.95 !important;
+    color: white !important;
+}
+
+div.hc-section > h4 {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+    margin: 0 !important;
+    padding: 20px 30px !important;
+    font-size: 1.4em !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    position: relative !important;
+    border: none !important;
+}
+
+div.hc-section > h4::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%) !important;
+    pointer-events: none !important;
+}
+
+div.hc-section > h4 > i {
+    font-size: 1.3em !important;
+    opacity: 0.95 !important;
+    color: white !important;
+}
+
+/* Botón de historial */
+button#btnMostrarHistorial,
+.btn-historial {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+    border: 2px solid #cbd5e1 !important;
+    color: #475569 !important;
+    padding: 15px 25px !important;
+    border-radius: 16px !important;
+    font-weight: 600 !important;
+    font-size: 1.1em !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin: 20px 30px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    text-decoration: none !important;
+    outline: none !important;
+}
+
+button#btnMostrarHistorial::before,
+.btn-historial::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent 0%, rgba(102, 126, 234, 0.1) 50%, transparent 100%) !important;
+    transition: left 0.5s ease !important;
+}
+
+button#btnMostrarHistorial:hover::before,
+.btn-historial:hover::before {
+    left: 100% !important;
+}
+
+button#btnMostrarHistorial:hover,
+.btn-historial:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border-color: #667eea !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+}
+
+button#btnMostrarHistorial > i,
+.btn-historial > i {
+    font-size: 1.2em !important;
+    transition: all 0.3s ease !important;
+}
+
+button#btnMostrarHistorial:hover > i,
+.btn-historial:hover > i {
+    transform: scale(1.1) !important;
+}
+
+/* Contenedor de historial */
+div#historialConsultas {
+    padding: 0 30px 30px 30px !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+}
+
+/* Elementos de consulta individuales */
+div.consulta-item {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    border-radius: 20px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06) !important;
+    margin-bottom: 25px !important;
+    overflow: hidden !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    padding: 0 !important;
+}
+
+div.consulta-item::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 5px !important;
+    height: 100% !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    transform: scaleY(0) !important;
+    transition: transform 0.3s ease !important;
+}
+
+div.consulta-item:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) !important;
+    border-color: #667eea !important;
+}
+
+div.consulta-item:hover::before {
+    transform: scaleY(1) !important;
+}
+
+/* Header de consulta */
+div.consulta-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    padding: 20px 25px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 15px !important;
+    margin: 0 !important;
+}
+
+div.consulta-header > h5 {
+    margin: 0 !important;
+    font-size: 1.3em !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 0 !important;
+}
+
+div.consulta-header > h5 > i {
+    color: #667eea !important;
+    font-size: 1.2em !important;
+    filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.2)) !important;
+}
+
+span.consulta-motivo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    padding: 8px 16px !important;
+    border-radius: 20px !important;
+    font-size: 0.95em !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+    display: inline-block !important;
+}
+
+/* Contenido de consulta */
+.consulta-content {
+    padding: 25px !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+}
+
+.consulta-content > p {
+    margin: 0 0 15px 0 !important;
+    font-size: 1.05em !important;
+    line-height: 1.6 !important;
+    color: #475569 !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    padding: 0 !important;
+}
+
+.consulta-content > p:last-child {
+    margin-bottom: 0 !important;
+}
+
+.consulta-content > p > strong {
+    color: #1e293b !important;
+    font-weight: 700 !important;
+    min-width: 80px !important;
+    display: inline-block !important;
+}
+
+/* Sección de laboratorio */
+.lab-section {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    margin: 20px 0 !important;
+    border: 1px solid #bae6fd !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.lab-section::before {
+    content: '🔬' !important;
+    position: absolute !important;
+    top: 15px !important;
+    right: 20px !important;
+    font-size: 1.5em !important;
+    opacity: 0.3 !important;
+}
+
+.lab-section h6 {
+    margin: 0 0 15px 0 !important;
+    font-size: 1.1em !important;
+    font-weight: 700 !important;
+    color: #0369a1 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 0 !important;
+}
+
+.lab-section h6 i {
+    color: #0369a1 !important;
+}
+
+.lab-results-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+    gap: 15px !important;
+    margin: 0 !important;
+}
+
+.lab-item {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    margin: 0 !important;
+}
+
+.lab-item:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    border-color: #667eea !important;
+}
+
+.lab-item span:first-child {
+    font-weight: 600 !important;
+    color: #475569 !important;
+    font-size: 0.95em !important;
+}
+
+.lab-item span:last-child {
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    font-size: 1.05em !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* Sección de archivos adjuntos */
+.archivos-section {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    margin: 20px 0 !important;
+    border: 1px solid #fbbf24 !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.archivos-section::before {
+    content: '📎' !important;
+    position: absolute !important;
+    top: 15px !important;
+    right: 20px !important;
+    font-size: 1.5em !important;
+    opacity: 0.3 !important;
+}
+
+.archivos-section h6 {
+    margin: 0 0 15px 0 !important;
+    font-size: 1.1em !important;
+    font-weight: 700 !important;
+    color: #92400e !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 0 !important;
+}
+
+.archivos-section h6 i {
+    color: #92400e !important;
+}
+
+.archivos-lista {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin: 0 !important;
+}
+
+.archivo-item {
+    background: linear-gradient(135deg, #ffffff 0%, #fefce8 100%) !important;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+    border: 1px solid #fde68a !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    margin: 0 !important;
+}
+
+.archivo-item:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    border-color: #f59e0b !important;
+}
+
+a.archivo-link {
+    color: #667eea !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    font-size: 1em !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+a.archivo-link:hover {
+    color: #764ba2 !important;
+    transform: translateX(5px) !important;
+}
+
+a.archivo-link > i {
+    font-size: 1.1em !important;
+    color: #f59e0b !important;
+}
+
+span.archivo-size {
+    font-size: 0.9em !important;
+    color: #92400e !important;
+    font-weight: 500 !important;
+    background: rgba(251, 191, 36, 0.2) !important;
+    padding: 4px 8px !important;
+    border-radius: 8px !important;
+    display: inline-block !important;
+}
+
+/* Mensajes */
+p.no-consultas {
+    text-align: center !important;
+    padding: 60px 30px !important;
+    color: #94a3b8 !important;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    border-radius: 16px !important;
+    border: 2px dashed #cbd5e1 !important;
+    margin: 20px 0 !important;
+    font-size: 1.1em !important;
+    font-weight: 500 !important;
+}
+
+p.no-consultas::before {
+    content: '📋' !important;
+    display: block !important;
+    font-size: 3em !important;
+    margin-bottom: 15px !important;
+    opacity: 0.5 !important;
+}
+
+p.error {
+    text-align: center !important;
+    padding: 30px !important;
+    color: #ef4444 !important;
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+    border-radius: 16px !important;
+    border: 1px solid #fecaca !important;
+    margin: 20px 0 !important;
+    font-weight: 600 !important;
+}
+
+/* Separador */
+hr {
+    border: none !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%) !important;
+    margin: 30px 0 !important;
+}
+
+/* Formulario de nueva consulta */
+form#nuevaConsultaForm {
+    padding: 30px !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+}
+
+div.form-group {
+    margin-bottom: 25px !important;
+    position: relative !important;
+}
+
+div.form-group > label {
+    display: block !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    font-size: 1.05em !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+div.form-group > input,
+div.form-group > textarea {
+    width: 100% !important;
+    padding: 15px 20px !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    font-size: 1em !important;
+    transition: all 0.3s ease !important;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    outline: none !important;
+}
+
+div.form-group > input:focus,
+div.form-group > textarea:focus {
+    outline: none !important;
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+div.form-group > input:hover,
+div.form-group > textarea:hover {
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Campos específicos con colores */
+div.form-group > input[name="fecha"] {
+    border-color: #ef4444 !important;
+}
+
+div.form-group > input[name="fecha"]:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+div.form-group > input[name="motivo"] {
+    border-color: #ef4444 !important;
+}
+
+div.form-group > input[name="motivo"]:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+div.form-group > input[name="recetar"],
+div.form-group > input[name="ome"] {
+    border-color: #10b981 !important;
+}
+
+div.form-group > input[name="recetar"]:focus,
+div.form-group > input[name="ome"]:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+/* Grid de laboratorio */
+div.lab-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 20px !important;
+    margin-top: 20px !important;
+}
+
+div.lab-grid > div.form-group {
+    margin-bottom: 0 !important;
+}
+
+div.lab-grid > div.form-group.full-width {
+    grid-column: 1 / -1 !important;
+}
+
+/* Mensaje del formulario */
+div#consultaMessage {
+    padding: 15px 20px !important;
+    border-radius: 12px !important;
+    margin: 20px 0 !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+div#consultaMessage.success {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+    color: #065f46 !important;
+    border: 1px solid #a7f3d0 !important;
+}
+
+div#consultaMessage.error {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+    color: #991b1b !important;
+    border: 1px solid #fecaca !important;
+}
+
+/* Botón de envío */
+button.submit-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    border: none !important;
+    padding: 18px 35px !important;
+    border-radius: 16px !important;
+    color: white !important;
+    font-size: 1.2em !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin: 30px 0 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    outline: none !important;
+}
+
+button.submit-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%) !important;
+    transition: left 0.5s ease !important;
+}
+
+button.submit-btn:hover::before {
+    left: 100% !important;
+}
+
+button.submit-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4) !important;
+}
+
+button.submit-btn:disabled {
+    background: #94a3b8 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+button.submit-btn > i {
+    font-size: 1.2em !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    div.consulta-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+    
+    div.lab-results-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    div.consulta-content {
+        padding: 20px !important;
+    }
+    
+    div.consulta-header {
+        padding: 15px 20px !important;
+    }
+    
+    div.hc-section > h3,
+    div.hc-section > h4 {
+        padding: 20px 25px !important;
+        font-size: 1.3em !important;
+    }
+    
+    form#nuevaConsultaForm {
+        padding: 20px !important;
+    }
+    
+    div.lab-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ======================
+   PANEL LATERAL IZQUIERDO
+   ====================== */
+
+.patient-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 400px;
+    height: 100vh;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-right: 1px solid #e2e8f0;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+.patient-sidebar.show {
+    transform: translateX(0);
+}
+
+.patient-sidebar.hidden {
+    transform: translateX(-100%);
+}
+
+.sidebar-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1.4em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.close-sidebar-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1.1em;
+}
+
+.close-sidebar-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.sidebar-content {
+    padding: 25px;
+}
+
+/* Secciones de datos del paciente */
+.patient-data-section {
+    background: white;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.patient-data-section h4 {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    color: #1e293b;
+    margin: 0;
+    padding: 18px 20px;
+    font-size: 1.2em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.patient-data-section h4 i {
+    color: #667eea;
+    font-size: 1.1em;
+}
+
+.patient-data-section-content {
+    padding: 20px;
+}
+
+/* Campos de datos individuales */
+.patient-data-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+}
+
+.patient-data-field:last-child {
+    border-bottom: none;
+}
+
+.patient-data-field:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border-radius: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+.patient-data-label {
+    font-weight: 600;
+    color: #475569;
+    font-size: 0.95em;
+    min-width: 120px;
+}
+
+.patient-data-value {
+    color: #1e293b;
+    font-weight: 500;
+    text-align: right;
+    flex: 1;
+    margin-left: 15px;
+}
+
+.patient-data-value.empty {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+/* Botón de edición */
+.edit-field-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+    margin-left: 10px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.edit-field-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.edit-field-btn:active {
+    transform: scale(0.95);
+}
+
+/* Campos de entrada inline */
+.inline-edit-input {
+    background: white;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.95em;
+    color: #1e293b;
+    transition: all 0.3s ease;
+    outline: none;
+    width: 100%;
+    max-width: 200px;
+}
+
+.inline-edit-input:focus {
+    border-color: #764ba2;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.inline-edit-input[type="checkbox"] {
+    width: auto;
+    max-width: none;
+}
+
+.inline-edit-input[type="date"] {
+    max-width: 150px;
+}
+
+.inline-edit-input[type="number"] {
+    max-width: 100px;
+}
+
+/* Botones de guardar/cancelar */
+.edit-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    justify-content: flex-end;
+}
+
+.edit-buttons .btn {
+    padding: 6px 12px;
+    font-size: 0.85em;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.edit-buttons .btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.edit-buttons .btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-1px);
+}
+
+.edit-buttons .btn-secondary {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+}
+
+.edit-buttons .btn-secondary:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+    transform: translateY(-1px);
+}
+
+/* Ajuste del contenido principal cuando el sidebar está abierto */
+.main-content {
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-content.sidebar-open {
+    margin-left: 400px;
+}
+
+/* Overlay para cerrar el sidebar en móviles */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Responsive para el sidebar */
+@media (max-width: 768px) {
+    .patient-sidebar {
+        width: 100vw;
+        max-width: 350px;
+    }
+    
+    .main-content.sidebar-open {
+        margin-left: 0;
+    }
+    
+    .sidebar-overlay {
+        display: block;
+    }
+    
+    .patient-data-field {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .patient-data-value {
+        text-align: left;
+        margin-left: 0;
+    }
+    
+    .edit-field-btn {
+        align-self: flex-end;
+        margin-left: 0;
+    }
+    
+    .inline-edit-input {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .patient-sidebar {
+        width: 100vw;
+    }
+    
+    .sidebar-header {
+        padding: 15px 20px;
+    }
+    
+    .sidebar-header h3 {
+        font-size: 1.2em;
+    }
+    
+    .sidebar-content {
+        padding: 20px;
+    }
+    
+    .patient-data-section h4 {
+        padding: 15px 18px;
+        font-size: 1.1em;
+    }
+    
+    .patient-data-section-content {
+        padding: 15px;
+    }
+}
+
+/* Estilos adicionales para botones en el sidebar */
+.patient-sidebar .btn {
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    outline: none;
+}
+
+.patient-sidebar .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.patient-sidebar .btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.patient-sidebar .btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.patient-sidebar .btn-danger:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Animación de entrada para el sidebar */
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+.patient-sidebar.show {
+    animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ======================
+   FORMULARIO DE EDICIÓN DE PACIENTE
+   ====================== */
+
+.patient-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.form-field-group label {
+    font-weight: 600;
+    color: #475569;
+    font-size: 0.95em;
+    margin-bottom: 4px;
+}
+
+.form-field-group input,
+.form-field-group textarea {
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.95em;
+    background: white;
+    transition: all 0.3s ease;
+    outline: none;
+    font-family: inherit;
+}
+
+.form-field-group input:focus,
+.form-field-group textarea:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-field-group input::placeholder,
+.form-field-group textarea::placeholder {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+.form-field-group textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+}
+
+/* Checkbox personalizado */
+.checkbox-group {
+    margin-top: 10px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.checkbox-label:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 4px;
+    background: white;
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Estilos para las filas del formulario */
+.form-row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.form-row .form-field-group {
+    flex: 1;
+    min-width: 0; /* Permite que los campos se reduzcan */
+}
+
+/* Ajuste especial para el checkbox en la tercera fila */
+.form-row .checkbox-group {
+    flex: 0 0 auto;
+    min-width: 150px;
+    margin-top: 25px; /* Alinear con los inputs */
+    position: relative;
+}
+
+/* Estilos para contenedores de campos con botones de edición */
+.field-container {
+    position: relative !important;
+    display: flex;
+    align-items: center;
+    overflow: visible !important;
+    z-index: 1;
+}
+
+.field-container input {
+    flex: 1;
+    padding-right: 40px; /* Espacio para el botón */
+}
+
+.edit-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 165, 0, 0.1);
+    color: #ff8c00;
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    width: 30px;
+    height: 30px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 18px;
+    font-weight: bold;
+    z-index: 1;
+    opacity: 1 !important;
+    visibility: visible !important;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.edit-btn:hover {
+    background: rgba(255, 165, 0, 0.2);
+    border-color: rgba(255, 165, 0, 0.5);
+    transform: translateY(-50%) scale(1.15);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(255, 165, 0, 0.3);
+}
+
+.edit-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+/* Estilos para los emojis de lápiz */
+.edit-btn {
+    font-size: 16px !important;
+    line-height: 1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.edit-btn:hover {
+    transform: translateY(-50%) scale(1.15);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para campos en modo edición */
+.field-container.editing input {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.field-container.editing .edit-btn {
+    background: rgba(72, 187, 120, 0.2);
+    border-color: rgba(72, 187, 120, 0.4);
+    color: #48bb78;
+    box-shadow: 0 2px 4px rgba(72, 187, 120, 0.3);
+}
+
+.field-container.editing .edit-btn:hover {
+    background: rgba(72, 187, 120, 0.3);
+    border-color: rgba(72, 187, 120, 0.6);
+    color: #38a169;
+    box-shadow: 0 4px 8px rgba(72, 187, 120, 0.4);
+}
+
+/* Estilos para campos readonly */
+.field-container input[readonly] {
+    background-color: #f8fafc;
+    color: #374151;
+    cursor: default;
+}
+
+.field-container input[readonly]:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Estilos para textareas con botones de edición */
+.field-container textarea {
+    flex: 1;
+    padding-right: 40px;
+    resize: vertical;
+    min-height: 80px;
+}
+
+.field-container textarea[readonly] {
+    background-color: #f8fafc;
+    color: #374151;
+    cursor: default;
+}
+
+.field-container textarea[readonly]:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.checkbox-label span {
+    font-weight: 500;
+    color: #475569;
+}
+
+/* Botones de acción del formulario */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.form-actions .btn {
+    flex: 1;
+    padding: 12px 20px;
+    font-size: 1em;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.form-actions .btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.form-actions .btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+.form-actions .btn-secondary {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+
+.form-actions .btn-secondary:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(107, 114, 128, 0.4);
+}
+
+.form-actions .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Responsive para el formulario */
+@media (max-width: 768px) {
+    .form-field-group input,
+    .form-field-group textarea {
+        padding: 14px 16px;
+        font-size: 16px; /* Evita zoom en iOS */
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+
+/* ======================
+   LAYOUT DE HISTORIA CLÍNICA CON SIDEBAR FIJO
+   ====================== */
+
+.hc-layout-container {
+    display: flex;
+    gap: 15px;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Sidebar fijo para datos del paciente */
+.patient-sidebar-fixed {
+    width: 500px;
+    min-width: 500px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    z-index: 1;
+}
+
+.patient-sidebar-fixed .sidebar-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 25px;
+    margin: 0;
+    border-radius: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.patient-sidebar-fixed .sidebar-header h3 {
+    margin: 0;
+    font-size: 1.3em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.patient-sidebar-fixed .sidebar-content {
+    padding: 25px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Contenido principal de la historia clínica */
+.hc-main-content {
+    flex: 1;
+    min-width: 0;
+    max-width: calc(100% - 515px); /* 500px sidebar + 15px gap */
+    width: 100%;
+}
+
+/* Optimización del contenido de consultas */
+.hc-main-content .hc-body {
+    width: 100%;
+    max-width: none;
+}
+
+.hc-main-content .form-section {
+    width: 100%;
+    max-width: none;
+}
+
+.hc-main-content .form-group {
+    width: 100%;
+    max-width: none;
+}
+
+.hc-main-content .form-group input,
+.hc-main-content .form-group textarea {
+    width: 100%;
+    max-width: none;
+}
+
+/* Maximización adicional del espacio */
+.hc-main-content .form-card {
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+}
+
+.hc-main-content .form-header {
+    width: 100%;
+    max-width: none;
+}
+
+.hc-main-content .form-content {
+    width: 100%;
+    max-width: none;
+}
+
+/* Asegurar uso completo del ancho */
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+.main-content {
+    width: 100%;
+    max-width: 100vw;
+    margin: 0;
+    padding: 0;
+}
+
+/* Optimización para pantallas pequeñas */
+@media (max-width: 1199px) {
+    .hc-layout-container {
+        gap: 3px;
+        padding: 0;
+    }
+    
+    .patient-sidebar-fixed {
+        width: 400px;
+        min-width: 400px;
+    }
+    
+    .hc-main-content {
+        max-width: calc(100% - 403px);
+    }
+}
+
+/* Optimización para pantallas medianas */
+@media (min-width: 1200px) and (max-width: 1599px) {
+    .hc-layout-container {
+        gap: 5px;
+        padding: 0;
+    }
+    
+    .patient-sidebar-fixed {
+        width: 480px;
+        min-width: 480px;
+    }
+    
+    .hc-main-content {
+        max-width: calc(100% - 485px);
+    }
+}
+
+.hc-main-content .form-card {
+    margin: 0;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    width: 100%;
+    max-width: none;
+}
+
+/* Responsive para el layout */
+@media (max-width: 1400px) {
+    .hc-layout-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .patient-sidebar-fixed {
+        width: 100%;
+        min-width: auto;
+        position: static;
+        max-height: none;
+    }
+
+    .hc-main-content {
+        flex: none;
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .hc-layout-container {
+        gap: 10px;
+        padding: 0 5px;
+    }
+
+    .patient-sidebar-fixed .sidebar-content {
+        padding: 20px;
+    }
+
+    .patient-sidebar-fixed .sidebar-header {
+        padding: 15px 20px;
+    }
+
+    .patient-sidebar-fixed .sidebar-header h3 {
+        font-size: 1.2em;
+    }
+    
+    .hc-main-content .form-card {
+        margin: 0;
+        width: 100%;
+    }
+}
+
+/* Optimización para pantallas muy grandes */
+@media (min-width: 1600px) {
+    .hc-layout-container {
+        gap: 5px;
+        padding: 0;
+    }
+    
+    .patient-sidebar-fixed {
+        width: 520px;
+        min-width: 520px;
+    }
+    
+    .hc-main-content {
+        max-width: calc(100% - 525px);
+    }
+}
+
+@media (min-width: 1920px) {
+    .hc-layout-container {
+        gap: 5px;
+        padding: 0;
+    }
+    
+    .patient-sidebar-fixed {
+        width: 550px;
+        min-width: 550px;
+    }
+    
+    .hc-main-content {
+        max-width: calc(100% - 555px);
+    }
+}
+
+/* Estilos para los detalles del paciente en el modal */
+.patient-details {
+    padding: 20px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #555;
+    min-width: 150px;
+}
+
+.detail-value {
+    color: #333;
+    text-align: right;
+    flex: 1;
+    margin-left: 20px;
+}
+
+.text-success {
+    color: #28a745;
+}
+
+.text-danger {
+    color: #dc3545;
+}
+
+/* Estilos para botones de eliminar consultas */
+.btn-eliminar-consulta {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+    font-size: 16px;
+    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+    position: relative;
+    border: 2px solid #dc3545;
+}
+
+.btn-eliminar-consulta:hover {
+    background: #c82333;
+    border-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.5);
+}
+
+.btn-eliminar-consulta:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.4);
+}
+
+.btn-eliminar-consulta i {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Agregar un tooltip visual */
+.btn-eliminar-consulta::after {
+    content: 'Eliminar';
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+}
+
+.btn-eliminar-consulta:hover::after {
+    opacity: 1;
 }

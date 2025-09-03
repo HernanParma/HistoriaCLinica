@@ -6,6 +6,1327 @@
     <title>Historia Clínica del Paciente</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+    /* ESTILOS INLINE PARA CONSULTAS Y FORMULARIO DE ARCHIVOS */
+    
+    /* Contenedor principal */
+    .hc-section {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+        border-radius: 24px !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08) !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        border: 1px solid #e2e8f0 !important;
+        margin: 20px 0 !important;
+        position: relative !important;
+    }
+    
+    .hc-section::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 4px !important;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 0%, #f093fb 100%) !important;
+        z-index: 10 !important;
+    }
+    
+    /* Títulos */
+    .hc-section h3 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        margin: 0 !important;
+        padding: 25px 30px !important;
+        font-size: 1.6em !important;
+        font-weight: 700 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 15px !important;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+        position: relative !important;
+        border: none !important;
+    }
+    
+    .hc-section h4 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        margin: 0 !important;
+        padding: 20px 30px !important;
+        font-size: 1.4em !important;
+        font-weight: 700 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+        position: relative !important;
+        border: none !important;
+    }
+    
+    /* Botón de historial */
+    #btnMostrarHistorial {
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+        border: 2px solid #cbd5e1 !important;
+        color: #475569 !important;
+        padding: 15px 25px !important;
+        border-radius: 16px !important;
+        font-weight: 600 !important;
+        font-size: 1.1em !important;
+        cursor: pointer !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        margin: 20px 30px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+        position: relative !important;
+        overflow: hidden !important;
+        text-decoration: none !important;
+        outline: none !important;
+    }
+    
+    #btnMostrarHistorial:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border-color: #667eea !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+    }
+    
+    /* Modal para Nueva Consulta */
+    .modal {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        z-index: 1000 !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .modal.show {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .modal.hidden {
+        display: none !important;
+    }
+
+    .modal-content {
+        background: white !important;
+        border-radius: 20px !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+        width: 90% !important;
+        max-width: 600px !important;
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+        position: relative !important;
+        transform: scale(0.9) !important;
+        transition: transform 0.3s ease !important;
+    }
+
+    .modal.show .modal-content {
+        transform: scale(1) !important;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        padding: 20px 25px !important;
+        border-radius: 20px 20px 0 0 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    .modal-header h3 {
+        margin: 0 !important;
+        font-size: 1.4em !important;
+        font-weight: 600 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+    .close-btn {
+        background: none !important;
+        border: none !important;
+        color: white !important;
+        font-size: 1.5em !important;
+        cursor: pointer !important;
+        padding: 5px !important;
+        border-radius: 50% !important;
+        transition: background 0.3s ease !important;
+    }
+
+    .close-btn:hover {
+        background: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .modal-body {
+        padding: 25px !important;
+    }
+
+    .form-group {
+        margin-bottom: 20px !important;
+    }
+
+    .form-group label {
+        display: block !important;
+        margin-bottom: 8px !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
+        font-size: 0.95em !important;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100% !important;
+        padding: 12px 15px !important;
+        border: 2px solid #e5e7eb !important;
+        border-radius: 12px !important;
+        font-size: 14px !important;
+        transition: border-color 0.3s ease !important;
+        font-family: inherit !important;
+        box-sizing: border-box !important;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none !important;
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    }
+
+    .form-group textarea {
+        resize: vertical !important;
+        min-height: 60px !important;
+    }
+
+    /* Estilos para sección de laboratorio */
+    .form-section {
+        margin: 25px 0 !important;
+        padding: 20px !important;
+        background: #f8fafc !important;
+        border-radius: 12px !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+
+    .form-section h4 {
+        margin: 0 0 20px 0 !important;
+        color: #374151 !important;
+        font-size: 1.1em !important;
+        font-weight: 600 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    .lab-grid {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+        gap: 15px !important;
+    }
+
+    .lab-grid .form-group {
+        margin-bottom: 15px !important;
+    }
+
+    .lab-grid .form-group input {
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+    }
+
+    .lab-grid .form-group.full-width {
+        grid-column: 1 / -1 !important;
+    }
+
+
+
+    /* Estilos para archivos */
+    .file-upload-area {
+        padding: 20px !important;
+        border: 2px dashed #d1d5db !important;
+        border-radius: 12px !important;
+        background: #f9fafb !important;
+        text-align: center !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .file-upload-area:hover {
+        border-color: #667eea !important;
+        background: #f0f4ff !important;
+    }
+
+    .file-input-container {
+        position: relative !important;
+        display: inline-block !important;
+        width: 100% !important;
+    }
+
+    .file-input {
+        position: absolute !important;
+        opacity: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        cursor: pointer !important;
+    }
+
+    .file-input-label {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 10px !important;
+        padding: 30px 20px !important;
+        cursor: pointer !important;
+        color: #6b7280 !important;
+        transition: color 0.3s ease !important;
+    }
+
+    .file-input-label:hover {
+        color: #667eea !important;
+    }
+
+    .file-input-label i {
+        font-size: 2em !important;
+        color: #9ca3af !important;
+    }
+
+    .file-input-label span {
+        font-weight: 600 !important;
+        font-size: 1.1em !important;
+    }
+
+    .file-input-label small {
+        color: #9ca3af !important;
+        font-size: 0.9em !important;
+    }
+
+    .archivos-seleccionados {
+        margin-top: 20px !important;
+        text-align: left !important;
+    }
+
+    .archivo-item {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 10px 15px !important;
+        background: white !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 8px !important;
+        margin-bottom: 8px !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    .archivo-info {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+    .archivo-icono {
+        width: 24px !important;
+        height: 24px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 4px !important;
+        font-size: 12px !important;
+        color: white !important;
+    }
+
+    .archivo-icono.pdf { background: #ef4444 !important; }
+    .archivo-icono.image { background: #10b981 !important; }
+    .archivo-icono.document { background: #3b82f6 !important; }
+    .archivo-icono.spreadsheet { background: #059669 !important; }
+
+    .archivo-nombre {
+        font-weight: 500 !important;
+        color: #374151 !important;
+        font-size: 0.9em !important;
+    }
+
+    .archivo-tamaño {
+        color: #6b7280 !important;
+        font-size: 0.8em !important;
+    }
+
+    .btn-eliminar-archivo {
+        background: #ef4444 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 4px !important;
+        padding: 4px 8px !important;
+        cursor: pointer !important;
+        font-size: 12px !important;
+        transition: background 0.3s ease !important;
+    }
+
+    .btn-eliminar-archivo:hover {
+        background: #dc2626 !important;
+    }
+
+    /* Botón de eliminar consulta con icono de papelera - ROJO TENUE */
+    .btn-eliminar-consulta {
+        background: linear-gradient(135deg, #fca5a5 0%, #f87171 100%) !important;
+        color: #dc2626 !important;
+        border: 2px solid #fecaca !important;
+        border-radius: 10px !important;
+        padding: 10px 14px !important;
+        font-size: 0.95em !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        box-shadow: 0 3px 12px rgba(248, 113, 113, 0.25) !important;
+        min-width: 120px !important;
+        height: 40px !important;
+        justify-content: center !important;
+        backdrop-filter: blur(10px) !important;
+        position: relative !important;
+    }
+
+    .btn-eliminar-consulta:hover {
+        background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important;
+        color: white !important;
+        border-color: #fca5a5 !important;
+        transform: translateY(-3px) scale(1.05) !important;
+        box-shadow: 0 6px 20px rgba(248, 113, 113, 0.35) !important;
+    }
+
+    .btn-eliminar-consulta:active {
+        transform: translateY(-1px) scale(1.02) !important;
+        box-shadow: 0 3px 12px rgba(248, 113, 113, 0.25) !important;
+    }
+
+    .btn-eliminar-consulta i {
+        font-size: 1.1em !important;
+        color: inherit !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .btn-eliminar-consulta:hover i {
+        transform: scale(1.1) !important;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)) !important;
+    }
+
+    /* Efectos adicionales para el botón de eliminar */
+    .btn-eliminar-consulta::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+        border-radius: 10px !important;
+        opacity: 0 !important;
+        transition: opacity 0.3s ease !important;
+        pointer-events: none !important;
+    }
+
+    .btn-eliminar-consulta:hover::before {
+        opacity: 1 !important;
+    }
+
+    /* Animación de pulso sutil en hover */
+    @keyframes pulse-soft {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
+    }
+
+    .btn-eliminar-consulta:hover {
+        animation: pulse-soft 2s infinite !important;
+    }
+
+    /* Efecto de brillo sutil en hover */
+    .btn-eliminar-consulta::after {
+        content: '' !important;
+        position: absolute !important;
+        top: -2px !important;
+        left: -2px !important;
+        right: -2px !important;
+        bottom: -2px !important;
+        background: linear-gradient(135deg, #fecaca 0%, #fca5a5 50%, #f87171 100%) !important;
+        border-radius: 12px !important;
+        z-index: -1 !important;
+        opacity: 0 !important;
+        transition: opacity 0.3s ease !important;
+    }
+
+    .btn-eliminar-consulta:hover::after {
+        opacity: 0.3 !important;
+    }
+
+    /* Estado de focus para accesibilidad */
+    .btn-eliminar-consulta:focus {
+        outline: none !important;
+        box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.4), 0 3px 12px rgba(248, 113, 113, 0.25) !important;
+    }
+
+    .btn-eliminar-consulta:focus-visible {
+        outline: 2px solid #f87171 !important;
+        outline-offset: 2px !important;
+    }
+
+    /* Botón para ver laboratorio */
+    .btn-ver-laboratorio {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+        font-size: 0.9em !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
+        margin-top: 15px !important;
+    }
+
+    .btn-ver-laboratorio:hover {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4) !important;
+    }
+
+    .btn-ver-laboratorio.active {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+        box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4) !important;
+    }
+
+    .btn-ver-laboratorio i {
+        font-size: 1em !important;
+    }
+
+    /* Sección de laboratorio */
+    .laboratorio-section {
+        margin-top: 20px !important;
+        padding: 20px !important;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+        border-radius: 12px !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+
+    .laboratorio-section.hidden {
+        display: none !important;
+    }
+
+    .laboratorio-section.show {
+        display: block !important;
+        animation: slideDown 0.3s ease-out !important;
+    }
+
+    .laboratorio-grid {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+        gap: 15px !important;
+    }
+
+    .lab-value-item {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 10px 15px !important;
+        background: white !important;
+        border-radius: 8px !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .lab-label {
+        font-weight: 600 !important;
+        color: #374151 !important;
+        font-size: 0.9em !important;
+    }
+
+    .lab-value {
+        font-weight: 700 !important;
+        color: #1e40af !important;
+        font-size: 1em !important;
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+        padding: 4px 12px !important;
+        border-radius: 20px !important;
+        border: 1px solid #93c5fd !important;
+    }
+
+    .no-lab-values {
+        text-align: center !important;
+        color: #6b7280 !important;
+        font-style: italic !important;
+        padding: 20px !important;
+    }
+
+    /* Acciones inferiores de la consulta */
+    .consulta-actions-bottom {
+        margin-top: 20px !important;
+        padding-top: 15px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        text-align: center !important;
+    }
+
+    /* Estilos para datos del paciente editables */
+    .patient-data-container {
+        padding: 0 !important;
+    }
+
+    .patient-section {
+        margin-bottom: 25px !important;
+        background: white !important;
+        border-radius: 12px !important;
+        padding: 20px !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+
+    .patient-section h4 {
+        margin: 0 0 20px 0 !important;
+        color: #374151 !important;
+        font-size: 1.1em !important;
+        font-weight: 600 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        padding-bottom: 10px !important;
+        border-bottom: 2px solid #667eea !important;
+    }
+
+    .patient-section h4 i {
+        color: #667eea !important;
+        font-size: 1em !important;
+    }
+
+    .editable-field {
+        margin-bottom: 15px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    .editable-field label {
+        font-weight: 600 !important;
+        color: #374151 !important;
+        font-size: 0.9em !important;
+        margin-bottom: 5px !important;
+    }
+
+    .editable-field input,
+    .editable-field textarea {
+        padding: 10px 12px !important;
+        border: 2px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        font-size: 0.9em !important;
+        transition: all 0.3s ease !important;
+        background: #f8fafc !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .editable-field input:focus,
+    .editable-field textarea:focus {
+        outline: none !important;
+        border-color: #667eea !important;
+        background: white !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    }
+
+    .editable-field textarea {
+        resize: vertical !important;
+        min-height: 80px !important;
+        font-family: inherit !important;
+    }
+
+    .btn-save-field {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 6px !important;
+        padding: 8px 12px !important;
+        font-size: 0.8em !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        align-self: flex-end !important;
+        min-width: 80px !important;
+        justify-content: center !important;
+    }
+
+    .btn-save-field:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+    }
+
+    .btn-save-field:disabled {
+        opacity: 0.7 !important;
+        cursor: not-allowed !important;
+        transform: none !important;
+    }
+
+    .btn-save-field i {
+        font-size: 0.9em !important;
+    }
+
+    /* Optimizaciones adicionales para mejor uso del espacio */
+    .form-header {
+        margin-bottom: 20px !important;
+        padding: 15px 0 !important;
+    }
+
+    .form-header h2 {
+        margin: 0 !important;
+        font-size: 1.5em !important;
+    }
+
+    .header-buttons {
+        gap: 12px !important;
+    }
+
+    /* Mejorar densidad de información en consultas */
+    .consulta-item .consulta-content p {
+        margin: 8px 0 !important;
+        line-height: 1.4 !important;
+    }
+
+    .consulta-item .consulta-content strong {
+        color: #374151 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Optimizar espaciado general */
+    .hc-body {
+        padding: 0 !important;
+    }
+
+    /* Hacer el contenido más compacto */
+    .form-card {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Optimizar el layout de las consultas para mejor densidad */
+    .consulta-fecha {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        font-weight: 600 !important;
+        color: #1e293b !important;
+    }
+
+    .consulta-fecha i {
+        color: #667eea !important;
+        font-size: 0.9em !important;
+    }
+
+    .consulta-actions {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+    .toggle-icon {
+        color: #6b7280 !important;
+        transition: transform 0.3s ease !important;
+        cursor: pointer !important;
+        font-size: 0.9em !important;
+    }
+
+    /* Mejorar la densidad de información en el contenido */
+    .consulta-details {
+        display: grid !important;
+        gap: 8px !important;
+    }
+
+    .detail-item {
+        padding: 6px 0 !important;
+        border-bottom: 1px solid #f3f4f6 !important;
+    }
+
+    .detail-item:last-child {
+        border-bottom: none !important;
+    }
+
+    .detail-item strong {
+        color: #374151 !important;
+        font-weight: 600 !important;
+        margin-right: 8px !important;
+    }
+
+    /* Estados colapsado/expandido para consultas */
+    .consulta-content.collapsed {
+        display: none !important;
+    }
+
+    .consulta-content.expanded {
+        display: block !important;
+        animation: slideDown 0.3s ease-out !important;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0 !important;
+            transform: translateY(-10px) !important;
+        }
+        to {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+    }
+
+    /* Hover mejorado para las consultas */
+    .consulta-item:hover .consulta-header {
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+    }
+
+    .consulta-item:hover .toggle-icon {
+        color: #667eea !important;
+    }
+
+    .form-actions {
+        display: flex !important;
+        gap: 15px !important;
+        justify-content: flex-end !important;
+        margin-top: 30px !important;
+        padding-top: 20px !important;
+        border-top: 1px solid #e5e7eb !important;
+    }
+
+    .btn {
+        padding: 12px 24px !important;
+        border: none !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        text-decoration: none !important;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        color: white !important;
+    }
+
+    .btn-success:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3) !important;
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+        color: white !important;
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3) !important;
+    }
+
+    /* Estilos para el botón Nueva Consulta */
+    #btnNuevaConsulta {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        color: white !important;
+        border: none !important;
+        padding: 12px 20px !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        text-decoration: none !important;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important;
+    }
+
+    #btnNuevaConsulta:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3) !important;
+    }
+
+    /* Consultas individuales - OPTIMIZADAS para mejor uso del espacio */
+    .consulta-item {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+        border-radius: 12px !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+        margin-bottom: 15px !important;
+        overflow: hidden !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        position: relative !important;
+        padding: 0 !important;
+    }
+    
+    .consulta-item:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
+        border-color: #667eea !important;
+    }
+    
+    .consulta-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+        padding: 15px 20px !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+        margin: 0 !important;
+    }
+    
+    .consulta-header h5 {
+        margin: 0 !important;
+        font-size: 1.1em !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        padding: 0 !important;
+    }
+    
+    .consulta-motivo {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        padding: 6px 14px !important;
+        border-radius: 16px !important;
+        font-size: 0.9em !important;
+        font-weight: 600 !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+        box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3) !important;
+        backdrop-filter: blur(10px) !important;
+        display: inline-block !important;
+        max-width: 200px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+    
+    .consulta-content {
+        padding: 18px 20px !important;
+        background: #ffffff !important;
+        margin: 0 !important;
+    }
+    
+    /* Formulario de archivos */
+    .file-upload-container {
+        margin: 40px 0 !important;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+        border-radius: 20px !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08) !important;
+        overflow: hidden !important;
+        border: 1px solid #e2e8f0 !important;
+        position: relative !important;
+        padding: 0 !important;
+    }
+    
+    .file-upload-title {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        margin: 0 !important;
+        padding: 25px 30px !important;
+        font-size: 1.5em !important;
+        font-weight: 700 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 15px !important;
+        position: relative !important;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+        border: none !important;
+    }
+    
+    .file-upload-area {
+        border: 3px dashed #e2e8f0 !important;
+        border-radius: 16px !important;
+        padding: 60px 40px !important;
+        text-align: center !important;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+        cursor: pointer !important;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        margin: 30px !important;
+        position: relative !important;
+        min-height: 280px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
+    }
+    
+    .file-upload-area:hover {
+        border-color: #667eea !important;
+        background: linear-gradient(135deg, #f0f4ff 0%, #f8f5ff 100%) !important;
+        transform: translateY(-3px) !important;
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15) !important;
+    }
+    
+    .upload-icon {
+        font-size: 5em !important;
+        color: #667eea !important;
+        opacity: 0.9 !important;
+        transition: all 0.3s ease !important;
+        z-index: 2 !important;
+        position: relative !important;
+        filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.2)) !important;
+        display: block !important;
+    }
+    
+    .upload-text h3 {
+        font-size: 2.2em !important;
+        font-weight: 800 !important;
+        color: #1e293b !important;
+        margin: 0 0 15px 0 !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+        text-shadow: none !important;
+        display: block !important;
+    }
+    
+    .upload-description {
+        font-size: 1.2em !important;
+        color: #64748b !important;
+        margin: 0 0 30px 0 !important;
+        font-weight: 500 !important;
+        line-height: 1.5 !important;
+        display: block !important;
+    }
+    
+    .info-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        padding: 12px 16px !important;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%) !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(102, 126, 234, 0.15) !important;
+        transition: all 0.3s ease !important;
+        backdrop-filter: blur(10px) !important;
+    }
+    
+    .info-item:hover {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%) !important;
+        transform: translateX(8px) !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15) !important;
+    }
+    
+    .info-item i {
+        color: #667eea !important;
+        font-size: 1.2em !important;
+        width: 24px !important;
+        text-align: center !important;
+        filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.2)) !important;
+    }
+    
+    .info-item span {
+        font-size: 1em !important;
+        color: #475569 !important;
+        font-weight: 500 !important;
+        line-height: 1.4 !important;
+    }
+    
+    .file-list-placeholder {
+        text-align: center !important;
+        padding: 50px 30px !important;
+        color: #94a3b8 !important;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+        border-radius: 16px !important;
+        border: 2px dashed #cbd5e1 !important;
+        transition: all 0.3s ease !important;
+        position: relative !important;
+    }
+    
+    .file-list-placeholder:hover {
+        border-color: #667eea !important;
+        background: linear-gradient(135deg, #f0f4ff 0%, #f8f5ff 100%) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.1) !important;
+    }
+    
+    .file-list-placeholder i {
+        font-size: 3.5em !important;
+        color: #cbd5e1 !important;
+        margin-bottom: 20px !important;
+        display: block !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .file-list-placeholder:hover i {
+        color: #667eea !important;
+        transform: scale(1.1) !important;
+    }
+    
+    .file-list-placeholder p {
+        font-size: 1.2em !important;
+        font-weight: 600 !important;
+        margin: 0 0 8px 0 !important;
+        color: #64748b !important;
+        display: block !important;
+    }
+    
+    .file-list-placeholder small {
+        font-size: 1em !important;
+        color: #94a3b8 !important;
+        line-height: 1.4 !important;
+        display: block !important;
+    }
+    
+    /* Botón de envío */
+    .submit-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        border: none !important;
+        padding: 18px 35px !important;
+        border-radius: 16px !important;
+        color: white !important;
+        font-size: 1.2em !important;
+        font-weight: 700 !important;
+        cursor: pointer !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        margin: 30px 0 !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+        transform: translateY(-3px) !important;
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4) !important;
+    }
+    
+    /* Campos del formulario */
+    .form-group input {
+        width: 100% !important;
+        padding: 15px 20px !important;
+        border: 2px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        font-size: 1em !important;
+        transition: all 0.3s ease !important;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+        outline: none !important;
+    }
+    
+    .form-group input:focus {
+        outline: none !important;
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+        transform: translateY(-1px) !important;
+    }
+    
+    .form-group input[name="fecha"],
+    .form-group input[name="motivo"] {
+        border-color: #ef4444 !important;
+    }
+    
+    .form-group input[name="recetar"],
+    .form-group input[name="ome"] {
+        border-color: #667eea !important;
+    }
+    
+    /* Historial de consultas */
+    #historialConsultas {
+        padding: 0 30px 30px 30px !important;
+        background: #ffffff !important;
+        margin: 0 !important;
+    }
+    
+    /* Mensajes de error y estado */
+    .error-message {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important;
+        border: 2px solid #ef4444 !important;
+        border-radius: 16px !important;
+        padding: 25px !important;
+        margin: 20px !important;
+        text-align: center !important;
+        color: #dc2626 !important;
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.15) !important;
+    }
+    
+    .error-message i {
+        font-size: 3em !important;
+        margin-bottom: 15px !important;
+        display: block !important;
+        color: #ef4444 !important;
+    }
+    
+    .error-message span {
+        font-size: 1.2em !important;
+        font-weight: 600 !important;
+        display: block !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .error-message small {
+        font-size: 1em !important;
+        color: #991b1b !important;
+        font-weight: 500 !important;
+        line-height: 1.4 !important;
+    }
+    
+    .no-consultations {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+        border: 2px dashed #0ea5e9 !important;
+        border-radius: 20px !important;
+        padding: 60px 40px !important;
+        text-align: center !important;
+        color: #0369a1 !important;
+        margin: 30px !important;
+    }
+    
+    .no-consultations i {
+        font-size: 4em !important;
+        margin-bottom: 20px !important;
+        display: block !important;
+        color: #0ea5e9 !important;
+        opacity: 0.8 !important;
+    }
+    
+    .no-consultations span {
+        font-size: 1.4em !important;
+        font-weight: 600 !important;
+        display: block !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .no-consultations small {
+        font-size: 1.1em !important;
+        color: #0c4a6e !important;
+        font-weight: 500 !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* Loading spinner mejorado */
+    .loading {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 60px 40px !important;
+        text-align: center !important;
+        color: #667eea !important;
+    }
+    
+    .loading i {
+        font-size: 3em !important;
+        margin-bottom: 20px !important;
+        animation: spin 1s linear infinite !important;
+    }
+    
+    .loading span {
+        font-size: 1.2em !important;
+        font-weight: 600 !important;
+        color: #475569 !important;
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Botones de acción en mensajes de error */
+    .btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 12px 20px !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-size: 1em !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        text-decoration: none !important;
+        outline: none !important;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
+    }
+    
+    .btn-secondary {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3) !important;
+    }
+    
+    .btn-secondary:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4) !important;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .consulta-header {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 10px !important;
+        }
+        
+        .file-upload-area {
+            padding: 40px 25px !important;
+            min-height: 240px !important;
+            margin: 20px !important;
+        }
+        
+        .upload-text h3 {
+            font-size: 1.8em !important;
+        }
+        
+        .error-message {
+            margin: 15px !important;
+            padding: 20px !important;
+        }
+        
+        .no-consultations {
+            margin: 20px !important;
+            padding: 40px 25px !important;
+        }
+    }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -41,20 +1362,45 @@
             </nav>
         </header>
 
+
+
         <main class="main-content">
-            <div class="form-container full-width">
-                <div id="hc-card" class="form-card hidden">
-                    <div class="form-header">
-                        <h2 id="hc-patient-name"><i class="fas fa-user-injured"></i> Paciente</h2>
-                        <a href="index.html" class="btn-back">
-                            <i class="fas fa-arrow-left"></i> Volver al listado
-                        </a>
+            <div class="hc-layout-container">
+                <!-- Columna lateral izquierda con datos del paciente -->
+                <div id="patient-sidebar" class="patient-sidebar-fixed">
+                    <div class="sidebar-header">
+                        <h3 id="sidebar-patient-name"><i class="fas fa-user-circle"></i> Datos del Paciente</h3>
                     </div>
-                    <div id="hc-body" class="hc-body">
-                        <!-- La historia clínica se cargará dinámicamente aquí -->
-                        <div id="loading-hc" class="loading">
+                    <div id="sidebar-content" class="sidebar-content">
+                        <!-- Los datos del paciente se cargarán dinámicamente aquí -->
+                        <div id="loading-patient-data" class="loading">
                             <i class="fas fa-spinner fa-spin"></i>
-                            <span>Cargando historia clínica...</span>
+                            <span>Cargando datos del paciente...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenido principal de la historia clínica -->
+                <div class="hc-main-content">
+                    <div id="hc-card" class="form-card hidden">
+                        <div class="form-header">
+                            <h2><i class="fas fa-stethoscope"></i> Consultas</h2>
+                            <div class="header-buttons">
+                                <button id="btnNuevaConsulta" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Nueva Consulta
+                                </button>
+
+                                <a href="index.html" class="btn-back">
+                                    <i class="fas fa-arrow-left"></i> Volver al listado
+                                </a>
+                            </div>
+                        </div>
+                        <div id="hc-body" class="hc-body">
+                            <!-- La historia clínica se cargará dinámicamente aquí -->
+                            <div id="loading-hc" class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Cargando historia clínica...</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -62,8 +1408,165 @@
         </main>
     </div>
 
+    <!-- Modal para Nueva Consulta -->
+    <div id="modalNuevaConsulta" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Nueva Consulta</h3>
+                <button id="closeModalNuevaConsulta" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formNuevaConsulta">
+                    <div class="form-group">
+                        <label for="fechaConsulta">Fecha de Consulta:</label>
+                        <input type="date" id="fechaConsulta" name="fecha" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="motivoConsulta">Motivo de Consulta: *</label>
+                        <textarea id="motivoConsulta" name="motivo" rows="3" placeholder="Describa el motivo de la consulta..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="recetarConsulta">Recetar:</label>
+                        <textarea id="recetarConsulta" name="recetar" rows="2" placeholder="Medicamentos a recetar..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="omeConsulta">OME:</label>
+                        <textarea id="omeConsulta" name="ome" rows="2" placeholder="Tratamiento OME..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notasConsulta">Notas Adicionales:</label>
+                        <textarea id="notasConsulta" name="notas" rows="3" placeholder="Observaciones, recomendaciones..."></textarea>
+                    </div>
+                    
+                    <!-- Campos de Laboratorio -->
+                    <div class="form-section">
+                        <h4><i class="fas fa-flask"></i> Valores de Laboratorio</h4>
+                        <div class="lab-grid">
+                            <!-- Primera fila -->
+                            <div class="form-group">
+                                <label for="grConsulta">GR:</label>
+                                <input type="number" id="grConsulta" name="gr" step="0.1" placeholder="Glóbulos Rojos">
+                            </div>
+                            <div class="form-group">
+                                <label for="htoConsulta">HTO:</label>
+                                <input type="number" id="htoConsulta" name="hto" step="0.1" placeholder="Hematocrito">
+                            </div>
+                            <div class="form-group">
+                                <label for="hbConsulta">HB:</label>
+                                <input type="number" id="hbConsulta" name="hb" step="0.1" placeholder="Hemoglobina">
+                            </div>
+                            <div class="form-group">
+                                <label for="gbConsulta">GB:</label>
+                                <input type="number" id="gbConsulta" name="gb" step="0.1" placeholder="Glóbulos Blancos">
+                            </div>
+                            <!-- Segunda fila -->
+                            <div class="form-group">
+                                <label for="plaqConsulta">PLAQ:</label>
+                                <input type="number" id="plaqConsulta" name="plaq" step="0.1" placeholder="Plaquetas">
+                            </div>
+                            <div class="form-group">
+                                <label for="glucConsulta">GLUC:</label>
+                                <input type="number" id="glucConsulta" name="gluc" step="0.1" placeholder="Glucosa">
+                            </div>
+                            <div class="form-group">
+                                <label for="ureaConsulta">UREA:</label>
+                                <input type="number" id="ureaConsulta" name="urea" step="0.1" placeholder="Urea">
+                            </div>
+                            <div class="form-group">
+                                <label for="crConsulta">CR:</label>
+                                <input type="number" id="crConsulta" name="cr" step="0.1" placeholder="Creatinina">
+                            </div>
+                            <!-- Tercera fila -->
+                            <div class="form-group">
+                                <label for="gotConsulta">GOT:</label>
+                                <input type="number" id="gotConsulta" name="got" step="0.1" placeholder="GOT">
+                            </div>
+                            <div class="form-group">
+                                <label for="gptConsulta">GPT:</label>
+                                <input type="number" id="gptConsulta" name="gpt" step="0.1" placeholder="GPT">
+                            </div>
+                            <div class="form-group">
+                                <label for="ctConsulta">CT:</label>
+                                <input type="number" id="ctConsulta" name="ct" step="0.1" placeholder="Colesterol Total">
+                            </div>
+                            <div class="form-group">
+                                <label for="tgConsulta">TG:</label>
+                                <input type="number" id="tgConsulta" name="tg" step="0.1" placeholder="Triglicéridos">
+                            </div>
+                            <!-- Cuarta fila -->
+                            <div class="form-group">
+                                <label for="vitdConsulta">VITD:</label>
+                                <input type="number" id="vitdConsulta" name="vitd" step="0.1" placeholder="Vitamina D">
+                            </div>
+                            <div class="form-group">
+                                <label for="falConsulta">FAL:</label>
+                                <input type="number" id="falConsulta" name="fal" step="0.1" placeholder="Fosfatasa Alcalina">
+                            </div>
+                            <div class="form-group">
+                                <label for="colConsulta">COL:</label>
+                                <input type="number" id="colConsulta" name="col" step="0.1" placeholder="Colesterol">
+                            </div>
+                            <div class="form-group">
+                                <label for="b12Consulta">B12:</label>
+                                <input type="number" id="b12Consulta" name="b12" step="0.1" placeholder="Vitamina B12">
+                            </div>
+                            <!-- Quinta fila -->
+                            <div class="form-group">
+                                <label for="tshConsulta">TSH:</label>
+                                <input type="number" id="tshConsulta" name="tsh" step="0.1" placeholder="TSH">
+                            </div>
+                            <div class="form-group">
+                                <label for="uricoConsulta">URICO:</label>
+                                <input type="number" id="uricoConsulta" name="urico" step="0.1" placeholder="Ácido Úrico">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="orinaConsulta">ORINA:</label>
+                                <input type="text" id="orinaConsulta" name="orina" placeholder="Análisis de orina">
+                            </div>
+                            
+
+                        </div>
+                    </div>
+                    
+                    <!-- Sección de Archivos -->
+                    <div class="form-section">
+                        <h4><i class="fas fa-paperclip"></i> Archivos Adjuntos</h4>
+                        <div class="file-upload-area">
+                            <div class="file-input-container">
+                                <input type="file" id="archivosConsulta" name="archivos" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx" class="file-input">
+                                <label for="archivosConsulta" class="file-input-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Seleccionar archivos (PDF, imágenes, documentos)</span>
+                                    <small>Máximo 5 archivos, 10MB cada uno</small>
+                                </label>
+                            </div>
+                            <div id="archivosSeleccionados" class="archivos-seleccionados">
+                                <!-- Los archivos seleccionados se mostrarán aquí -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Guardar Consulta
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelarNuevaConsulta">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="js/config.js"></script>
-    <script src="js/historia.js"></script>
+    <script src="js/historia.js?v=3"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Redirigir a login.html si no está autenticado

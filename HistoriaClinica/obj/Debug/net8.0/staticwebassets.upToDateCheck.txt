@@ -1,9 +1,0 @@
-wwwroot\agregar.html
-wwwroot\bd.xlsx
-wwwroot\css\styles.css
-wwwroot\historia.html
-wwwroot\index.html
-wwwroot\js\app.js
-wwwroot\js\config.js
-wwwroot\js\historia.js
-wwwroot\login.html

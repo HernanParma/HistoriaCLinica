@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Eliminación de Consultas</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .feature-list {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .feature-list h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+        .feature-list ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .feature-list li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🗑️ Prueba de Eliminación de Consultas</h1>
+        
+        <div class="test-section">
+            <h3>🎯 Problemas Solucionados</h3>
+            <ul>
+                <li><strong>Consulta 9/9/9999:</strong> Ahora se muestran correctamente todos los datos guardados (OME, recetar, laboratorio, archivos)</li>
+                <li><strong>Botón de eliminar:</strong> Se agregó un botón de papelera roja a cada consulta anterior</li>
+                <li><strong>Funcionalidad de expansión:</strong> Las consultas se expanden/colapsan correctamente al hacer clic</li>
+                <li><strong>Logging mejorado:</strong> Se agregaron logs detallados para debugging</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Funcionalidades Implementadas</h3>
+            <div class="feature-list">
+                <h4>✅ Botón de Eliminar:</h4>
+                <ul>
+                    <li>Botón rojo circular con icono de papelera</li>
+                    <li>Confirmación antes de eliminar</li>
+                    <li>Eliminación visual inmediata del DOM</li>
+                    <li>Mensaje de éxito temporal</li>
+                    <li>Llamada a la API para eliminar del servidor</li>
+                </ul>
+            </div>
+            
+            <div class="feature-list">
+                <h4>✅ Visualización de Datos:</h4>
+                <ul>
+                    <li>Verificación de múltiples variaciones de nombres de campos</li>
+                    <li>Logs detallados de cada campo encontrado</li>
+                    <li>Manejo de campos vacíos con mensaje informativo</li>
+                    <li>Expansión/colapso con animaciones suaves</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Cómo Funciona la Eliminación</h3>
+            <ol>
+                <li><strong>Botón visible:</strong> Cada consulta tiene un botón rojo con icono de papelera</li>
+                <li><strong>Confirmación:</strong> Al hacer clic, se muestra un diálogo de confirmación</li>
+                <li><strong>Eliminación:</strong> Si se confirma, se envía la petición DELETE al servidor</li>
+                <li><strong>Actualización visual:</strong> La consulta se elimina inmediatamente de la interfaz</li>
+                <li><strong>Mensaje de éxito:</strong> Se muestra un mensaje temporal de confirmación</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 Para Verificar la Solución</h3>
+            <ol>
+                <li>Ve a la página de historia clínica de un paciente</li>
+                <li>Haz clic en "CONSULTAS ANTERIORES"</li>
+                <li>Busca la consulta del 9/9/9999</li>
+                <li>Haz clic en su header para expandirla</li>
+                <li>Deberías ver todos los datos que guardaste (OME, recetar, etc.)</li>
+                <li>Observa el botón rojo de eliminar en cada consulta</li>
+                <li>Prueba hacer clic en el botón de eliminar (con confirmación)</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>💡 Características del Botón de Eliminar</h3>
+            <ul>
+                <li><strong>Diseño:</strong> Botón circular rojo con icono de papelera</li>
+                <li><strong>Posición:</strong> Ubicado a la derecha del header de cada consulta</li>
+                <li><strong>Interacción:</strong> No interfiere con la expansión/colapso de la consulta</li>
+                <li><strong>Confirmación:</strong> Pregunta antes de proceder con la eliminación</li>
+                <li><strong>Feedback:</strong> Muestra mensaje de éxito y elimina visualmente</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🐛 Debugging Mejorado</h3>
+            <p>Si una consulta no muestra datos, abre la consola del navegador (F12) y verifica:</p>
+            <ul>
+                <li><strong>Logs de generación:</strong> "📝 Generando HTML para consulta X"</li>
+                <li><strong>Campos encontrados:</strong> Lista detallada de todos los campos de la consulta</li>
+                <li><strong>Contenido generado:</strong> "📊 Contenido generado para consulta X"</li>
+                <li><strong>Errores:</strong> Mensajes que empiecen con "❌"</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="test-button" onclick="window.location.href='historia.html?id=1'">
+                <i class="fas fa-user-injured"></i> Probar en Historia Clínica
+            </button>
+            <button class="test-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i> Volver al Inicio
+            </button>
+            <button class="test-button" onclick="window.open('test-expansion-consulta.html', '_blank')">
+                <i class="fas fa-eye"></i> Ver Prueba de Expansión
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Función de prueba para verificar que las funciones estén disponibles
+        function testFunctions() {
+            const functions = {
+                'toggleConsultaDetalle': typeof window.toggleConsultaDetalle === 'function',
+                'eliminarConsulta': typeof window.eliminarConsulta === 'function'
+            };
+            
+            console.log('🔍 Verificando funciones disponibles:', functions);
+            
+            let allAvailable = true;
+            for (const [funcName, isAvailable] of Object.entries(functions)) {
+                if (isAvailable) {
+                    console.log(`✅ ${funcName} está disponible`);
+                } else {
+                    console.error(`❌ ${funcName} NO está disponible`);
+                    allAvailable = false;
+                }
+            }
+            
+            return allAvailable;
+        }
+
+        // Verificar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 Verificando funcionalidad de eliminación...');
+            testFunctions();
+        });
+    </script>
+</body>
+</html>

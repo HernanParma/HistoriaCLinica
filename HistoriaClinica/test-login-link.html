@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login Link - Historia Clínica</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .debug-info {
+            background: #e2e3e5;
+            color: #383d41;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <h1>Historia Clínica</h1>
+            </div>
+        </header>
+        
+        <div class="debug-info">
+            <h3>🔍 Debug Info</h3>
+            <p><strong>URL actual:</strong> <span id="currentUrl"></span></p>
+            <p><strong>Estado del formulario:</strong> <span id="formState">Verificando...</span></p>
+            <p><strong>Elementos encontrados:</strong> <span id="elementsFound">Verificando...</span></p>
+            <p><strong>Última acción:</strong> <span id="lastAction">Ninguna</span></p>
+        </div>
+
+        <main class="main-content">
+            <!-- Formulario de Login -->
+            <div id="loginForm" class="form-container">
+                <div class="form-card">
+                    <h2><i class="fas fa-user-lock"></i> Iniciar Sesión</h2>
+                    <form id="loginFormElement">
+                        <div class="form-group">
+                            <label for="username">Usuario:</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Contraseña:</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Ingresar
+                        </button>
+                    </form>
+                    <div id="loginMessage" class="message"></div>
+                    <div class="register-link">
+                        ¿No tienes una cuenta? <a href="#" id="showRegister">Regístrate aquí</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de Registro de Usuario -->
+            <div id="userForm" class="form-container hidden">
+                <div class="form-card">
+                    <h2><i class="fas fa-user-plus"></i> Registrar Nuevo Usuario</h2>
+                    <form id="userFormElement">
+                        <div class="form-group">
+                            <label for="newUsername">Nombre de Usuario *:</label>
+                            <input type="text" id="newUsername" name="newUsername" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">Contraseña *:</label>
+                            <input type="password" id="newPassword" name="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirmar Contraseña *:</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-user-plus"></i> Registrar Usuario
+                        </button>
+                    </form>
+                    <div id="userMessage" class="message"></div>
+                    <div class="form-switch-link">
+                        <span>¿Ya tienes una cuenta?</span>
+                        <button id="switchToLoginBtn" class="btn-link" type="button">Inicia sesión</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="debug-info">
+            <h3>🧪 Botones de Prueba</h3>
+            <button class="test-button" onclick="testShowRegister()">Probar "Regístrate aquí"</button>
+            <button class="test-button" onclick="testSwitchToLogin()">Probar "Inicia sesión"</button>
+            <button class="test-button" onclick="updateDebugInfo()">Actualizar Debug Info</button>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Debug functions
+        function updateDebugInfo() {
+            const currentUrl = document.getElementById('currentUrl');
+            const formState = document.getElementById('formState');
+            const elementsFound = document.getElementById('elementsFound');
+            
+            currentUrl.textContent = window.location.href;
+            
+            const loginForm = document.getElementById('loginForm');
+            const userForm = document.getElementById('userForm');
+            const showRegisterBtn = document.getElementById('showRegister');
+            const switchToLoginBtn = document.getElementById('switchToLoginBtn');
+            
+            const currentForm = userForm.classList.contains('hidden') ? 'Login' : 'Registro';
+            formState.textContent = `Formulario actual: ${currentForm}`;
+            
+            const elements = [];
+            if (loginForm) elements.push('loginForm ✅');
+            if (userForm) elements.push('userForm ✅');
+            if (showRegisterBtn) elements.push('showRegisterBtn ✅');
+            if (switchToLoginBtn) elements.push('switchToLoginBtn ✅');
+            
+            elementsFound.textContent = elements.join(', ');
+        }
+
+        function updateLastAction(action) {
+            document.getElementById('lastAction').textContent = action;
+        }
+
+        function testShowRegister() {
+            console.log('🧪 Probando showRegister...');
+            updateLastAction('Probando showRegister');
+            
+            const showRegisterBtn = document.getElementById('showRegister');
+            if (showRegisterBtn) {
+                showRegisterBtn.click();
+                updateLastAction('showRegister click ejecutado');
+            } else {
+                updateLastAction('ERROR: showRegisterBtn no encontrado');
+            }
+            
+            setTimeout(updateDebugInfo, 100);
+        }
+
+        function testSwitchToLogin() {
+            console.log('🧪 Probando switchToLogin...');
+            updateLastAction('Probando switchToLogin');
+            
+            const switchToLoginBtn = document.getElementById('switchToLoginBtn');
+            if (switchToLoginBtn) {
+                switchToLoginBtn.click();
+                updateLastAction('switchToLogin click ejecutado');
+            } else {
+                updateLastAction('ERROR: switchToLoginBtn no encontrado');
+            }
+            
+            setTimeout(updateDebugInfo, 100);
+        }
+
+        // Override functions for testing
+        const originalShowUserForm = window.showUserForm;
+        const originalShowLoginForm = window.showLoginForm;
+
+        if (typeof showUserForm !== 'undefined') {
+            window.showUserForm = function() {
+                console.log('🔍 showUserForm() called');
+                updateLastAction('showUserForm() ejecutado');
+                if (originalShowUserForm) {
+                    originalShowUserForm();
+                }
+                setTimeout(updateDebugInfo, 100);
+            };
+        }
+
+        if (typeof showLoginForm !== 'undefined') {
+            window.showLoginForm = function() {
+                console.log('🔍 showLoginForm() called');
+                updateLastAction('showLoginForm() ejecutado');
+                if (originalShowLoginForm) {
+                    originalShowLoginForm();
+                }
+                setTimeout(updateDebugInfo, 100);
+            };
+        }
+
+        // Initialize debug info
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 DOM loaded');
+            updateDebugInfo();
+            
+            // Update debug info every 2 seconds
+            setInterval(updateDebugInfo, 2000);
+        });
+    </script>
+</body>
+</html>
+

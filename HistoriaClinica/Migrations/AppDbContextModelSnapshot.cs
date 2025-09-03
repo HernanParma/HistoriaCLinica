@@ -30,6 +30,9 @@ namespace HistoriaClinica.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ArchivosJson")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double?>("B12")
                         .HasColumnType("float");
 
@@ -74,15 +77,12 @@ namespace HistoriaClinica.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Notas")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ORINA")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Ome")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("PLAQ")
@@ -92,7 +92,6 @@ namespace HistoriaClinica.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Recetar")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("TG")
@@ -129,7 +128,6 @@ namespace HistoriaClinica.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Antecedentes")
-                        .IsRequired()
                         .HasColumnType("nvarchar(MAX)");
 
                     b.Property<string>("Apellido")
@@ -141,14 +139,12 @@ namespace HistoriaClinica.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("FechaNacimiento")
+                    b.Property<DateTime?>("FechaNacimiento")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Medicacion")
-                        .IsRequired()
                         .HasColumnType("nvarchar(MAX)");
 
                     b.Property<string>("Nombre")
@@ -156,18 +152,19 @@ namespace HistoriaClinica.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NumeroAfiliado")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ObraSocial")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("Particular")
+                        .HasColumnType("bit");
+
                     b.Property<decimal?>("Peso")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<string>("Telefono")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -183,13 +180,27 @@ namespace HistoriaClinica.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CodigoVerificacion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ContrasenaHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NombreUsuario")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Perfil")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Verificado")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

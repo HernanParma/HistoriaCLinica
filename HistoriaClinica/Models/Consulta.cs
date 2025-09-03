@@ -30,13 +30,16 @@ namespace HistoriaClinica.Models
         public double? COL { get; set; }
         public double? B12 { get; set; }
         public double? TSH { get; set; }
-        public string ORINA { get; set; } = string.Empty;
+        public string? ORINA { get; set; }
         public double? URICO { get; set; }
-        public string Recetar { get; set; } = string.Empty;
-        public string Ome { get; set; } = string.Empty;
+        public string? Recetar { get; set; }
+        public string? Ome { get; set; }
 
         // Notas
-        public string Notas { get; set; } = string.Empty;
+        public string? Notas { get; set; }
+
+        // Archivos adjuntos
+        public string? ArchivosJson { get; set; } // JSON con información de archivos
 
         // Relación con Paciente
         public int PacienteId { get; set; }

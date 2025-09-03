@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Local - Paciente 152</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            border-radius: 15px; 
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .success { background: rgba(76, 175, 80, 0.2); border-color: #4caf50; }
+        .error { background: rgba(244, 67, 54, 0.2); border-color: #f44336; }
+        .loading { background: rgba(255, 193, 7, 0.2); border-color: #ffc107; }
+        button { 
+            padding: 12px 24px; 
+            margin: 8px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        pre { 
+            background: rgba(0, 0, 0, 0.3); 
+            padding: 15px; 
+            border-radius: 10px; 
+            overflow-x: auto; 
+            color: #fff;
+            font-size: 12px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.success { background: rgba(76, 175, 80, 0.3); }
+        .status.error { background: rgba(244, 67, 54, 0.3); }
+        .status.loading { background: rgba(255, 193, 7, 0.3); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Local - Paciente 152</h1>
+        <p><strong>Esta página se ejecuta desde localhost para evitar problemas de CSP</strong></p>
+        
+        <div class="test-section">
+            <h3>🔧 Configuración</h3>
+            <p><strong>URL actual:</strong> <span id="current-url"></span></p>
+            <p><strong>Hostname:</strong> <span id="hostname"></span></p>
+            <p><strong>Backend URL:</strong> <span id="backend-url"></span></p>
+        </div>
+
+        <div class="test-section">
+            <h3>📡 Test de Conexión</h3>
+            <button onclick="testConnection()">Probar Conexión</button>
+            <div id="connection-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>👤 Test Paciente 152</h3>
+            <button onclick="testPatient152()">Obtener Paciente 152</button>
+            <div id="patient-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Test Consultas del Paciente 152</h3>
+            <button onclick="testConsultas152()">Obtener Consultas</button>
+            <div id="consultas-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Test Completo</h3>
+            <button onclick="runAllTests()">Ejecutar Todos los Tests</button>
+            <div id="all-tests-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración directa para localhost
+        const API_BASE_URL = 'http://localhost:5156';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar información de la página
+            document.getElementById('current-url').textContent = window.location.href;
+            document.getElementById('hostname').textContent = window.location.hostname;
+            document.getElementById('backend-url').textContent = API_BASE_URL;
+            
+            console.log('🚀 Página de test local cargada');
+            console.log('🌐 API_BASE_URL:', API_BASE_URL);
+            console.log('🏠 Hostname:', window.location.hostname);
+        });
+
+        async function testConnection() {
+            const resultDiv = document.getElementById('connection-result');
+            resultDiv.innerHTML = '<div class="status loading">🔄 Probando conexión...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/pacientes`);
+                if (response.ok) {
+                    resultDiv.innerHTML = '<div class="status success">✅ Conexión exitosa! API responde correctamente.</div>';
+                } else {
+                    resultDiv.innerHTML = `<div class="status error">❌ Error ${response.status}: ${response.statusText}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="status error">❌ Error de conexión: ${error.message}</div>`;
+            }
+        }
+
+        async function testPatient152() {
+            const resultDiv = document.getElementById('patient-result');
+            resultDiv.innerHTML = '<div class="status loading">🔄 Obteniendo paciente 152...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/pacientes/152`);
+                if (response.ok) {
+                    const paciente = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ Paciente encontrado!
+                            <pre>${JSON.stringify(paciente, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `<div class="status error">❌ Error ${response.status}: ${errorText}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="status error">❌ Error de conexión: ${error.message}</div>`;
+            }
+        }
+
+        async function testConsultas152() {
+            const resultDiv = document.getElementById('consultas-result');
+            resultDiv.innerHTML = '<div class="status loading">🔄 Obteniendo consultas del paciente 152...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/pacientes/152/consultas`);
+                if (response.ok) {
+                    const consultas = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ Consultas encontradas: ${consultas.length}
+                            <pre>${JSON.stringify(consultas, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `<div class="status error">❌ Error ${response.status}: ${errorText}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="status error">❌ Error de conexión: ${error.message}</div>`;
+            }
+        }
+
+        async function runAllTests() {
+            const resultDiv = document.getElementById('all-tests-result');
+            resultDiv.innerHTML = '<div class="status loading">🔄 Ejecutando todos los tests...</div>';
+            
+            let results = [];
+            
+            // Test 1: Conexión
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/pacientes`);
+                if (response.ok) {
+                    results.push('✅ Conexión: OK');
+                } else {
+                    results.push(`❌ Conexión: Error ${response.status}`);
+                }
+            } catch (error) {
+                results.push(`❌ Conexión: ${error.message}`);
+            }
+            
+            // Test 2: Paciente 152
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/pacientes/152`);
+                if (response.ok) {
+                    const paciente = await response.json();
+                    results.push(`✅ Paciente 152: OK (${paciente.Nombre} ${paciente.Apellido})`);
+                } else {
+                    results.push(`❌ Paciente 152: Error ${response.status}`);
+                }
+            } catch (error) {
+                results.push(`❌ Paciente 152: ${error.message}`);
+            }
+            
+            // Test 3: Consultas
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/pacientes/152/consultas`);
+                if (response.ok) {
+                    const consultas = await response.json();
+                    results.push(`✅ Consultas: OK (${consultas.length} encontradas)`);
+                } else {
+                    results.push(`❌ Consultas: Error ${response.status}`);
+                }
+            } catch (error) {
+                results.push(`❌ Consultas: ${error.message}`);
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="status ${results.every(r => r.includes('✅')) ? 'success' : 'error'}">
+                    <h4>📊 Resultados de los Tests:</h4>
+                    ${results.map(r => `<div>${r}</div>`).join('')}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Verificación</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 15px; margin: 5px; }
+        pre { background: #f8f9fa; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Test de Verificación de Usuarios</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Verificar usuario "martita" con código "908198"</h3>
+        <button onclick="testVerification('martita', '908198')">Probar</button>
+        <div id="result1"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 2: Verificar usuario "mariano" con código "407918"</h3>
+        <button onclick="testVerification('mariano', '407918')">Probar</button>
+        <div id="result2"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 3: Usuario inexistente</h3>
+        <button onclick="testVerification('usuario_inexistente', '123456')">Probar</button>
+        <div id="result3"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 4: Código incorrecto</h3>
+        <button onclick="testVerification('martita', '000000')">Probar</button>
+        <div id="result4"></div>
+    </div>
+
+    <script>
+        async function testVerification(username, codigo) {
+            const resultId = `result${event.target.parentElement.querySelector('h3').textContent.match(/\d+/)[0]}`;
+            const resultDiv = document.getElementById(resultId);
+            
+            resultDiv.innerHTML = '<p>Probando...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:5156/api/usuarios/verificar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        codigo: codigo
+                    })
+                });
+                
+                const contentType = response.headers.get('content-type');
+                let data;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    data = await response.text();
+                }
+                
+                const isSuccess = response.ok;
+                const className = isSuccess ? 'success' : 'error';
+                
+                resultDiv.innerHTML = `
+                    <div class="${className}">
+                        <h4>Status: ${response.status} ${response.statusText}</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>Error de conexión</h4>
+                        <pre>${error.message}</pre>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

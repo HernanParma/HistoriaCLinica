@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Consultas Anteriores</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🧪 Prueba de Consultas Anteriores</h1>
+        
+        <div class="test-section">
+            <h3>📋 Funcionalidad Implementada</h3>
+            <ul>
+                <li>✅ Botón de debug eliminado</li>
+                <li>✅ Función setupFormEvents corregida con acceso a patientId</li>
+                <li>✅ Visualización completa de consultas anteriores</li>
+                <li>✅ Resultados de laboratorio con estilos mejorados</li>
+                <li>✅ Archivos adjuntos con iconos y enlaces</li>
+                <li>✅ Estilos CSS modernos y responsivos</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Cambios Realizados</h3>
+            <ol>
+                <li><strong>historia.js:</strong> Corregida función setupFormEvents para obtener patientId de la URL</li>
+                <li><strong>historia.html:</strong> Eliminado botón de debug y elementos relacionados</li>
+                <li><strong>styles.css:</strong> Agregados estilos completos para consultas anteriores</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>🎯 Cómo Funciona Ahora</h3>
+            <p>Cuando hagas clic en "CONSULTAS ANTERIORES":</p>
+            <ol>
+                <li>Se obtiene el ID del paciente de la URL</li>
+                <li>Se hace una petición a la API para obtener las consultas</li>
+                <li>Se muestran todas las consultas con detalles completos</li>
+                <li>Se incluyen resultados de laboratorio si existen</li>
+                <li>Se muestran archivos adjuntos con enlaces descargables</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Para Probar</h3>
+            <p>1. Ve a la página de historia clínica de un paciente</p>
+            <p>2. Haz clic en el botón "CONSULTAS ANTERIORES"</p>
+            <p>3. Verifica que se muestren todas las consultas con detalles</p>
+            <p>4. Comprueba que los resultados de laboratorio se muestren correctamente</p>
+            <p>5. Verifica que los archivos adjuntos sean accesibles</p>
+        </div>
+
+        <div class="test-section">
+            <h3>📱 Estilos Aplicados</h3>
+            <ul>
+                <li>Diseño moderno con gradientes y sombras</li>
+                <li>Animaciones suaves en hover</li>
+                <li>Colores diferenciados para cada sección</li>
+                <li>Responsive design para móviles</li>
+                <li>Iconos FontAwesome para mejor UX</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="test-button" onclick="window.location.href='historia.html?id=1'">
+                <i class="fas fa-user-injured"></i> Ir a Historia Clínica
+            </button>
+            <button class="test-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i> Volver al Inicio
+            </button>
+        </div>
+    </div>
+</body>
+</html>
+
+
+

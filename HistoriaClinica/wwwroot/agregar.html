@@ -89,6 +89,24 @@
                             <label for="altura">Altura (cm):</label>
                             <input type="number" id="altura" name="altura" min="0">
                         </div>
+                        <div class="form-group">
+                            <label for="antecedentes">Antecedentes:</label>
+                            <textarea id="antecedentes" name="antecedentes" rows="4" placeholder="Ingrese los antecedentes médicos del paciente..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="medicacion">Medicación Actual:</label>
+                            <textarea id="medicacion" name="medicacion" rows="4" placeholder="Ingrese la medicación actual del paciente..."></textarea>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="particular" name="particular" class="custom-checkbox">
+                                <label class="checkbox-label" for="particular">
+                                    <i class="fas fa-user-tie"></i>
+                                    Paciente Particular
+                                </label>
+                            </div>
+                            <small class="form-help">Marque esta casilla si el paciente no tiene obra social</small>
+                        </div>
                        
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Guardar Paciente
@@ -99,7 +117,7 @@
             </div>
         </main>
     </div>
-    <script src="js/config.js"></script>
+    <script src="js/environment-config.js"></script>
     <script src="js/app.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {

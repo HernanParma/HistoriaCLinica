@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Formulario Nueva Consulta</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">📝 Prueba Formulario Nueva Consulta</h1>
+        
+        <div class="test-section">
+            <h3>🎯 Problema Identificado</h3>
+            <p>El formulario de nueva consulta no estaba funcionando porque:</p>
+            <ul>
+                <li><strong>Faltaba el event listener:</strong> No se estaba capturando el evento submit</li>
+                <li><strong>No se obtenía el patientId:</strong> La variable no estaba disponible en el scope correcto</li>
+                <li><strong>Faltaba la función de envío:</strong> No había lógica para procesar y enviar los datos</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 Formulario de Prueba</h3>
+            <p>Este es un formulario funcional que puedes usar para probar:</p>
+            
+            <form id="testConsultaForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fecha">Fecha de Consulta:</label>
+                        <input type="date" id="fecha" name="fecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="motivo">Motivo:</label>
+                        <input type="text" id="motivo" name="motivo" placeholder="Ej: Control rutinario" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="recetar">Recetar:</label>
+                    <textarea id="recetar" name="recetar" rows="3" placeholder="Medicación recetada..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ome">OME:</label>
+                    <input type="text" id="ome" name="ome" placeholder="Ej: Cardiología">
+                </div>
+                
+                <div class="form-group">
+                    <label for="notas">Notas Adicionales:</label>
+                    <textarea id="notas" name="notas" rows="3" placeholder="Observaciones, notas..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="submitBtn">Acción:</label>
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <i class="fas fa-save"></i> Guardar Consulta
+                    </button>
+                </div>
+            </form>
+            
+            <div id="testMessage"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Información de Debug</h3>
+            <div id="debugInfo" class="debug-info">
+                Cargando información de debug...
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>💡 Cómo Funciona Ahora</h3>
+            <ol>
+                <li><strong>Event Listener:</strong> Se captura el evento submit del formulario</li>
+                <li><strong>Obtención de patientId:</strong> Se extrae de la URL usando URLSearchParams</li>
+                <li><strong>Procesamiento de datos:</strong> Se recopilan todos los campos del formulario</li>
+                <li><strong>Validación:</strong> Se verifica que los campos requeridos estén presentes</li>
+                <li><strong>Envío al backend:</strong> Se hace POST a /api/pacientes/{id}/consultas</li>
+                <li><strong>Manejo de respuesta:</strong> Se muestra éxito o error según corresponda</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Para Probar en la Aplicación</h3>
+            <ol>
+                <li>Ve a la página de historia clínica de un paciente (ej: historia.html?id=1)</li>
+                <li>Llena el formulario de nueva consulta con los datos</li>
+                <li>Haz clic en "Guardar Consulta"</li>
+                <li>Deberías ver un mensaje de éxito</li>
+                <li>La consulta aparecerá en "CONSULTAS ANTERIORES"</li>
+            </ol>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="test-button" onclick="window.location.href='historia.html?id=1'">
+                <i class="fas fa-user-injured"></i> Probar en Historia Clínica
+            </button>
+            <button class="test-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i> Volver al Inicio
+            </button>
+            <button class="test-button" onclick="testFormSubmission()">
+                <i class="fas fa-paper-plane"></i> Probar Envío
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de la API
+        const CONFIG = {
+            API_BASE_URL: window.location.origin
+        };
+
+        // Función para obtener headers de autenticación
+        function getAuthHeaders() {
+            const token = localStorage.getItem('jwtToken');
+            return token ? { 'Authorization': `Bearer ${token}` } : {};
+        }
+
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'info') {
+            const messageDiv = document.getElementById('testMessage');
+            if (messageDiv) {
+                messageDiv.textContent = message;
+                messageDiv.className = `message ${type}`;
+                
+                // Limpiar mensaje después de 5 segundos
+                setTimeout(() => {
+                    messageDiv.textContent = '';
+                    messageDiv.className = '';
+                }, 5000);
+            }
+        }
+
+        // Función para mostrar información de debug
+        function showDebugInfo() {
+            const debugDiv = document.getElementById('debugInfo');
+            const params = new URLSearchParams(window.location.search);
+            const patientId = params.get('id');
+            
+            const debugInfo = {
+                currentUrl: window.location.href,
+                patientId: patientId,
+                hasToken: !!localStorage.getItem('jwtToken'),
+                tokenLength: localStorage.getItem('jwtToken')?.length || 0,
+                apiBaseUrl: CONFIG.API_BASE_URL,
+                formExists: !!document.getElementById('testConsultaForm')
+            };
+            
+            debugDiv.innerHTML = `
+                <strong>Debug Info:</strong><br>
+                URL actual: ${debugInfo.currentUrl}<br>
+                Patient ID: ${debugInfo.patientId || 'NO ENCONTRADO'}<br>
+                Token JWT: ${debugInfo.hasToken ? 'SÍ' : 'NO'} (${debugInfo.tokenLength} chars)<br>
+                API Base URL: ${debugInfo.apiBaseUrl}<br>
+                Formulario existe: ${debugInfo.formExists ? 'SÍ' : 'NO'}
+            `;
+        }
+
+        // Función para probar el envío del formulario
+        async function testFormSubmission() {
+            const form = document.getElementById('testConsultaForm');
+            const formData = new FormData(form);
+            const consultaData = {};
+            
+            // Procesar campos del formulario
+            formData.forEach((value, key) => {
+                if (value !== null && value !== undefined && value !== '') {
+                    consultaData[key] = value;
+                }
+            });
+            
+            console.log('📝 Datos del formulario:', consultaData);
+            showNotification('📝 Datos del formulario procesados. Revisa la consola.', 'success');
+        }
+
+        // Configurar el formulario de prueba
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 Página de prueba del formulario cargada');
+            
+            const form = document.getElementById('testConsultaForm');
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    console.log('📝 Formulario enviado');
+                    
+                    const formData = new FormData(form);
+                    const consultaData = {};
+                    
+                    // Procesar campos del formulario
+                    formData.forEach((value, key) => {
+                        if (value !== null && value !== undefined && value !== '') {
+                            consultaData[key] = value;
+                        }
+                    });
+                    
+                    console.log('📝 Datos procesados:', consultaData);
+                    showNotification('✅ Formulario procesado correctamente. Revisa la consola.', 'success');
+                });
+                
+                console.log('✅ Event listener del formulario configurado');
+            } else {
+                console.error('❌ No se encontró el formulario de prueba');
+            }
+            
+            // Mostrar información de debug
+            showDebugInfo();
+            
+            // Establecer fecha actual por defecto
+            const fechaInput = document.getElementById('fecha');
+            if (fechaInput) {
+                const today = new Date().toISOString().split('T')[0];
+                fechaInput.value = today;
+            }
+        });
+    </script>
+</body>
+</html>

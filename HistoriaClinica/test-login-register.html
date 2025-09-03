@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login/Registro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .form-container { margin: 20px 0; padding: 20px; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .hidden { display: none; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 12px 20px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-link { background: none; color: #007bff; text-decoration: underline; }
+        .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .debug { background: #e2e3e5; color: #383d41; padding: 10px; margin: 10px 0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Login/Registro</h1>
+        
+        <div class="debug">
+            <h3>🔍 Debug Info</h3>
+            <p><strong>Estado:</strong> <span id="debugStatus">Cargando...</span></p>
+            <p><strong>Elementos encontrados:</strong> <span id="debugElements">Verificando...</span></p>
+        </div>
+
+        <!-- Formulario de Login -->
+        <div id="loginForm" class="form-container">
+            <h2>🔐 Iniciar Sesión</h2>
+            <form id="loginFormElement">
+                <div class="form-group">
+                    <label for="username">Usuario:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Ingresar</button>
+            </form>
+            <div id="loginMessage" class="message"></div>
+            <div class="register-link">
+                ¿No tienes una cuenta? <a href="#" id="showRegister">Regístrate aquí</a>
+            </div>
+        </div>
+
+        <!-- Formulario de Registro de Usuario -->
+        <div id="userForm" class="form-container hidden">
+            <h2>👤 Registrar Nuevo Usuario</h2>
+            <form id="userFormElement">
+                <div class="form-group">
+                    <label for="newUsername">Nombre de Usuario *:</label>
+                    <input type="text" id="newUsername" name="newUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Contraseña *:</label>
+                    <input type="password" id="newPassword" name="newPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Contraseña *:</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                <button type="submit" class="btn btn-success">Registrar Usuario</button>
+            </form>
+            <div id="userMessage" class="message"></div>
+            <div class="form-switch-link">
+                <span>¿Ya tienes una cuenta?</span>
+                <button id="switchToLoginBtn" class="btn-link" type="button">Inicia sesión</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Debug function
+        function updateDebugInfo() {
+            const loginForm = document.getElementById('loginForm');
+            const userForm = document.getElementById('userForm');
+            const showRegisterBtn = document.getElementById('showRegister');
+            const switchToLoginBtn = document.getElementById('switchToLoginBtn');
+            
+            const debugStatus = document.getElementById('debugStatus');
+            const debugElements = document.getElementById('debugElements');
+            
+            const currentForm = userForm.classList.contains('hidden') ? 'Login' : 'Registro';
+            debugStatus.textContent = `Formulario actual: ${currentForm}`;
+            
+            const elements = [];
+            if (loginForm) elements.push('loginForm ✅');
+            if (userForm) elements.push('userForm ✅');
+            if (showRegisterBtn) elements.push('showRegisterBtn ✅');
+            if (switchToLoginBtn) elements.push('switchToLoginBtn ✅');
+            
+            debugElements.textContent = elements.join(', ');
+        }
+
+        // Show/Hide functions
+        function showLoginForm() {
+            console.log('🔍 showLoginForm() called');
+            const loginForm = document.getElementById('loginForm');
+            const userForm = document.getElementById('userForm');
+            
+            if (loginForm) loginForm.classList.remove('hidden');
+            if (userForm) userForm.classList.add('hidden');
+            
+            updateDebugInfo();
+        }
+
+        function showUserForm() {
+            console.log('🔍 showUserForm() called');
+            const loginForm = document.getElementById('loginForm');
+            const userForm = document.getElementById('userForm');
+            
+            if (userForm) userForm.classList.remove('hidden');
+            if (loginForm) loginForm.classList.add('hidden');
+            
+            updateDebugInfo();
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 DOM loaded');
+            
+            const showRegisterBtn = document.getElementById('showRegister');
+            const switchToLoginBtn = document.getElementById('switchToLoginBtn');
+            
+            // Event listener para "Regístrate aquí"
+            if (showRegisterBtn) {
+                console.log('🔍 showRegisterBtn found, adding event listener');
+                showRegisterBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🔍 showRegisterBtn clicked');
+                    showUserForm();
+                });
+            } else {
+                console.error('❌ showRegisterBtn not found');
+            }
+            
+            // Event listener para "Inicia sesión"
+            if (switchToLoginBtn) {
+                console.log('🔍 switchToLoginBtn found, adding event listener');
+                switchToLoginBtn.addEventListener('click', function() {
+                    console.log('🔍 switchToLoginBtn clicked');
+                    showLoginForm();
+                });
+            } else {
+                console.error('❌ switchToLoginBtn not found');
+            }
+            
+            updateDebugInfo();
+        });
+
+        // Update debug info every second
+        setInterval(updateDebugInfo, 1000);
+    </script>
+</body>
+</html>
+

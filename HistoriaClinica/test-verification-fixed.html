@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Verificación - Corregido</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 20px; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { border-left: 4px solid #28a745; }
+        .error { border-left: 4px solid #dc3545; }
+        .info { border-left: 4px solid #17a2b8; }
+        button { padding: 12px 20px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+        .status { font-weight: bold; margin-bottom: 10px; }
+        .status.success { color: #28a745; }
+        .status.error { color: #dc3545; }
+        .status.info { color: #17a2b8; }
+        .summary { background: #e9ecef; padding: 15px; border-radius: 4px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test de Verificación de Usuarios - CORREGIDO</h1>
+        
+        <div class="summary">
+            <h3>📋 Resumen de la Corrección</h3>
+            <p><strong>Problema:</strong> La columna <code>CodigoVerificacion</code> en la base de datos no permitía valores NULL.</p>
+            <p><strong>Solución:</strong> Se modificó el modelo para permitir NULL y se creó una migración para actualizar la base de datos.</p>
+            <p><strong>Estado:</strong> ✅ Corregido y listo para probar</p>
+        </div>
+        
+        <div class="test-section info">
+            <h3>🔧 Test de Conexión</h3>
+            <button class="btn-primary" onclick="testConnection()">Probar Conexión</button>
+            <div id="connectionResult"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>✅ Test 1: Verificar usuario "martita" con código "908198" (Caso Exitoso)</h3>
+            <button class="btn-success" onclick="testVerification('martita', '908198')">Probar Verificación Exitosa</button>
+            <div id="result1"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>✅ Test 2: Verificar usuario "mariano" con código "407918" (Caso Exitoso)</h3>
+            <button class="btn-success" onclick="testVerification('mariano', '407918')">Probar Verificación Exitosa</button>
+            <div id="result2"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>❌ Test 3: Usuario inexistente (Caso de Error)</h3>
+            <button class="btn-danger" onclick="testVerification('usuario_inexistente', '123456')">Probar Usuario Inexistente</button>
+            <div id="result3"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>❌ Test 4: Código incorrecto (Caso de Error)</h3>
+            <button class="btn-warning" onclick="testVerification('martita', '000000')">Probar Código Incorrecto</button>
+            <div id="result4"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔄 Test 5: Verificar usuario ya verificado (Caso de Error)</h3>
+            <button class="btn-warning" onclick="testVerification('martita', '908198')">Probar Usuario Ya Verificado</button>
+            <div id="result5"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testConnection() {
+            const resultDiv = document.getElementById('connectionResult');
+            resultDiv.innerHTML = '<p>🔍 Probando conexión...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:5156/api/usuarios/test');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="status success">✅ Conexión exitosa</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="status error">❌ Error de conexión</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="status error">❌ Error de red</div>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+
+        async function testVerification(username, codigo) {
+            const resultId = `result${event.target.parentElement.querySelector('h3').textContent.match(/\d+/)[0]}`;
+            const resultDiv = document.getElementById(resultId);
+            
+            resultDiv.innerHTML = '<p>🔄 Probando...</p>';
+            
+            try {
+                console.log(`[TEST] Probando verificación: ${username} con código ${codigo}`);
+                
+                const response = await fetch('http://localhost:5156/api/usuarios/verificar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        codigo: codigo
+                    })
+                });
+                
+                const contentType = response.headers.get('content-type');
+                let data;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    data = await response.text();
+                }
+                
+                const isSuccess = response.ok;
+                const className = isSuccess ? 'success' : 'error';
+                const statusClass = isSuccess ? 'success' : 'error';
+                const statusIcon = isSuccess ? '✅' : '❌';
+                
+                console.log(`[TEST] Resultado: ${response.status} ${response.statusText}`, data);
+                
+                resultDiv.innerHTML = `
+                    <div class="status ${statusClass}">${statusIcon} Status: ${response.status} ${response.statusText}</div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                console.error('[TEST] Error:', error);
+                resultDiv.innerHTML = `
+                    <div class="status error">❌ Error de conexión</div>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+
+        // Auto-test de conexión al cargar la página
+        window.addEventListener('load', () => {
+            setTimeout(testConnection, 1000);
+        });
+    </script>
+</body>
+</html>
