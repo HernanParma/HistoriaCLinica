@@ -4692,3 +4692,94 @@ body {
 .btn-eliminar-consulta:hover::after {
     opacity: 1;
 }
+
+/* Estilos para archivos adjuntos */
+.archivos-section {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.archivos-lista {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.archivo-adjunto {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.archivo-adjunto:hover {
+    background: #f8f9fa;
+    border-color: #667eea;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.archivo-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.archivo-info i {
+    font-size: 1.2rem;
+    color: #667eea;
+    min-width: 20px;
+}
+
+.archivo-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.archivo-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.archivo-link:hover {
+    color: #5a6fd8;
+    text-decoration: underline;
+}
+
+.archivo-size {
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+/* Iconos específicos para tipos de archivo */
+.archivo-info .fa-file-pdf {
+    color: #dc3545;
+}
+
+.archivo-info .fa-file-image {
+    color: #28a745;
+}
+
+.archivo-info .fa-file-word {
+    color: #007bff;
+}
+
+.archivo-info .fa-file-excel {
+    color: #28a745;
+}
+
+.archivo-info .fa-file-alt {
+    color: #6c757d;
+}

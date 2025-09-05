@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://historia.runasp.net http://localhost:5156;">
     <title>Historia Clínica del Paciente</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -1064,7 +1065,8 @@
         font-size: 1.5em !important;
         font-weight: 700 !important;
         display: flex !important;
-        align-items: center !important;
+        align-items: center
+         !important;
         gap: 15px !important;
         position: relative !important;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;

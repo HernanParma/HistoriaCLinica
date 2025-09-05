@@ -109,3 +109,5 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Funcionalidad del usuario inicializada correctamente');
 });
 
+
+

@@ -277,9 +277,9 @@ async function saveSection(section) {
     }
     
     try {
-        // Hacer petición PUT para actualizar el paciente
-        const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}`, {
-            method: 'PUT',
+        // Hacer petición POST para actualizar el paciente
+        const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/actualizar`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 ...getAuthHeaders()
@@ -469,6 +469,65 @@ window.toggleLaboratorio = function(consultaId) {
     }
 };
 
+// Renderizar archivos adjuntos
+function renderArchivosAdjuntos(archivos) {
+    if (!archivos || !Array.isArray(archivos) || archivos.length === 0) {
+        return '';
+    }
+    
+    const archivosHtml = archivos.map(archivo => {
+        const iconClass = getFileIcon(archivo.extension || archivo.Extension);
+        const fileSize = formatFileSize(archivo.tamañoBytes || archivo.TamañoBytes);
+        const fileName = archivo.nombreOriginal || archivo.NombreOriginal;
+        const downloadUrl = archivo.urlDescarga || archivo.UrlDescarga || `/api/pacientes/archivos/${archivo.nombreArchivo || archivo.NombreArchivo}`;
+        
+        return `
+            <div class="archivo-adjunto">
+                <div class="archivo-info">
+                    <i class="fas ${iconClass}"></i>
+                    <div class="archivo-details">
+                        <a href="${downloadUrl}" target="_blank" class="archivo-link">${fileName}</a>
+                        <small class="archivo-size">${fileSize}</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    return `
+        <div class="archivos-section">
+            <div class="detail-item">
+                <strong><i class="fas fa-paperclip"></i> Archivos Adjuntos (${archivos.length}):</strong>
+                <div class="archivos-lista">
+                    ${archivosHtml}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Obtener icono según extensión del archivo
+function getFileIcon(extension) {
+    if (!extension) return 'fa-file';
+    
+    const ext = extension.toLowerCase();
+    if (ext === '.pdf') return 'fa-file-pdf';
+    if (['.jpg', '.jpeg', '.png', '.gif', '.bmp'].includes(ext)) return 'fa-file-image';
+    if (['.doc', '.docx'].includes(ext)) return 'fa-file-word';
+    if (['.xls', '.xlsx'].includes(ext)) return 'fa-file-excel';
+    if (['.txt'].includes(ext)) return 'fa-file-alt';
+    return 'fa-file';
+}
+
+// Formatear tamaño de archivo
+function formatFileSize(bytes) {
+    if (!bytes || bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
 // Renderizar consultas
 function renderConsultas(consultas) {
     const hcBody = document.getElementById('hc-body');
@@ -505,6 +564,9 @@ function renderConsultas(consultas) {
                     ${consulta.recetar || consulta.Recetar ? `<div class="detail-item"><strong>Recetar:</strong> ${consulta.recetar || consulta.Recetar}</div>` : ''}
                     ${consulta.ome || consulta.Ome ? `<div class="detail-item"><strong>OME:</strong> ${consulta.ome || consulta.Ome}</div>` : ''}
                     ${consulta.notas || consulta.Notas ? `<div class="detail-item"><strong>Notas:</strong> ${consulta.notas || consulta.Notas}</div>` : ''}
+                    
+                    <!-- Archivos adjuntos -->
+                    ${renderArchivosAdjuntos(consulta.archivos || consulta.Archivos)}
                 </div>
                 
                 <!-- Botón para ver valores de laboratorio -->
@@ -686,6 +748,46 @@ function initializeModal() {
                 
                 // Obtener datos del formulario
                 const formData = new FormData(formNuevaConsulta);
+                
+                // Procesar archivos adjuntos primero
+                const archivosSubidos = [];
+                const archivosInput = document.getElementById('archivosConsulta');
+                
+                if (archivosInput && archivosInput.files && archivosInput.files.length > 0) {
+                    console.log(`📎 Subiendo ${archivosInput.files.length} archivos...`);
+                    
+                    for (let i = 0; i < archivosInput.files.length; i++) {
+                        const archivo = archivosInput.files[i];
+                        
+                        // Crear FormData para subir el archivo
+                        const archivoFormData = new FormData();
+                        archivoFormData.append('archivo', archivo);
+                        
+                        try {
+                            const uploadResponse = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/archivos/subir`, {
+                                method: 'POST',
+                                headers: getAuthHeaders(),
+                                body: archivoFormData
+                            });
+                            
+                            if (uploadResponse.ok) {
+                                const archivoSubido = await uploadResponse.json();
+                                archivosSubidos.push(archivoSubido);
+                                console.log(`✅ Archivo subido: ${archivoSubido.nombreOriginal}`);
+                            } else {
+                                const errorText = await uploadResponse.text();
+                                console.error(`❌ Error al subir archivo ${archivo.name}:`, errorText);
+                                alert(`Error al subir archivo ${archivo.name}: ${errorText}`);
+                                return;
+                            }
+                        } catch (error) {
+                            console.error(`❌ Error de conexión al subir archivo ${archivo.name}:`, error);
+                            alert(`Error de conexión al subir archivo ${archivo.name}`);
+                            return;
+                        }
+                    }
+                }
+                
                 const consultaData = {
                     fecha: formData.get('fecha') || new Date().toISOString().split('T')[0],
                     motivo: formData.get('motivo'),
@@ -711,7 +813,9 @@ function initializeModal() {
                     b12: formData.get('b12') ? parseFloat(formData.get('b12')) : null,
                     tsh: formData.get('tsh') ? parseFloat(formData.get('tsh')) : null,
                     orina: formData.get('orina') || null,
-                    urico: formData.get('urico') ? parseFloat(formData.get('urico')) : null
+                    urico: formData.get('urico') ? parseFloat(formData.get('urico')) : null,
+                    // Incluir archivos subidos
+                    archivos: archivosSubidos
                 };
 
                 // Validar motivo (requerido)
