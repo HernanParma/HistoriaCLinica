@@ -73,3 +73,5 @@ Si encuentras algún problema:
 4. Verificar que los archivos aparezcan en las consultas
 
 ¡La funcionalidad de archivos adjuntos está completamente operativa! 🎉
+
+

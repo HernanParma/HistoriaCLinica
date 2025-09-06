@@ -100,7 +100,27 @@ namespace HistoriaClinica.Controllers
                                 Recetar = c.Recetar ?? "",
                                 Ome = c.Ome ?? "",
                                 Notas = c.Notas ?? "",
-                                Archivos = null // Se llenará después con DeserializarArchivos
+                                Archivos = null, // Se llenará después con DeserializarArchivos
+                                // Valores de laboratorio
+                                GR = c.GR,
+                                HTO = c.HTO,
+                                HB = c.HB,
+                                GB = c.GB,
+                                PLAQ = c.PLAQ,
+                                GLUC = c.GLUC,
+                                UREA = c.UREA,
+                                CR = c.CR,
+                                GOT = c.GOT,
+                                GPT = c.GPT,
+                                CT = c.CT,
+                                TG = c.TG,
+                                VITD = c.VITD,
+                                FAL = c.FAL,
+                                COL = c.COL,
+                                B12 = c.B12,
+                                TSH = c.TSH,
+                                ORINA = c.ORINA,
+                                URICO = c.URICO
                             }).ToList()
                     })
                     .FirstOrDefaultAsync();
@@ -309,7 +329,27 @@ namespace HistoriaClinica.Controllers
                     Recetar = c.Recetar ?? "",
                     Ome = c.Ome ?? "",
                     Notas = c.Notas ?? "",
-                    Archivos = DeserializarArchivos(c.ArchivosJson)
+                    Archivos = DeserializarArchivos(c.ArchivosJson),
+                    // Valores de laboratorio
+                    GR = c.GR,
+                    HTO = c.HTO,
+                    HB = c.HB,
+                    GB = c.GB,
+                    PLAQ = c.PLAQ,
+                    GLUC = c.GLUC,
+                    UREA = c.UREA,
+                    CR = c.CR,
+                    GOT = c.GOT,
+                    GPT = c.GPT,
+                    CT = c.CT,
+                    TG = c.TG,
+                    VITD = c.VITD,
+                    FAL = c.FAL,
+                    COL = c.COL,
+                    B12 = c.B12,
+                    TSH = c.TSH,
+                    ORINA = c.ORINA,
+                    URICO = c.URICO
                 }).ToList();
                 
                 // Logging detallado de cada consulta para debug
@@ -317,6 +357,14 @@ namespace HistoriaClinica.Controllers
                 {
                     _logger.LogInformation("[API] Consulta {ConsultaId}: Fecha={Fecha}, Motivo={Motivo}, Archivos={ArchivosCount}", 
                         consulta.Id, consulta.Fecha, consulta.Motivo, consulta.Archivos?.Count ?? 0);
+                    
+                    // Debug específico para valores de laboratorio
+                    _logger.LogInformation("[API] Laboratorio - GR={GR}, HTO={HTO}, HB={HB}, GB={GB}, PLAQ={PLAQ}, GLUC={GLUC}, UREA={UREA}, CR={CR}", 
+                        consulta.GR, consulta.HTO, consulta.HB, consulta.GB, consulta.PLAQ, consulta.GLUC, consulta.UREA, consulta.CR);
+                    _logger.LogInformation("[API] Laboratorio - GOT={GOT}, GPT={GPT}, CT={CT}, TG={TG}, VITD={VITD}, FAL={FAL}, COL={COL}, B12={B12}", 
+                        consulta.GOT, consulta.GPT, consulta.CT, consulta.TG, consulta.VITD, consulta.FAL, consulta.COL, consulta.B12);
+                    _logger.LogInformation("[API] Laboratorio - TSH={TSH}, URICO={URICO}, ORINA={ORINA}", 
+                        consulta.TSH, consulta.URICO, consulta.ORINA);
                 }
 
                 _logger.LogInformation("[API] Preparando respuesta JSON...");
@@ -359,6 +407,18 @@ namespace HistoriaClinica.Controllers
         try
         {
             _logger.LogInformation("[API] Creando nueva consulta para paciente {PatientId}", pacienteId);
+            
+            // Debug: Log de los datos recibidos
+            _logger.LogInformation("[API] Datos de consulta recibidos: Motivo={Motivo}, Fecha={Fecha}", 
+                crearConsultaDto.Motivo, crearConsultaDto.Fecha);
+            _logger.LogInformation("[API] Laboratorio recibido - GR={GR}, HTO={HTO}, HB={HB}, GB={GB}, PLAQ={PLAQ}, GLUC={GLUC}, UREA={UREA}, CR={CR}", 
+                crearConsultaDto.GR, crearConsultaDto.HTO, crearConsultaDto.HB, crearConsultaDto.GB, 
+                crearConsultaDto.PLAQ, crearConsultaDto.GLUC, crearConsultaDto.UREA, crearConsultaDto.CR);
+            _logger.LogInformation("[API] Laboratorio recibido - GOT={GOT}, GPT={GPT}, CT={CT}, TG={TG}, VITD={VITD}, FAL={FAL}, COL={COL}, B12={B12}", 
+                crearConsultaDto.GOT, crearConsultaDto.GPT, crearConsultaDto.CT, crearConsultaDto.TG, 
+                crearConsultaDto.VITD, crearConsultaDto.FAL, crearConsultaDto.COL, crearConsultaDto.B12);
+            _logger.LogInformation("[API] Laboratorio recibido - TSH={TSH}, URICO={URICO}, ORINA={ORINA}", 
+                crearConsultaDto.TSH, crearConsultaDto.URICO, crearConsultaDto.ORINA);
             
             // Verificar que el paciente existe
             var paciente = await _context.Pacientes.FindAsync(pacienteId);
@@ -435,6 +495,16 @@ namespace HistoriaClinica.Controllers
             
             _logger.LogInformation("[API] Consulta creada exitosamente con ID: {ConsultaId}", nuevaConsulta.Id);
             
+            // Debug: Verificar que los valores se guardaron correctamente
+            _logger.LogInformation("[API] Verificación - Laboratorio guardado - GR={GR}, HTO={HTO}, HB={HB}, GB={GB}, PLAQ={PLAQ}, GLUC={GLUC}, UREA={UREA}, CR={CR}", 
+                nuevaConsulta.GR, nuevaConsulta.HTO, nuevaConsulta.HB, nuevaConsulta.GB, 
+                nuevaConsulta.PLAQ, nuevaConsulta.GLUC, nuevaConsulta.UREA, nuevaConsulta.CR);
+            _logger.LogInformation("[API] Verificación - Laboratorio guardado - GOT={GOT}, GPT={GPT}, CT={CT}, TG={TG}, VITD={VITD}, FAL={FAL}, COL={COL}, B12={B12}", 
+                nuevaConsulta.GOT, nuevaConsulta.GPT, nuevaConsulta.CT, nuevaConsulta.TG, 
+                nuevaConsulta.VITD, nuevaConsulta.FAL, nuevaConsulta.COL, nuevaConsulta.B12);
+            _logger.LogInformation("[API] Verificación - Laboratorio guardado - TSH={TSH}, URICO={URICO}, ORINA={ORINA}", 
+                nuevaConsulta.TSH, nuevaConsulta.URICO, nuevaConsulta.ORINA);
+            
             // Retornar la consulta creada como DTO
             var consultaCreada = new ConsultaDto
             {
@@ -444,7 +514,27 @@ namespace HistoriaClinica.Controllers
                 Recetar = nuevaConsulta.Recetar,
                 Ome = nuevaConsulta.Ome,
                 Notas = nuevaConsulta.Notas,
-                Archivos = DeserializarArchivos(nuevaConsulta.ArchivosJson)
+                Archivos = DeserializarArchivos(nuevaConsulta.ArchivosJson),
+                // Valores de laboratorio
+                GR = nuevaConsulta.GR,
+                HTO = nuevaConsulta.HTO,
+                HB = nuevaConsulta.HB,
+                GB = nuevaConsulta.GB,
+                PLAQ = nuevaConsulta.PLAQ,
+                GLUC = nuevaConsulta.GLUC,
+                UREA = nuevaConsulta.UREA,
+                CR = nuevaConsulta.CR,
+                GOT = nuevaConsulta.GOT,
+                GPT = nuevaConsulta.GPT,
+                CT = nuevaConsulta.CT,
+                TG = nuevaConsulta.TG,
+                VITD = nuevaConsulta.VITD,
+                FAL = nuevaConsulta.FAL,
+                COL = nuevaConsulta.COL,
+                B12 = nuevaConsulta.B12,
+                TSH = nuevaConsulta.TSH,
+                ORINA = nuevaConsulta.ORINA,
+                URICO = nuevaConsulta.URICO
             };
             
             return CreatedAtAction(nameof(ObtenerConsultasPorPaciente), new { id = pacienteId }, consultaCreada);
@@ -505,7 +595,28 @@ namespace HistoriaClinica.Controllers
                 Motivo = consulta.Motivo,
                 Recetar = consulta.Recetar,
                 Ome = consulta.Ome,
-                Notas = consulta.Notas
+                Notas = consulta.Notas,
+                Archivos = DeserializarArchivos(consulta.ArchivosJson),
+                // Valores de laboratorio
+                GR = consulta.GR,
+                HTO = consulta.HTO,
+                HB = consulta.HB,
+                GB = consulta.GB,
+                PLAQ = consulta.PLAQ,
+                GLUC = consulta.GLUC,
+                UREA = consulta.UREA,
+                CR = consulta.CR,
+                GOT = consulta.GOT,
+                GPT = consulta.GPT,
+                CT = consulta.CT,
+                TG = consulta.TG,
+                VITD = consulta.VITD,
+                FAL = consulta.FAL,
+                COL = consulta.COL,
+                B12 = consulta.B12,
+                TSH = consulta.TSH,
+                ORINA = consulta.ORINA,
+                URICO = consulta.URICO
             };
             
             return Ok(consultaDto);
@@ -596,7 +707,28 @@ namespace HistoriaClinica.Controllers
                 Motivo = consulta.Motivo,
                 Recetar = consulta.Recetar,
                 Ome = consulta.Ome,
-                Notas = consulta.Notas
+                Notas = consulta.Notas,
+                Archivos = DeserializarArchivos(consulta.ArchivosJson),
+                // Valores de laboratorio
+                GR = consulta.GR,
+                HTO = consulta.HTO,
+                HB = consulta.HB,
+                GB = consulta.GB,
+                PLAQ = consulta.PLAQ,
+                GLUC = consulta.GLUC,
+                UREA = consulta.UREA,
+                CR = consulta.CR,
+                GOT = consulta.GOT,
+                GPT = consulta.GPT,
+                CT = consulta.CT,
+                TG = consulta.TG,
+                VITD = consulta.VITD,
+                FAL = consulta.FAL,
+                COL = consulta.COL,
+                B12 = consulta.B12,
+                TSH = consulta.TSH,
+                ORINA = consulta.ORINA,
+                URICO = consulta.URICO
             };
             
             return Ok(consultaActualizada);
@@ -1100,6 +1232,27 @@ namespace HistoriaClinica.Controllers
         public string? Ome { get; set; }
         public string? Notas { get; set; }
         public List<ArchivoConsultaDto>? Archivos { get; set; }
+        
+        // Valores de laboratorio
+        public double? GR { get; set; }
+        public double? HTO { get; set; }
+        public double? HB { get; set; }
+        public double? GB { get; set; }
+        public double? PLAQ { get; set; }
+        public double? GLUC { get; set; }
+        public double? UREA { get; set; }
+        public double? CR { get; set; }
+        public double? GOT { get; set; }
+        public double? GPT { get; set; }
+        public double? CT { get; set; }
+        public double? TG { get; set; }
+        public double? VITD { get; set; }
+        public double? FAL { get; set; }
+        public double? COL { get; set; }
+        public double? B12 { get; set; }
+        public double? TSH { get; set; }
+        public string? ORINA { get; set; }
+        public double? URICO { get; set; }
     }
 
     /// <summary>

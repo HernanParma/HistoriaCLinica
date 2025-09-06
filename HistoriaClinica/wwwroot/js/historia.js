@@ -382,17 +382,21 @@ async function loadPatientConsultations(patientId) {
         // Intentar primero la ruta específica de consultas
         try {
             const consultas = await apiGet(`/api/pacientes/${patientId}/consultas`);
+            console.log('🔍 Debug - Consultas obtenidas desde API específica:', consultas);
             renderConsultas(consultas);
             return;
         } catch (err) {
-            console.log('⚠️ Ruta específica falló, intentando desde datos del paciente...');
+            console.log('⚠️ Ruta específica falló, intentando desde datos del paciente...', err);
         }
         
         // Si falla, intentar obtener las consultas desde los datos del paciente
         const paciente = await apiGet(`/api/pacientes/${patientId}`);
+        console.log('🔍 Debug - Paciente obtenido:', paciente);
         if (paciente && paciente.consultas) {
+            console.log('🔍 Debug - Consultas desde datos del paciente:', paciente.consultas);
             renderConsultas(paciente.consultas);
         } else {
+            console.log('⚠️ No se encontraron consultas en los datos del paciente');
             renderConsultas([]);
         }
         
@@ -413,30 +417,47 @@ async function loadPatientConsultations(patientId) {
 
 // Función para renderizar valores de laboratorio
 function renderLaboratorioValues(consulta) {
+    // Debug: Log de la consulta completa para ver qué datos tenemos
+    console.log('🔍 Debug - Datos de consulta para laboratorio:', consulta);
+    
+    // Función auxiliar para obtener el valor de laboratorio
+    function getLabValue(consulta, ...keys) {
+        for (const key of keys) {
+            const value = consulta[key];
+            if (value !== null && value !== undefined && value !== '') {
+                return value;
+            }
+        }
+        return null;
+    }
+    
     const labValues = [
-        { key: 'gr', label: 'GR (Glóbulos Rojos)', value: consulta.gr || consulta.GR },
-        { key: 'hto', label: 'HTO (Hematocrito)', value: consulta.hto || consulta.HTO },
-        { key: 'hb', label: 'HB (Hemoglobina)', value: consulta.hb || consulta.HB },
-        { key: 'gb', label: 'GB (Glóbulos Blancos)', value: consulta.gb || consulta.GB },
-        { key: 'plaq', label: 'PLAQ (Plaquetas)', value: consulta.plaq || consulta.PLAQ },
-        { key: 'gluc', label: 'GLUC (Glucosa)', value: consulta.gluc || consulta.GLUC },
-        { key: 'urea', label: 'UREA', value: consulta.urea || consulta.UREA },
-        { key: 'cr', label: 'CR (Creatinina)', value: consulta.cr || consulta.CR },
-        { key: 'got', label: 'GOT', value: consulta.got || consulta.GOT },
-        { key: 'gpt', label: 'GPT', value: consulta.gpt || consulta.GPT },
-        { key: 'ct', label: 'CT (Colesterol Total)', value: consulta.ct || consulta.CT },
-        { key: 'tg', label: 'TG (Triglicéridos)', value: consulta.tg || consulta.TG },
-        { key: 'vitd', label: 'VITD (Vitamina D)', value: consulta.vitd || consulta.VITD },
-        { key: 'fal', label: 'FAL (Fosfatasa Alcalina)', value: consulta.fal || consulta.FAL },
-        { key: 'col', label: 'COL (Colesterol)', value: consulta.col || consulta.COL },
-        { key: 'b12', label: 'B12 (Vitamina B12)', value: consulta.b12 || consulta.B12 },
-        { key: 'tsh', label: 'TSH', value: consulta.tsh || consulta.TSH },
-        { key: 'orina', label: 'ORINA', value: consulta.orina || consulta.ORINA },
-        { key: 'urico', label: 'URICO (Ácido Úrico)', value: consulta.urico || consulta.URICO }
+        { key: 'gr', label: 'GR (Glóbulos Rojos)', value: getLabValue(consulta, 'gr', 'GR') },
+        { key: 'hto', label: 'HTO (Hematocrito)', value: getLabValue(consulta, 'hto', 'HTO') },
+        { key: 'hb', label: 'HB (Hemoglobina)', value: getLabValue(consulta, 'hb', 'HB') },
+        { key: 'gb', label: 'GB (Glóbulos Blancos)', value: getLabValue(consulta, 'gb', 'GB') },
+        { key: 'plaq', label: 'PLAQ (Plaquetas)', value: getLabValue(consulta, 'plaq', 'PLAQ') },
+        { key: 'gluc', label: 'GLUC (Glucosa)', value: getLabValue(consulta, 'gluc', 'GLUC') },
+        { key: 'urea', label: 'UREA', value: getLabValue(consulta, 'urea', 'UREA') },
+        { key: 'cr', label: 'CR (Creatinina)', value: getLabValue(consulta, 'cr', 'CR') },
+        { key: 'got', label: 'GOT', value: getLabValue(consulta, 'got', 'GOT') },
+        { key: 'gpt', label: 'GPT', value: getLabValue(consulta, 'gpt', 'GPT') },
+        { key: 'ct', label: 'CT (Colesterol Total)', value: getLabValue(consulta, 'ct', 'CT') },
+        { key: 'tg', label: 'TG (Triglicéridos)', value: getLabValue(consulta, 'tg', 'TG') },
+        { key: 'vitd', label: 'VITD (Vitamina D)', value: getLabValue(consulta, 'vitd', 'VITD') },
+        { key: 'fal', label: 'FAL (Fosfatasa Alcalina)', value: getLabValue(consulta, 'fal', 'FAL') },
+        { key: 'col', label: 'COL (Colesterol)', value: getLabValue(consulta, 'col', 'COL') },
+        { key: 'b12', label: 'B12 (Vitamina B12)', value: getLabValue(consulta, 'b12', 'B12') },
+        { key: 'tsh', label: 'TSH', value: getLabValue(consulta, 'tsh', 'TSH') },
+        { key: 'orina', label: 'ORINA', value: getLabValue(consulta, 'orina', 'ORINA') },
+        { key: 'urico', label: 'URICO (Ácido Úrico)', value: getLabValue(consulta, 'urico', 'URICO') }
     ];
 
-    const labHTML = labValues
-        .filter(item => item.value !== null && item.value !== undefined && item.value !== '')
+    // Debug: Log de valores encontrados
+    const valoresConDatos = labValues.filter(item => item.value !== null && item.value !== undefined && item.value !== '');
+    console.log('🔍 Debug - Valores de laboratorio encontrados:', valoresConDatos);
+
+    const labHTML = valoresConDatos
         .map(item => `
             <div class="lab-value-item">
                 <span class="lab-label">${item.label}:</span>
@@ -445,9 +466,12 @@ function renderLaboratorioValues(consulta) {
         `).join('');
 
     if (labHTML === '') {
+        console.log('⚠️ Debug - No se encontraron valores de laboratorio para la consulta');
+        console.log('🔍 Debug - Todos los valores de laboratorio:', labValues);
         return '<div class="no-lab-values">No hay valores de laboratorio registrados para esta consulta.</div>';
     }
 
+    console.log('✅ Debug - HTML de laboratorio generado:', labHTML);
     return labHTML;
 }
 
