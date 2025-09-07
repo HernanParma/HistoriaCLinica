@@ -12,11 +12,12 @@ body {
     color: #333;
 }
 
-.container {
-    max-width: 100vw;
-    width: 100%;
-    margin: 0;
-    padding: 0;
+/* Quita el max-width del container de Bootstrap */
+.container, .container-sm, .container-md, .container-lg, .container-xl, .container-xxl {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
 }
 
 /* Header */
@@ -239,10 +240,17 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Global (sin tope) */
 .form-container {
     width: 100%;
-    max-width: 600px;
+    max-width: none;   /* o directamente eliminá la propiedad */
     transition: all 0.3s ease;
+}
+
+/* Solo auth */
+.auth-page .form-container {
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .form-container.full-width {
@@ -4358,18 +4366,20 @@ button.submit-btn > i {
    LAYOUT DE HISTORIA CLÍNICA CON SIDEBAR FIJO
    ====================== */
 
+/* Reemplaza el layout de .hc-layout-container por grid */
 .hc-layout-container {
-    display: flex;
-    gap: 15px;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr); /* izquierda fija, derecha todo lo demás */
+    gap: 12px;
+    width: 100%;
+    max-width: 100vw;
+    padding: 0 10px;
 }
 
 /* Sidebar fijo para datos del paciente */
 .patient-sidebar-fixed {
-    width: 500px;
-    min-width: 500px;
+    width: 340px;
+    min-width: 340px;
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -4409,13 +4419,14 @@ button.submit-btn > i {
     z-index: 1;
 }
 
-/* Contenido principal de la historia clínica */
+/* Que la derecha no tenga límites artificiales */
 .hc-main-content {
-    flex: 1;
-    min-width: 0;
-    max-width: calc(100% - 515px); /* 500px sidebar + 15px gap */
     width: 100%;
+    max-width: none;
+    min-width: 0;
 }
+
+/* Ya no necesarios - el problema se resolvió en la raíz */
 
 /* Optimización del contenido de consultas */
 .hc-main-content .hc-body {
@@ -4466,44 +4477,58 @@ body {
     overflow-x: hidden;
 }
 
+/* Ya tenés otra definición más abajo, pero acá aseguramos que NO centre */
 .main-content {
+    justify-content: flex-start;   /* en lugar de center */
     width: 100%;
     max-width: 100vw;
     margin: 0;
     padding: 0;
 }
 
+/* Las definiciones de grid ya están arriba */
+
+/* Asegurar que las consultas ocupen todo el ancho disponible */
+.hc-main-content .consulta-item {
+    width: 100%;
+    max-width: none;
+}
+
+.hc-main-content .consulta-content {
+    width: 100%;
+    max-width: none;
+}
+
+.hc-main-content .consulta-details {
+    width: 100%;
+    max-width: none;
+}
+
 /* Optimización para pantallas pequeñas */
 @media (max-width: 1199px) {
     .hc-layout-container {
-        gap: 3px;
-        padding: 0;
+        grid-template-columns: 300px minmax(0, 1fr);
+        gap: 8px;
+        padding: 0 5px;
     }
     
     .patient-sidebar-fixed {
-        width: 400px;
-        min-width: 400px;
-    }
-    
-    .hc-main-content {
-        max-width: calc(100% - 403px);
+        width: 300px;
+        min-width: 300px;
     }
 }
 
 /* Optimización para pantallas medianas */
 @media (min-width: 1200px) and (max-width: 1599px) {
     .hc-layout-container {
-        gap: 5px;
-        padding: 0;
+        grid-template-columns: 320px minmax(0, 1fr);
+        gap: 10px;
+        padding: 0 8px;
     }
     
     .patient-sidebar-fixed {
-        width: 480px;
-        min-width: 480px;
-    }
-    
-    .hc-main-content {
-        max-width: calc(100% - 485px);
+        width: 320px;
+        min-width: 320px;
     }
 }
 
@@ -4519,7 +4544,7 @@ body {
 /* Responsive para el layout */
 @media (max-width: 1400px) {
     .hc-layout-container {
-        flex-direction: column;
+        grid-template-columns: 1fr;
         gap: 15px;
     }
 
@@ -4531,9 +4556,8 @@ body {
     }
 
     .hc-main-content {
-        flex: none;
-        max-width: 100%;
         width: 100%;
+        max-width: none;
     }
 }
 
@@ -4564,39 +4588,68 @@ body {
 /* Optimización para pantallas muy grandes */
 @media (min-width: 1600px) {
     .hc-layout-container {
-        gap: 5px;
-        padding: 0;
+        grid-template-columns: 360px minmax(0, 1fr);
+        gap: 12px;
+        padding: 0 10px;
     }
     
     .patient-sidebar-fixed {
-        width: 520px;
-        min-width: 520px;
-    }
-    
-    .hc-main-content {
-        max-width: calc(100% - 525px);
+        width: 360px;
+        min-width: 360px;
     }
 }
 
 @media (min-width: 1920px) {
     .hc-layout-container {
-        gap: 5px;
-        padding: 0;
+        grid-template-columns: 380px minmax(0, 1fr);
+        gap: 15px;
+        padding: 0 12px;
     }
     
     .patient-sidebar-fixed {
-        width: 550px;
-        min-width: 550px;
-    }
-    
-    .hc-main-content {
-        max-width: calc(100% - 555px);
+        width: 380px;
+        min-width: 380px;
     }
 }
 
 /* Estilos para los detalles del paciente en el modal */
 .patient-details {
     padding: 20px;
+}
+
+/* ===== Historia Clínica: usar grid y anular col-* de Bootstrap ===== */
+body.historia .row.hc-layout,
+.hc-layout-container {                           /* por si usás este wrapper */
+    display: grid !important;
+    grid-template-columns: 340px minmax(0, 1fr) !important;
+    gap: 12px !important;
+    width: 100% !important;
+}
+
+/* Neutralizar los anchos de Bootstrap dentro de esa fila/grid */
+body.historia .row.hc-layout > [class^="col-"],
+body.historia .row.hc-layout > [class*=" col-"] {
+    float: none !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: none !important;
+}
+
+/* Asegurar que el segundo panel (Consultas) se estire de verdad */
+body.historia .row.hc-layout > :nth-child(2),
+.hc-layout-container > :nth-child(2) {
+    justify-self: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;   /* fix de Safari/Chrome para grids */
+    max-width: none !important;
+}
+
+/* Por si adentro tenés .form-container/.form-card */
+.hc-main-content,
+.hc-main-content .form-container,
+.hc-main-content .form-card {
+    width: 100% !important;
+    max-width: none !important;
 }
 
 .detail-row {
