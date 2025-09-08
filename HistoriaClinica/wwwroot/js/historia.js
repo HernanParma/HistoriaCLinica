@@ -122,38 +122,20 @@ function renderPatientSidebar(p) {
             
             <div class="patient-section" data-section="medicacion">
                 <div class="section-header">
-                    <h4><i class="fas fa-pills"></i> Medicación Actual</h4>
-                    <button class="btn-edit-section" onclick="toggleEditMode('medicacion')">
-                        <i class="fas fa-edit"></i> Editar
+                    <button class="btn-edit-section" onclick="abrirModalMedicacion()">
+                        <i class="fas fa-pills"></i> Medicación
                     </button>
                 </div>
-                <div class="editable-field">
-                    <label>Medicación:</label>
-                    <textarea id="edit-medicacion" placeholder="Medicación actual del paciente" disabled>${p.medicacion || p.Medicacion || ''}</textarea>
-                </div>
-                <div class="section-actions hidden">
-                    <button class="btn-save-section" onclick="saveSection('medicacion')">
-                        <i class="fas fa-save"></i> Guardar
-                    </button>
-                </div>
+                <textarea id="edit-medicacion" style="display: none;">${p.medicacion || p.Medicacion || ''}</textarea>
             </div>
             
             <div class="patient-section" data-section="antecedentes">
                 <div class="section-header">
-                    <h4><i class="fas fa-history"></i> Antecedentes Médicos</h4>
-                    <button class="btn-edit-section" onclick="toggleEditMode('antecedentes')">
-                        <i class="fas fa-edit"></i> Editar
+                    <button class="btn-edit-section" onclick="abrirModalAntecedentes()">
+                        <i class="fas fa-history"></i> Antecedentes
                     </button>
                 </div>
-                <div class="editable-field">
-                    <label>Antecedentes:</label>
-                    <textarea id="edit-antecedentes" placeholder="Antecedentes médicos del paciente" disabled>${p.antecedentes || p.Antecedentes || ''}</textarea>
-                </div>
-                <div class="section-actions hidden">
-                    <button class="btn-save-section" onclick="saveSection('antecedentes')">
-                        <i class="fas fa-save"></i> Guardar
-                    </button>
-                </div>
+                <textarea id="edit-antecedentes" style="display: none;">${p.antecedentes || p.Antecedentes || ''}</textarea>
             </div>
         </div>
     `;
@@ -450,7 +432,8 @@ function renderLaboratorioValues(consulta) {
         { key: 'b12', label: 'B12 (Vitamina B12)', value: getLabValue(consulta, 'b12', 'B12') },
         { key: 'tsh', label: 'TSH', value: getLabValue(consulta, 'tsh', 'TSH') },
         { key: 'orina', label: 'ORINA', value: getLabValue(consulta, 'orina', 'ORINA') },
-        { key: 'urico', label: 'URICO (Ácido Úrico)', value: getLabValue(consulta, 'urico', 'URICO') }
+        { key: 'urico', label: 'URICO (Ácido Úrico)', value: getLabValue(consulta, 'urico', 'URICO') },
+        { key: 'valoresNoIncluidos', label: 'Valores no incluidos', value: getLabValue(consulta, 'valoresNoIncluidos', 'ValoresNoIncluidos') }
     ];
 
     // Debug: Log de valores encontrados
@@ -552,6 +535,72 @@ function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
+// Función para renderizar RECETAR con botón de confirmación
+function renderRecetarConBoton(consulta) {
+    const recetar = consulta.recetar || consulta.Recetar;
+    const recetarRevisado = consulta.recetarRevisado || consulta.RecetarRevisado;
+    
+    if (!recetar || recetar.trim() === '') {
+        return '';
+    }
+    
+    let html = `<div class="detail-item recetar-item">`;
+    html += `<strong>Recetar:</strong> ${recetar}`;
+    
+    if (!recetarRevisado) {
+        const consultaId = consulta.id || consulta.Id;
+        console.log(`🔧 Generando botón RECETAR para consulta ${consultaId}`);
+        html += `<div class="revision-controls-historial">
+            <button type="button" class="btn btn-success btn-sm marcar-revisado-btn" data-consulta-id="${consultaId}" data-campo="recetar">
+                <i class="fas fa-check"></i> Realizado
+            </button>
+        </div>`;
+    } else {
+        html += `<div class="revision-status-historial">
+            <span class="revision-status">
+                <i class="fas fa-check-circle"></i>
+                Revisado
+            </span>
+        </div>`;
+    }
+    
+    html += `</div>`;
+    return html;
+}
+
+// Función para renderizar OME con botón de confirmación
+function renderOmeConBoton(consulta) {
+    const ome = consulta.ome || consulta.Ome;
+    const omeRevisado = consulta.omeRevisado || consulta.OmeRevisado;
+    
+    if (!ome || ome.trim() === '') {
+        return '';
+    }
+    
+    let html = `<div class="detail-item ome-item">`;
+    html += `<strong>OME:</strong> ${ome}`;
+    
+    if (!omeRevisado) {
+        const consultaId = consulta.id || consulta.Id;
+        console.log(`🔧 Generando botón OME para consulta ${consultaId}`);
+        html += `<div class="revision-controls-historial">
+            <button type="button" class="btn btn-success btn-sm marcar-revisado-btn" data-consulta-id="${consultaId}" data-campo="ome">
+                <i class="fas fa-check"></i> Realizado
+            </button>
+        </div>`;
+    } else {
+        html += `<div class="revision-status-historial">
+            <span class="revision-status">
+                <i class="fas fa-check-circle"></i>
+                Revisado
+            </span>
+        </div>`;
+    }
+    
+    html += `</div>`;
+    return html;
+}
+
 // Renderizar consultas
 function renderConsultas(consultas) {
     const hcBody = document.getElementById('hc-body');
@@ -585,8 +634,8 @@ function renderConsultas(consultas) {
             <div class="consulta-content collapsed">
                 <div class="consulta-details">
                     ${consulta.motivo || consulta.Motivo ? `<div class="detail-item"><strong>Motivo:</strong> ${consulta.motivo || consulta.Motivo}</div>` : ''}
-                    ${consulta.recetar || consulta.Recetar ? `<div class="detail-item"><strong>Recetar:</strong> ${consulta.recetar || consulta.Recetar}</div>` : ''}
-                    ${consulta.ome || consulta.Ome ? `<div class="detail-item"><strong>OME:</strong> ${consulta.ome || consulta.Ome}</div>` : ''}
+                    ${renderRecetarConBoton(consulta)}
+                    ${renderOmeConBoton(consulta)}
                     ${consulta.notas || consulta.Notas ? `<div class="detail-item"><strong>Notas:</strong> ${consulta.notas || consulta.Notas}</div>` : ''}
                     
                     <!-- Archivos adjuntos -->
@@ -818,26 +867,27 @@ function initializeModal() {
                     recetar: formData.get('recetar') || null,
                     ome: formData.get('ome') || null,
                     notas: formData.get('notas') || null,
-                    // Valores de laboratorio completos
-                    gr: formData.get('gr') ? parseFloat(formData.get('gr')) : null,
-                    hto: formData.get('hto') ? parseFloat(formData.get('hto')) : null,
-                    hb: formData.get('hb') ? parseFloat(formData.get('hb')) : null,
-                    gb: formData.get('gb') ? parseFloat(formData.get('gb')) : null,
-                    plaq: formData.get('plaq') ? parseFloat(formData.get('plaq')) : null,
-                    gluc: formData.get('gluc') ? parseFloat(formData.get('gluc')) : null,
-                    urea: formData.get('urea') ? parseFloat(formData.get('urea')) : null,
-                    cr: formData.get('cr') ? parseFloat(formData.get('cr')) : null,
-                    got: formData.get('got') ? parseFloat(formData.get('got')) : null,
-                    gpt: formData.get('gpt') ? parseFloat(formData.get('gpt')) : null,
-                    ct: formData.get('ct') ? parseFloat(formData.get('ct')) : null,
-                    tg: formData.get('tg') ? parseFloat(formData.get('tg')) : null,
-                    vitd: formData.get('vitd') ? parseFloat(formData.get('vitd')) : null,
-                    fal: formData.get('fal') ? parseFloat(formData.get('fal')) : null,
-                    col: formData.get('col') ? parseFloat(formData.get('col')) : null,
-                    b12: formData.get('b12') ? parseFloat(formData.get('b12')) : null,
-                    tsh: formData.get('tsh') ? parseFloat(formData.get('tsh')) : null,
+                    // Valores de laboratorio completos (convertir comas a puntos para el backend)
+                    gr: formData.get('gr') ? parseFloat(formData.get('gr').replace(',', '.')) : null,
+                    hto: formData.get('hto') ? parseFloat(formData.get('hto').replace(',', '.')) : null,
+                    hb: formData.get('hb') ? parseFloat(formData.get('hb').replace(',', '.')) : null,
+                    gb: formData.get('gb') ? parseFloat(formData.get('gb').replace(',', '.')) : null,
+                    plaq: formData.get('plaq') ? parseFloat(formData.get('plaq').replace(',', '.')) : null,
+                    gluc: formData.get('gluc') ? parseFloat(formData.get('gluc').replace(',', '.')) : null,
+                    urea: formData.get('urea') ? parseFloat(formData.get('urea').replace(',', '.')) : null,
+                    cr: formData.get('cr') ? parseFloat(formData.get('cr').replace(',', '.')) : null,
+                    got: formData.get('got') ? parseFloat(formData.get('got').replace(',', '.')) : null,
+                    gpt: formData.get('gpt') ? parseFloat(formData.get('gpt').replace(',', '.')) : null,
+                    ct: formData.get('ct') ? parseFloat(formData.get('ct').replace(',', '.')) : null,
+                    tg: formData.get('tg') ? parseFloat(formData.get('tg').replace(',', '.')) : null,
+                    vitd: formData.get('vitd') ? parseFloat(formData.get('vitd').replace(',', '.')) : null,
+                    fal: formData.get('fal') ? parseFloat(formData.get('fal').replace(',', '.')) : null,
+                    col: formData.get('col') ? parseFloat(formData.get('col').replace(',', '.')) : null,
+                    b12: formData.get('b12') ? parseFloat(formData.get('b12').replace(',', '.')) : null,
+                    tsh: formData.get('tsh') ? parseFloat(formData.get('tsh').replace(',', '.')) : null,
                     orina: formData.get('orina') || null,
-                    urico: formData.get('urico') ? parseFloat(formData.get('urico')) : null,
+                    urico: formData.get('urico') ? parseFloat(formData.get('urico').replace(',', '.')) : null,
+                    valoresNoIncluidos: formData.get('valoresNoIncluidos') || null,
                     // Incluir archivos subidos
                     archivos: archivosSubidos
                 };
@@ -1004,6 +1054,88 @@ function initializeModal() {
     };
 
     console.log('✅ Funcionalidad del modal de nueva consulta inicializada');
+    
+    // ===== FUNCIONALIDAD PARA FORMATO DE DECIMALES =====
+    
+    // Lista de todos los campos numéricos de laboratorio
+    const camposLaboratorio = [
+        'grConsulta', 'htoConsulta', 'hbConsulta', 'gbConsulta',
+        'plaqConsulta', 'glucConsulta', 'ureaConsulta', 'crConsulta',
+        'gotConsulta', 'gptConsulta', 'ctConsulta', 'tgConsulta',
+        'vitdConsulta', 'falConsulta', 'colConsulta', 'b12Consulta',
+        'tshConsulta', 'uricoConsulta'
+    ];
+    
+    // Función para formatear a 2 decimales
+    function formatearADosDecimales(input) {
+        if (input.value && input.value.trim() !== '') {
+            // Limpiar el valor: solo números y comas
+            let valorLimpio = input.value.replace(/[^0-9,]/g, '');
+            
+            // Si hay múltiples comas, tomar solo la primera
+            const partes = valorLimpio.split(',');
+            if (partes.length > 2) {
+                valorLimpio = partes[0] + ',' + partes.slice(1).join('');
+            }
+            
+            // Convertir a número
+            const valor = parseFloat(valorLimpio.replace(',', '.'));
+            if (!isNaN(valor) && valor >= 0) {
+                input.value = valor.toFixed(2).replace('.', ',');
+            } else if (valorLimpio !== '') {
+                // Si no es un número válido, limpiar el campo
+                input.value = '';
+            }
+        }
+    }
+    
+    // Agregar event listeners a todos los campos de laboratorio
+    camposLaboratorio.forEach(campoId => {
+        const campo = document.getElementById(campoId);
+        if (campo) {
+            // Formatear cuando el usuario presiona Enter
+            campo.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    formatearADosDecimales(this);
+                    this.blur();
+                }
+            });
+            
+            // Validación de entrada en tiempo real
+            campo.addEventListener('input', function(e) {
+                let valor = e.target.value;
+                
+                // Reemplazar punto por coma automáticamente
+                if (valor.includes('.')) {
+                    valor = valor.replace('.', ',');
+                }
+                
+                // Permitir solo números y comas
+                valor = valor.replace(/[^0-9,]/g, '');
+                
+                // Limitar a una sola coma
+                const partes = valor.split(',');
+                if (partes.length > 2) {
+                    // Si hay más de una coma, mantener solo la primera
+                    valor = partes[0] + ',' + partes.slice(1).join('');
+                }
+                
+                // Limitar decimales a máximo 2 dígitos
+                if (partes.length === 2 && partes[1].length > 2) {
+                    valor = partes[0] + ',' + partes[1].substring(0, 2);
+                }
+                
+                e.target.value = valor;
+            });
+            
+            // Validación adicional al perder el foco
+            campo.addEventListener('blur', function() {
+                formatearADosDecimales(this);
+            });
+        }
+    });
+    
+    console.log('✅ Formato de decimales configurado para campos de laboratorio');
 }
 
 // Función para guardar campos editados del paciente
@@ -1076,12 +1208,398 @@ window.savePatientField = async function(fieldName, inputId) {
     }
 };
 
+// ===== FUNCIONALIDAD DE MODALES DE MEDICACIÓN Y ANTECEDENTES =====
+
+// Función para abrir modal de medicación
+window.abrirModalMedicacion = function() {
+    console.log('💊 Abriendo modal de medicación...');
+    
+    const modal = document.getElementById('modalMedicacion');
+    const medicacionTexto = document.getElementById('medicacionTexto');
+    const medicacionField = document.getElementById('edit-medicacion');
+    
+    if (!modal || !medicacionTexto || !medicacionField) {
+        console.error('❌ Elementos del modal de medicación no encontrados');
+        return;
+    }
+    
+    // Obtener el texto de medicación
+    const medicacion = medicacionField.value.trim();
+    
+    if (medicacion) {
+        medicacionTexto.textContent = medicacion;
+        medicacionTexto.style.color = '#374151';
+        medicacionTexto.style.fontStyle = 'normal';
+    } else {
+        medicacionTexto.textContent = 'No hay información de medicación registrada.';
+        medicacionTexto.style.color = '#9ca3af';
+        medicacionTexto.style.fontStyle = 'italic';
+    }
+    
+    // Mostrar modal
+    modal.classList.remove('hidden');
+    modal.classList.add('show');
+}
+
+// Función para editar medicación
+window.editarModalMedicacion = function() {
+    console.log('✏️ Editando medicación...');
+    
+    const medicacionTexto = document.getElementById('medicacionTexto');
+    const editarBtn = document.getElementById('editarModalMedicacion');
+    
+    console.log('🔍 Elementos encontrados:', {
+        medicacionTexto: !!medicacionTexto,
+        editarBtn: !!editarBtn
+    });
+    
+    if (!medicacionTexto || !editarBtn) {
+        console.error('❌ Elementos para editar medicación no encontrados');
+        return;
+    }
+    
+    // Crear textarea para edición
+    const textarea = document.createElement('textarea');
+    textarea.value = medicacionTexto.textContent === 'No hay información de medicación registrada.' ? '' : medicacionTexto.textContent;
+    textarea.style.width = '100%';
+    textarea.style.minHeight = '150px';
+    textarea.style.padding = '15px';
+    textarea.style.border = '2px solid #667eea';
+    textarea.style.borderRadius = '8px';
+    textarea.style.fontSize = '1em';
+    textarea.style.fontFamily = 'inherit';
+    textarea.style.resize = 'vertical';
+    textarea.placeholder = 'Ingrese la medicación actual del paciente...';
+    
+    // Reemplazar el párrafo con el textarea
+    medicacionTexto.parentNode.replaceChild(textarea, medicacionTexto);
+    
+    // Cambiar botón a "Guardar"
+    editarBtn.innerHTML = '<i class="fas fa-save"></i> Guardar';
+    editarBtn.onclick = guardarMedicacion;
+    
+    // Enfocar el textarea
+    textarea.focus();
+}
+
+// Función para guardar medicación
+window.guardarMedicacion = async function() {
+    console.log('💾 Guardando medicación...');
+    
+    const textarea = document.querySelector('#modalMedicacion textarea');
+    const editarBtn = document.getElementById('editarModalMedicacion');
+    const medicacionField = document.getElementById('edit-medicacion');
+    
+    if (!textarea || !editarBtn || !medicacionField) {
+        console.error('❌ Elementos para guardar medicación no encontrados');
+        return;
+    }
+    
+    const nuevaMedicacion = textarea.value.trim();
+    
+    try {
+        // Mostrar loading en el botón
+        editarBtn.disabled = true;
+        editarBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        
+        // Actualizar el campo oculto
+        medicacionField.value = nuevaMedicacion;
+        
+        // Guardar en la base de datos
+        const patientId = getPatientIdFromUrl();
+        const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/actualizar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthHeaders()
+            },
+            body: JSON.stringify({ medicacion: nuevaMedicacion })
+        });
+        
+        if (response.ok) {
+            // Crear nuevo párrafo con el contenido actualizado
+            const nuevoParrafo = document.createElement('p');
+            nuevoParrafo.id = 'medicacionTexto';
+            
+            if (nuevaMedicacion) {
+                nuevoParrafo.textContent = nuevaMedicacion;
+                nuevoParrafo.style.color = '#374151';
+                nuevoParrafo.style.fontStyle = 'normal';
+            } else {
+                nuevoParrafo.textContent = 'No hay información de medicación registrada.';
+                nuevoParrafo.style.color = '#9ca3af';
+                nuevoParrafo.style.fontStyle = 'italic';
+            }
+            
+            // Reemplazar textarea con el párrafo
+            textarea.parentNode.replaceChild(nuevoParrafo, textarea);
+            
+            // Restaurar botón
+            editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
+            editarBtn.onclick = editarModalMedicacion;
+            editarBtn.disabled = false;
+            
+            console.log('✅ Medicación guardada exitosamente');
+        } else {
+            throw new Error('Error al guardar medicación');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error al guardar medicación:', error);
+        alert('Error al guardar la medicación');
+        
+        // Restaurar botón
+        editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
+        editarBtn.onclick = editarModalMedicacion;
+        editarBtn.disabled = false;
+    }
+}
+
+// Función para abrir modal de antecedentes
+window.abrirModalAntecedentes = function() {
+    console.log('📋 Abriendo modal de antecedentes...');
+    
+    const modal = document.getElementById('modalAntecedentes');
+    const antecedentesTexto = document.getElementById('antecedentesTexto');
+    const antecedentesField = document.getElementById('edit-antecedentes');
+    
+    if (!modal || !antecedentesTexto || !antecedentesField) {
+        console.error('❌ Elementos del modal de antecedentes no encontrados');
+        return;
+    }
+    
+    // Obtener el texto de antecedentes
+    const antecedentes = antecedentesField.value.trim();
+    
+    if (antecedentes) {
+        antecedentesTexto.textContent = antecedentes;
+        antecedentesTexto.style.color = '#374151';
+        antecedentesTexto.style.fontStyle = 'normal';
+    } else {
+        antecedentesTexto.textContent = 'No hay antecedentes médicos registrados.';
+        antecedentesTexto.style.color = '#9ca3af';
+        antecedentesTexto.style.fontStyle = 'italic';
+    }
+    
+    // Mostrar modal
+    modal.classList.remove('hidden');
+    modal.classList.add('show');
+}
+
+// Función para editar antecedentes
+window.editarModalAntecedentes = function() {
+    console.log('✏️ Editando antecedentes...');
+    
+    const antecedentesTexto = document.getElementById('antecedentesTexto');
+    const editarBtn = document.getElementById('editarModalAntecedentes');
+    
+    console.log('🔍 Elementos encontrados:', {
+        antecedentesTexto: !!antecedentesTexto,
+        editarBtn: !!editarBtn
+    });
+    
+    if (!antecedentesTexto || !editarBtn) {
+        console.error('❌ Elementos para editar antecedentes no encontrados');
+        return;
+    }
+    
+    // Crear textarea para edición
+    const textarea = document.createElement('textarea');
+    textarea.value = antecedentesTexto.textContent === 'No hay antecedentes médicos registrados.' ? '' : antecedentesTexto.textContent;
+    textarea.style.width = '100%';
+    textarea.style.minHeight = '150px';
+    textarea.style.padding = '15px';
+    textarea.style.border = '2px solid #667eea';
+    textarea.style.borderRadius = '8px';
+    textarea.style.fontSize = '1em';
+    textarea.style.fontFamily = 'inherit';
+    textarea.style.resize = 'vertical';
+    textarea.placeholder = 'Ingrese los antecedentes médicos del paciente...';
+    
+    // Reemplazar el párrafo con el textarea
+    antecedentesTexto.parentNode.replaceChild(textarea, antecedentesTexto);
+    
+    // Cambiar botón a "Guardar"
+    editarBtn.innerHTML = '<i class="fas fa-save"></i> Guardar';
+    editarBtn.onclick = guardarAntecedentes;
+    
+    // Enfocar el textarea
+    textarea.focus();
+}
+
+// Función para guardar antecedentes
+window.guardarAntecedentes = async function() {
+    console.log('💾 Guardando antecedentes...');
+    
+    const textarea = document.querySelector('#modalAntecedentes textarea');
+    const editarBtn = document.getElementById('editarModalAntecedentes');
+    const antecedentesField = document.getElementById('edit-antecedentes');
+    
+    if (!textarea || !editarBtn || !antecedentesField) {
+        console.error('❌ Elementos para guardar antecedentes no encontrados');
+        return;
+    }
+    
+    const nuevosAntecedentes = textarea.value.trim();
+    
+    try {
+        // Mostrar loading en el botón
+        editarBtn.disabled = true;
+        editarBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        
+        // Actualizar el campo oculto
+        antecedentesField.value = nuevosAntecedentes;
+        
+        // Guardar en la base de datos
+        const patientId = getPatientIdFromUrl();
+        const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/actualizar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthHeaders()
+            },
+            body: JSON.stringify({ antecedentes: nuevosAntecedentes })
+        });
+        
+        if (response.ok) {
+            // Crear nuevo párrafo con el contenido actualizado
+            const nuevoParrafo = document.createElement('p');
+            nuevoParrafo.id = 'antecedentesTexto';
+            
+            if (nuevosAntecedentes) {
+                nuevoParrafo.textContent = nuevosAntecedentes;
+                nuevoParrafo.style.color = '#374151';
+                nuevoParrafo.style.fontStyle = 'normal';
+            } else {
+                nuevoParrafo.textContent = 'No hay antecedentes médicos registrados.';
+                nuevoParrafo.style.color = '#9ca3af';
+                nuevoParrafo.style.fontStyle = 'italic';
+            }
+            
+            // Reemplazar textarea con el párrafo
+            textarea.parentNode.replaceChild(nuevoParrafo, textarea);
+            
+            // Restaurar botón
+            editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
+            editarBtn.onclick = editarModalAntecedentes;
+            editarBtn.disabled = false;
+            
+            console.log('✅ Antecedentes guardados exitosamente');
+        } else {
+            throw new Error('Error al guardar antecedentes');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error al guardar antecedentes:', error);
+        alert('Error al guardar los antecedentes');
+        
+        // Restaurar botón
+        editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
+        editarBtn.onclick = editarModalAntecedentes;
+        editarBtn.disabled = false;
+    }
+}
+
+// Función para cerrar modal de medicación
+function cerrarModalMedicacion() {
+    const modal = document.getElementById('modalMedicacion');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.classList.add('hidden');
+    }
+}
+
+// Función para cerrar modal de antecedentes
+function cerrarModalAntecedentes() {
+    const modal = document.getElementById('modalAntecedentes');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.classList.add('hidden');
+    }
+}
+
+// Configurar eventos de los modales
+function initializeModalesMedicacionAntecedentes() {
+    console.log('🔧 Inicializando modales de medicación y antecedentes...');
+    
+    // Modal de medicación
+    const modalMedicacion = document.getElementById('modalMedicacion');
+    const closeModalMedicacion = document.getElementById('closeModalMedicacion');
+    const cerrarModalMedicacionBtn = document.getElementById('cerrarModalMedicacion');
+    const editarModalMedicacionBtn = document.getElementById('editarModalMedicacion');
+    
+    // Modal de antecedentes
+    const modalAntecedentes = document.getElementById('modalAntecedentes');
+    const closeModalAntecedentes = document.getElementById('closeModalAntecedentes');
+    const cerrarModalAntecedentesBtn = document.getElementById('cerrarModalAntecedentes');
+    const editarModalAntecedentesBtn = document.getElementById('editarModalAntecedentes');
+    
+    // Event listeners para modal de medicación
+    if (closeModalMedicacion) {
+        closeModalMedicacion.addEventListener('click', cerrarModalMedicacion);
+    }
+    
+    if (cerrarModalMedicacionBtn) {
+        cerrarModalMedicacionBtn.addEventListener('click', cerrarModalMedicacion);
+    }
+    
+    if (editarModalMedicacionBtn) {
+        editarModalMedicacionBtn.addEventListener('click', editarModalMedicacion);
+        console.log('✅ Event listener agregado para botón editar medicación');
+    }
+    
+    if (modalMedicacion) {
+        modalMedicacion.addEventListener('click', (e) => {
+            if (e.target === modalMedicacion) {
+                cerrarModalMedicacion();
+            }
+        });
+    }
+    
+    // Event listeners para modal de antecedentes
+    if (closeModalAntecedentes) {
+        closeModalAntecedentes.addEventListener('click', cerrarModalAntecedentes);
+    }
+    
+    if (cerrarModalAntecedentesBtn) {
+        cerrarModalAntecedentesBtn.addEventListener('click', cerrarModalAntecedentes);
+    }
+    
+    if (editarModalAntecedentesBtn) {
+        editarModalAntecedentesBtn.addEventListener('click', editarModalAntecedentes);
+        console.log('✅ Event listener agregado para botón editar antecedentes');
+    }
+    
+    if (modalAntecedentes) {
+        modalAntecedentes.addEventListener('click', (e) => {
+            if (e.target === modalAntecedentes) {
+                cerrarModalAntecedentes();
+            }
+        });
+    }
+    
+    // Cerrar modales con Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (modalMedicacion && !modalMedicacion.classList.contains('hidden')) {
+                cerrarModalMedicacion();
+            }
+            if (modalAntecedentes && !modalAntecedentes.classList.contains('hidden')) {
+                cerrarModalAntecedentes();
+            }
+        }
+    });
+    
+    console.log('✅ Modales de medicación y antecedentes inicializados');
+}
+
 // Inicialización principal
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('🚀 Inicializando aplicación de historia clínica...');
     
-    // Inicializar modal
+    // Inicializar modales
     initializeModal();
+    initializeModalesMedicacionAntecedentes();
     
     // Cargar datos del paciente
     const patientId = getPatientIdFromUrl();
@@ -1102,4 +1620,271 @@ document.addEventListener('DOMContentLoaded', async function() {
             `;
         }
     }
+
+    // ===== FUNCIONALIDAD PARA BOTONES DE CONFIRMACIÓN =====
+    
+    // Función para mostrar/ocultar controles de revisión
+    function toggleRevisionControls() {
+        const recetarTextarea = document.getElementById('recetarConsulta');
+        const omeTextarea = document.getElementById('omeConsulta');
+        const recetarControls = document.getElementById('recetarControls');
+        const omeControls = document.getElementById('omeControls');
+        
+        // Mostrar controles para RECETAR si tiene contenido
+        if (recetarTextarea && recetarTextarea.value.trim() !== '') {
+            recetarControls.style.display = 'flex';
+        } else {
+            recetarControls.style.display = 'none';
+        }
+        
+        // Mostrar controles para OME si tiene contenido
+        if (omeTextarea && omeTextarea.value.trim() !== '') {
+            omeControls.style.display = 'flex';
+        } else {
+            omeControls.style.display = 'none';
+        }
+    }
+    
+    // Función para marcar consulta específica como revisada (desde historial)
+    async function marcarConsultaComoRevisada(consultaId, campo) {
+        console.log(`🔧 Iniciando marcarConsultaComoRevisada - consultaId: ${consultaId}, campo: ${campo}`);
+        
+        const pacienteId = getPatientIdFromUrl();
+        if (!pacienteId) {
+            console.error('No se encontró ID de paciente');
+            showNotification('Error: No se encontró ID de paciente', 'error');
+            return;
+        }
+        
+        console.log(`🔧 Paciente ID: ${pacienteId}`);
+        
+        try {
+            const url = `${window.CONFIG.API_BASE_URL}/api/pacientes/${pacienteId}/consultas/${consultaId}/marcar-revisado`;
+            console.log(`🔧 URL: ${url}`);
+            
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeaders()
+                },
+                body: JSON.stringify({ campo: campo })
+            });
+            
+            console.log(`🔧 Response status: ${response.status}`);
+            
+            if (response.ok) {
+                console.log(`✅ Campo ${campo} marcado como revisado para consulta ${consultaId}`);
+                
+                // Actualizar la lista de pacientes en la página principal si está abierta
+                if (window.opener && window.opener.loadPatients) {
+                    console.log('🔄 Actualizando lista de pacientes en ventana principal...');
+                    window.opener.loadPatients();
+                } else {
+                    console.log('⚠️ No se pudo actualizar la lista de pacientes - window.opener no disponible');
+                }
+            } else {
+                const errorText = await response.text();
+                console.error('Error al marcar como revisado:', errorText);
+                showNotification(`Error al marcar como revisado: ${errorText}`, 'error');
+                
+                // Si hay error, revertir el botón
+                const controlsDiv = document.querySelector(`[data-consulta-id="${consultaId}"][data-campo="${campo}"]`)?.closest('.revision-controls-historial');
+                if (controlsDiv) {
+                    controlsDiv.innerHTML = `
+                        <button type="button" class="btn btn-success btn-sm marcar-revisado-btn" data-consulta-id="${consultaId}" data-campo="${campo}">
+                            <i class="fas fa-check"></i> Realizado
+                        </button>
+                    `;
+                }
+            }
+        } catch (error) {
+            console.error('Error de conexión:', error);
+            showNotification(`Error de conexión: ${error.message}`, 'error');
+        }
+    }
+
+    // Función para marcar como revisado
+    async function marcarComoRevisado(campo) {
+        const pacienteId = getPatientIdFromUrl();
+        if (!pacienteId) {
+            console.error('No se encontró ID de paciente');
+            return;
+        }
+        
+        // Obtener la consulta más reciente (asumiendo que es la que se está editando)
+        const consultas = await apiGet(`/api/pacientes/${pacienteId}/consultas`);
+        if (!consultas || consultas.length === 0) {
+            console.error('No se encontraron consultas para el paciente');
+            return;
+        }
+        
+        const consultaMasReciente = consultas[0]; // La primera es la más reciente
+        
+        try {
+            const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${pacienteId}/consultas/${consultaMasReciente.id}/marcar-revisado`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeaders()
+                },
+                body: JSON.stringify({ campo: campo })
+            });
+            
+            if (response.ok) {
+                console.log(`✅ Campo ${campo} marcado como revisado`);
+                
+                // Mostrar mensaje de éxito
+                showNotification('Tarea realizada', 'success');
+                
+                // Ocultar el botón y mostrar estado de revisado
+                const controls = document.getElementById(`${campo}Controls`);
+                if (controls) {
+                    controls.innerHTML = `
+                        <span class="revision-status">
+                            <i class="fas fa-check-circle"></i>
+                            Revisado
+                        </span>
+                    `;
+                }
+                
+                // Actualizar la lista de pacientes en la página principal si está abierta
+                if (window.opener && window.opener.loadPatients) {
+                    window.opener.loadPatients();
+                }
+            } else {
+                const errorText = await response.text();
+                console.error('Error al marcar como revisado:', errorText);
+                showNotification(`Error al marcar como revisado: ${errorText}`, 'error');
+            }
+        } catch (error) {
+            console.error('Error de conexión:', error);
+            showNotification(`Error de conexión: ${error.message}`, 'error');
+        }
+    }
+    
+    // Función para mostrar notificación
+    function showNotification(message, type = 'info') {
+        console.log(`🔔 Mostrando notificación: ${message} (tipo: ${type})`);
+        
+        // Remover notificaciones existentes
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notif => notif.remove());
+        
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 20px 30px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 350px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            ${type === 'success' ? 'background: linear-gradient(135deg, #10b981 0%, #059669 100%);' : ''}
+            ${type === 'error' ? 'background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);' : ''}
+            ${type === 'info' ? 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);' : ''}
+        `;
+        
+        notification.innerHTML = `
+            <div style="font-size: 24px;">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+            </div>
+            <div style="font-size: 18px; font-weight: 800;">${message}</div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animación de entrada
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Auto-remove después de 3 segundos
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 400);
+        }, 3000);
+    }
+    
+    // Event listeners para los botones de confirmación
+    document.addEventListener('DOMContentLoaded', function() {
+        const marcarRecetarBtn = document.getElementById('marcarRecetarRevisado');
+        const marcarOmeBtn = document.getElementById('marcarOmeRevisado');
+        const recetarTextarea = document.getElementById('recetarConsulta');
+        const omeTextarea = document.getElementById('omeConsulta');
+        
+        if (marcarRecetarBtn) {
+            marcarRecetarBtn.addEventListener('click', () => marcarComoRevisado('recetar'));
+        }
+        
+        if (marcarOmeBtn) {
+            marcarOmeBtn.addEventListener('click', () => marcarComoRevisado('ome'));
+        }
+        
+        // Mostrar/ocultar controles cuando cambie el contenido
+        if (recetarTextarea) {
+            recetarTextarea.addEventListener('input', toggleRevisionControls);
+        }
+        
+        if (omeTextarea) {
+            omeTextarea.addEventListener('input', toggleRevisionControls);
+        }
+        
+        // Verificar controles al cargar la página
+        setTimeout(toggleRevisionControls, 500);
+    });
+
+    // Event listener global para botones de "Realizado" usando delegación de eventos
+    document.addEventListener('click', async function(event) {
+        // Verificar si el elemento clickeado es un botón de "Realizado"
+        if (event.target.closest('.marcar-revisado-btn')) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const boton = event.target.closest('.marcar-revisado-btn');
+            const consultaId = boton.getAttribute('data-consulta-id');
+            const campo = boton.getAttribute('data-campo');
+            
+            console.log(`🔧 Botón clickeado - consultaId: ${consultaId}, campo: ${campo}`);
+            
+            if (consultaId && campo) {
+                // Cambiar inmediatamente el botón a "Revisado"
+                const controlsDiv = boton.closest('.revision-controls-historial');
+                if (controlsDiv) {
+                    controlsDiv.innerHTML = `
+                        <div class="revision-status-historial">
+                            <span class="revision-status">
+                                <i class="fas fa-check-circle"></i>
+                                Revisado
+                            </span>
+                        </div>
+                    `;
+                }
+                
+                // Mostrar notificación
+                showNotification('Tarea realizada', 'success');
+                
+                // Llamar a la función para actualizar la base de datos
+                await marcarConsultaComoRevisada(consultaId, campo);
+            } else {
+                console.error('❌ Datos faltantes - consultaId:', consultaId, 'campo:', campo);
+                showNotification('Error: Datos faltantes', 'error');
+            }
+        }
+    });
 });

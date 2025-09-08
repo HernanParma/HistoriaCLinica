@@ -450,21 +450,38 @@ if (typeof CONFIG === 'undefined') {
     }
 
     async function loadPatients() {
+      console.log('🔄 loadPatients() ejecutándose...');
+      
       if (loadingPatients) loadingPatients.classList.remove('hidden');
       if (noPatients) noPatients.classList.add('hidden');
       if (patientsTableBody) patientsTableBody.innerHTML = '';
 
       try {
-        const response = await fetch(`${CONFIG.API_BASE_URL}/api/pacientes`, {
+        // Usar el endpoint optimizado que incluye información de notificaciones
+        const response = await fetch(`${CONFIG.API_BASE_URL}/api/pacientes/con-notificaciones`, {
           headers: { ...getAuthHeaders() }
         });
         if (response.ok) {
           allPatients = await response.json();
           
           // Debug: Verificar la estructura de los datos
-          console.log(`📊 Cargados ${allPatients.length} pacientes desde la API`);
+          console.log(`📊 Cargados ${allPatients.length} pacientes con notificaciones desde la API`);
           
-          filteredPatients = allPatients;
+          // Ordenar pacientes: primero los que tienen notificaciones pendientes
+          const pacientesConNotificaciones = allPatients.filter(p => p.tieneNotificaciones);
+          const pacientesSinNotificaciones = allPatients.filter(p => !p.tieneNotificaciones);
+          
+          // Debug: Verificar pacientes con notificaciones
+          console.log(`⚠️ Pacientes con notificaciones: ${pacientesConNotificaciones.length}`);
+          pacientesConNotificaciones.forEach(p => {
+            console.log(`  - ${p.nombre} ${p.apellido}: RECETAR=${p.tieneRecetarPendiente}, OME=${p.tieneOmePendiente}`);
+          });
+          
+          // Combinar: primero los que tienen notificaciones, luego los demás
+          filteredPatients = [...pacientesConNotificaciones, ...pacientesSinNotificaciones];
+          
+          console.log(`📊 Ordenados: ${pacientesConNotificaciones.length} con notificaciones primero, ${pacientesSinNotificaciones.length} sin notificaciones`);
+          
           currentPage = 1;
           updatePatientsTable();
         } else {
@@ -477,6 +494,7 @@ if (typeof CONFIG === 'undefined') {
         loadingPatients?.classList.add('hidden');
       }
     }
+
   
     function displayPatients(patients) {
       if (!patientsTableBody) return;
@@ -557,6 +575,11 @@ if (typeof CONFIG === 'undefined') {
         const row = document.createElement('tr');
         row.style.cursor = 'pointer';
         
+        // Agregar clase CSS si el paciente tiene notificaciones pendientes
+        if (patient.tieneNotificaciones) {
+          row.classList.add('patient-with-notifications');
+        }
+        
         // Crear cada celda individualmente para asegurar el orden correcto
         const dniCell = document.createElement('td');
         dniCell.textContent = correctedPatient.dni || '';
@@ -573,6 +596,23 @@ if (typeof CONFIG === 'undefined') {
         const nombreCell = document.createElement('td');
         nombreCell.textContent = correctedPatient.nombre || '';
         nombreCell.setAttribute('data-column', 'nombre');
+        
+        // Agregar indicador de notificación si el paciente tiene notificaciones pendientes
+        if (patient.tieneNotificaciones) {
+          const indicador = document.createElement('span');
+          indicador.className = 'notification-indicator';
+          
+          // Usar los campos optimizados del backend
+          if (patient.tieneRecetarPendiente && patient.tieneOmePendiente) {
+            indicador.innerHTML = '<i class="fas fa-pills"></i> RECETAR + OME';
+          } else if (patient.tieneRecetarPendiente) {
+            indicador.innerHTML = '<i class="fas fa-pills"></i> RECETAR';
+          } else if (patient.tieneOmePendiente) {
+            indicador.innerHTML = '<i class="fas fa-capsules"></i> OME';
+          }
+          
+          nombreCell.appendChild(indicador);
+        }
         
         const particularCell = document.createElement('td');
         particularCell.setAttribute('data-column', 'particular');
@@ -673,6 +713,11 @@ if (typeof CONFIG === 'undefined') {
 
     function sortPatients(patients, column, direction) {
       return [...patients].sort((a, b) => {
+        // Prioridad 1: Pacientes con notificaciones siempre van primero
+        if (a.tieneNotificaciones && !b.tieneNotificaciones) return -1;
+        if (!a.tieneNotificaciones && b.tieneNotificaciones) return 1;
+        
+        // Si ambos tienen o no tienen notificaciones, ordenar por la columna seleccionada
         let aValue = a[column];
         let bValue = b[column];
 
@@ -756,7 +801,13 @@ if (typeof CONFIG === 'undefined') {
   
     function handlePatientSearch(e) {
       const searchTerm = e.target.value.toLowerCase().trim();
-      filteredPatients = searchTerm ? filterPatients(searchTerm) : allPatients;
+      const pacientesFiltrados = searchTerm ? filterPatients(searchTerm) : allPatients;
+      
+      // Mantener el orden: primero los que tienen notificaciones
+      const pacientesConNotificaciones = pacientesFiltrados.filter(p => p.tieneNotificaciones);
+      const pacientesSinNotificaciones = pacientesFiltrados.filter(p => !p.tieneNotificaciones);
+      
+      filteredPatients = [...pacientesConNotificaciones, ...pacientesSinNotificaciones];
       currentPage = 1;
       updatePatientsTable();
     }

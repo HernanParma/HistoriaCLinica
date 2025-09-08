@@ -51,6 +51,64 @@ namespace HistoriaClinica.Controllers
         }
 
         /// <summary>
+        /// Obtiene todos los pacientes con información de notificaciones pendientes.
+        /// </summary>
+        [HttpGet("con-notificaciones")]
+        public async Task<ActionResult<IEnumerable<PacienteConNotificacionesDto>>> ObtenerPacientesConNotificaciones()
+        {
+            try
+            {
+                _logger.LogInformation("[API] Solicitando pacientes con notificaciones");
+                
+                // Verificar conexión a la base de datos
+                if (!await _context.Database.CanConnectAsync())
+                {
+                    _logger.LogError("[API] No se puede conectar a la base de datos");
+                    return StatusCode(500, "Error interno: No se puede conectar a la base de datos");
+                }
+
+                // Obtener pacientes con información de notificaciones en una sola consulta
+                var pacientesConNotificaciones = await _context.Pacientes
+                    .Select(p => new PacienteConNotificacionesDto
+                    {
+                        Id = p.Id,
+                        Nombre = p.Nombre ?? "",
+                        Apellido = p.Apellido ?? "",
+                        DNI = p.DNI ?? "",
+                        NumeroAfiliado = p.NumeroAfiliado ?? "",
+                        FechaNacimiento = p.FechaNacimiento,
+                        Telefono = p.Telefono ?? "",
+                        ObraSocial = p.ObraSocial ?? "",
+                        Particular = p.Particular,
+                        Peso = p.Peso,
+                        Altura = p.Altura,
+                        Email = p.Email ?? "",
+                        Antecedentes = p.Antecedentes ?? "",
+                        Medicacion = p.Medicacion ?? "",
+                        TieneNotificaciones = p.Consultas.Any(c => 
+                            (c.Recetar != null && c.Recetar.Trim() != "" && !c.RecetarRevisado) ||
+                            (c.Ome != null && c.Ome.Trim() != "" && !c.OmeRevisado)
+                        ),
+                        TieneRecetarPendiente = p.Consultas.Any(c => 
+                            c.Recetar != null && c.Recetar.Trim() != "" && !c.RecetarRevisado
+                        ),
+                        TieneOmePendiente = p.Consultas.Any(c => 
+                            c.Ome != null && c.Ome.Trim() != "" && !c.OmeRevisado
+                        )
+                    })
+                    .ToListAsync();
+
+                _logger.LogInformation($"[API] {pacientesConNotificaciones.Count} pacientes con notificaciones obtenidos exitosamente");
+                return Ok(pacientesConNotificaciones);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[API] Error al obtener pacientes con notificaciones");
+                return StatusCode(500, $"Error interno al obtener pacientes con notificaciones: {ex.Message}");
+            }
+        }
+
+        /// <summary>
         /// Obtiene un paciente específico por su ID usando DTOs para evitar ciclos de navegación.
         /// </summary>
         [HttpGet("{id}")]
@@ -328,6 +386,8 @@ namespace HistoriaClinica.Controllers
                     Motivo = c.Motivo ?? "",
                     Recetar = c.Recetar ?? "",
                     Ome = c.Ome ?? "",
+                    RecetarRevisado = c.RecetarRevisado,
+                    OmeRevisado = c.OmeRevisado,
                     Notas = c.Notas ?? "",
                     Archivos = DeserializarArchivos(c.ArchivosJson),
                     // Valores de laboratorio
@@ -417,8 +477,8 @@ namespace HistoriaClinica.Controllers
             _logger.LogInformation("[API] Laboratorio recibido - GOT={GOT}, GPT={GPT}, CT={CT}, TG={TG}, VITD={VITD}, FAL={FAL}, COL={COL}, B12={B12}", 
                 crearConsultaDto.GOT, crearConsultaDto.GPT, crearConsultaDto.CT, crearConsultaDto.TG, 
                 crearConsultaDto.VITD, crearConsultaDto.FAL, crearConsultaDto.COL, crearConsultaDto.B12);
-            _logger.LogInformation("[API] Laboratorio recibido - TSH={TSH}, URICO={URICO}, ORINA={ORINA}", 
-                crearConsultaDto.TSH, crearConsultaDto.URICO, crearConsultaDto.ORINA);
+            _logger.LogInformation("[API] Laboratorio recibido - TSH={TSH}, URICO={URICO}, ORINA={ORINA}, ValoresNoIncluidos={ValoresNoIncluidos}", 
+                crearConsultaDto.TSH, crearConsultaDto.URICO, crearConsultaDto.ORINA, crearConsultaDto.ValoresNoIncluidos);
             
             // Verificar que el paciente existe
             var paciente = await _context.Pacientes.FindAsync(pacienteId);
@@ -486,7 +546,8 @@ namespace HistoriaClinica.Controllers
                 B12 = crearConsultaDto.B12,
                 TSH = crearConsultaDto.TSH,
                 ORINA = crearConsultaDto.ORINA,
-                URICO = crearConsultaDto.URICO
+                URICO = crearConsultaDto.URICO,
+                ValoresNoIncluidos = crearConsultaDto.ValoresNoIncluidos?.Trim()
             };
 
             // Agregar a la base de datos
@@ -513,6 +574,8 @@ namespace HistoriaClinica.Controllers
                 Motivo = nuevaConsulta.Motivo,
                 Recetar = nuevaConsulta.Recetar,
                 Ome = nuevaConsulta.Ome,
+                RecetarRevisado = nuevaConsulta.RecetarRevisado,
+                OmeRevisado = nuevaConsulta.OmeRevisado,
                 Notas = nuevaConsulta.Notas,
                 Archivos = DeserializarArchivos(nuevaConsulta.ArchivosJson),
                 // Valores de laboratorio
@@ -534,7 +597,8 @@ namespace HistoriaClinica.Controllers
                 B12 = nuevaConsulta.B12,
                 TSH = nuevaConsulta.TSH,
                 ORINA = nuevaConsulta.ORINA,
-                URICO = nuevaConsulta.URICO
+                URICO = nuevaConsulta.URICO,
+                ValoresNoIncluidos = nuevaConsulta.ValoresNoIncluidos
             };
             
             return CreatedAtAction(nameof(ObtenerConsultasPorPaciente), new { id = pacienteId }, consultaCreada);
@@ -1194,6 +1258,57 @@ namespace HistoriaClinica.Controllers
                 return StatusCode(500, $"Error al probar conexión: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Marca como revisado el campo Recetar u Ome de una consulta específica
+        /// </summary>
+        [HttpPut("{pacienteId}/consultas/{consultaId}/marcar-revisado")]
+        public async Task<ActionResult> MarcarComoRevisado(int pacienteId, int consultaId, [FromBody] MarcarRevisadoDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("[API] Marcando como revisado - Paciente: {PacienteId}, Consulta: {ConsultaId}, Campo: {Campo}", 
+                    pacienteId, consultaId, dto.Campo);
+
+                // Verificar que la consulta existe y pertenece al paciente
+                var consulta = await _context.Consultas
+                    .FirstOrDefaultAsync(c => c.Id == consultaId && c.PacienteId == pacienteId);
+
+                if (consulta == null)
+                {
+                    _logger.LogWarning("[API] Consulta {ConsultaId} no encontrada para paciente {PacienteId}", consultaId, pacienteId);
+                    return NotFound(new { mensaje = "Consulta no encontrada" });
+                }
+
+                // Actualizar el campo correspondiente
+                if (dto.Campo.ToLower() == "recetar")
+                {
+                    consulta.RecetarRevisado = true;
+                    _logger.LogInformation("[API] Campo Recetar marcado como revisado para consulta {ConsultaId}", consultaId);
+                }
+                else if (dto.Campo.ToLower() == "ome")
+                {
+                    consulta.OmeRevisado = true;
+                    _logger.LogInformation("[API] Campo Ome marcado como revisado para consulta {ConsultaId}", consultaId);
+                }
+                else
+                {
+                    _logger.LogWarning("[API] Campo inválido: {Campo}", dto.Campo);
+                    return BadRequest(new { mensaje = "Campo debe ser 'recetar' u 'ome'" });
+                }
+
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("[API] Consulta {ConsultaId} actualizada exitosamente", consultaId);
+
+                return Ok(new { mensaje = "Campo marcado como revisado exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[API] Error al marcar como revisado - Paciente: {PacienteId}, Consulta: {ConsultaId}", 
+                    pacienteId, consultaId);
+                return StatusCode(500, new { mensaje = "Error interno del servidor" });
+            }
+        }
     }
 
     // ===== DTOs para evitar ciclos de navegación =====
@@ -1230,6 +1345,8 @@ namespace HistoriaClinica.Controllers
         public string? Motivo { get; set; }
         public string? Recetar { get; set; }
         public string? Ome { get; set; }
+        public bool RecetarRevisado { get; set; }
+        public bool OmeRevisado { get; set; }
         public string? Notas { get; set; }
         public List<ArchivoConsultaDto>? Archivos { get; set; }
         
@@ -1253,6 +1370,7 @@ namespace HistoriaClinica.Controllers
         public double? TSH { get; set; }
         public string? ORINA { get; set; }
         public double? URICO { get; set; }
+        public string? ValoresNoIncluidos { get; set; }
     }
 
     /// <summary>
@@ -1301,6 +1419,7 @@ namespace HistoriaClinica.Controllers
         public double? TSH { get; set; }
         public string? ORINA { get; set; }
         public double? URICO { get; set; }
+        public string? ValoresNoIncluidos { get; set; }
         
         // Archivos adjuntos
         public List<ArchivoConsultaDto>? Archivos { get; set; }
@@ -1394,5 +1513,38 @@ namespace HistoriaClinica.Controllers
         
         [JsonPropertyName("medicacion")]
         public string? Medicacion { get; set; }
+    }
+
+    /// <summary>
+    /// DTO para marcar como revisado un campo de consulta
+    /// </summary>
+    public class MarcarRevisadoDto
+    {
+        [JsonPropertyName("campo")]
+        public string Campo { get; set; } = "";
+    }
+
+    /// <summary>
+    /// DTO para paciente con información de notificaciones
+    /// </summary>
+    public class PacienteConNotificacionesDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = "";
+        public string Apellido { get; set; } = "";
+        public string? DNI { get; set; }
+        public string? NumeroAfiliado { get; set; }
+        public DateTime? FechaNacimiento { get; set; }
+        public string? Telefono { get; set; }
+        public string? ObraSocial { get; set; }
+        public bool Particular { get; set; }
+        public decimal? Peso { get; set; }
+        public int? Altura { get; set; }
+        public string? Email { get; set; }
+        public string? Antecedentes { get; set; }
+        public string? Medicacion { get; set; }
+        public bool TieneNotificaciones { get; set; }
+        public bool TieneRecetarPendiente { get; set; }
+        public bool TieneOmePendiente { get; set; }
     }
 }

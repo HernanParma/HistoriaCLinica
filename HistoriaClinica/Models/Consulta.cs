@@ -32,8 +32,13 @@ namespace HistoriaClinica.Models
         public double? TSH { get; set; }
         public string? ORINA { get; set; }
         public double? URICO { get; set; }
+        public string? ValoresNoIncluidos { get; set; }
         public string? Recetar { get; set; }
         public string? Ome { get; set; }
+
+        // Estados de revisión
+        public bool RecetarRevisado { get; set; } = false;
+        public bool OmeRevisado { get; set; } = false;
 
         // Notas
         public string? Notas { get; set; }

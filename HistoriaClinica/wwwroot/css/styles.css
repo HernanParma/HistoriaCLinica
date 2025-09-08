@@ -752,6 +752,52 @@ body {
 .patients-table th:nth-child(8), .patients-table td:nth-child(8) { width: 10%; } /* Fecha Nac. */
 .patients-table th:nth-child(9), .patients-table td:nth-child(9) { width: 9%; }  /* Acciones */
 
+/* Estilos para pacientes con notificaciones pendientes */
+.patients-table tbody tr.patient-with-notifications {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-left: 4px solid #ffc107;
+    position: relative;
+}
+
+.patients-table tbody tr.patient-with-notifications:hover {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.patients-table tbody tr.patient-with-notifications::before {
+    content: "⚠️";
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    z-index: 1;
+}
+
+.patients-table tbody tr.patient-with-notifications td {
+    font-weight: 600;
+    color: #856404;
+}
+
+/* Indicador de notificación en la fila */
+.notification-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #ffc107;
+    color: #856404;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.notification-indicator i {
+    font-size: 10px;
+}
+
 .action-buttons {
     display: flex;
     gap: 8px;

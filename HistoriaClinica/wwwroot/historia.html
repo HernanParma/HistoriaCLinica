@@ -789,6 +789,78 @@
         display: none !important;
     }
 
+    /* ===== ESTILOS PARA MODALES DE MEDICACIÓN Y ANTECEDENTES ===== */
+    
+    /* Contenido de medicación y antecedentes */
+    .medicacion-content,
+    .antecedentes-content {
+        padding: 0 !important;
+    }
+    
+    .medicacion-info,
+    .antecedentes-info {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+        border-radius: 12px !important;
+        padding: 25px !important;
+        margin-bottom: 20px !important;
+        border: 1px solid #e2e8f0 !important;
+        min-height: 200px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    .medicacion-info p,
+    .antecedentes-info p {
+        margin: 0 !important;
+        font-size: 1.1em !important;
+        line-height: 1.6 !important;
+        color: #374151 !important;
+        text-align: center !important;
+        font-weight: 500 !important;
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+    }
+    
+    .medicacion-info p:empty::before,
+    .antecedentes-info p:empty::before {
+        content: "No hay información registrada." !important;
+        color: #9ca3af !important;
+        font-style: italic !important;
+    }
+    
+    /* Acciones del modal */
+    .modal-actions {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 15px !important;
+        padding-top: 20px !important;
+        border-top: 1px solid #e2e8f0 !important;
+    }
+    
+    /* Botón de cerrar modal */
+    .btn-close-modal {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 12px 24px !important;
+        font-size: 1em !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        min-width: 120px !important;
+        justify-content: center !important;
+    }
+    
+    .btn-close-modal:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3) !important;
+    }
+
     /* Optimizaciones adicionales para mejor uso del espacio */
     .form-header {
         margin-bottom: 20px !important;
@@ -1266,6 +1338,79 @@
     .form-group input[name="ome"] {
         border-color: #667eea !important;
     }
+
+    /* Estilos para controles de revisión */
+    .revision-controls {
+        margin-top: 8px;
+        padding: 8px;
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .revision-controls .btn {
+        font-size: 12px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .revision-controls .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .revision-controls .btn-success:hover {
+        background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+    }
+
+    .revision-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #d4edda;
+        color: #155724;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .revision-status i {
+        color: #28a745;
+    }
+
+    /* Estilos para controles de revisión en historial */
+        .revision-controls-historial {
+            margin-top: 8px;
+            padding: 6px;
+            display: inline-block;
+        }
+
+    .revision-controls-historial .btn {
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+
+    .revision-status-historial {
+        margin-top: 6px;
+        display: inline-block;
+    }
+
+    .detail-item.recetar-item,
+    .detail-item.ome-item {
+        position: relative;
+        padding-bottom: 8px;
+    }
     
     /* Historial de consultas */
     #historialConsultas {
@@ -1539,11 +1684,21 @@
                     <div class="form-group">
                         <label for="recetarConsulta">Recetar:</label>
                         <textarea id="recetarConsulta" name="recetar" rows="2" placeholder="Medicamentos a recetar..."></textarea>
+                        <div class="revision-controls" id="recetarControls" style="display: none;">
+                            <button type="button" class="btn btn-success btn-sm" id="marcarRecetarRevisado">
+                                <i class="fas fa-check"></i> Realizado
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="omeConsulta">OME:</label>
                         <textarea id="omeConsulta" name="ome" rows="2" placeholder="Tratamiento OME..."></textarea>
+                        <div class="revision-controls" id="omeControls" style="display: none;">
+                            <button type="button" class="btn btn-success btn-sm" id="marcarOmeRevisado">
+                                <i class="fas fa-check"></i> Realizado
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -1558,85 +1713,90 @@
                             <!-- Primera fila -->
                             <div class="form-group">
                                 <label for="grConsulta">GR:</label>
-                                <input type="number" id="grConsulta" name="gr" step="0.1" placeholder="Glóbulos Rojos">
+                                <input type="text" id="grConsulta" name="gr" placeholder="Glóbulos Rojos" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="htoConsulta">HTO:</label>
-                                <input type="number" id="htoConsulta" name="hto" step="0.1" placeholder="Hematocrito">
+                                <input type="text" id="htoConsulta" name="hto" placeholder="Hematocrito" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="hbConsulta">HB:</label>
-                                <input type="number" id="hbConsulta" name="hb" step="0.1" placeholder="Hemoglobina">
+                                <input type="text" id="hbConsulta" name="hb" placeholder="Hemoglobina" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="gbConsulta">GB:</label>
-                                <input type="number" id="gbConsulta" name="gb" step="0.1" placeholder="Glóbulos Blancos">
+                                <input type="text" id="gbConsulta" name="gb" placeholder="Glóbulos Blancos" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <!-- Segunda fila -->
                             <div class="form-group">
                                 <label for="plaqConsulta">PLAQ:</label>
-                                <input type="number" id="plaqConsulta" name="plaq" step="0.1" placeholder="Plaquetas">
+                                <input type="text" id="plaqConsulta" name="plaq" placeholder="Plaquetas" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="glucConsulta">GLUC:</label>
-                                <input type="number" id="glucConsulta" name="gluc" step="0.1" placeholder="Glucosa">
+                                <input type="text" id="glucConsulta" name="gluc" placeholder="Glucosa" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="ureaConsulta">UREA:</label>
-                                <input type="number" id="ureaConsulta" name="urea" step="0.1" placeholder="Urea">
+                                <input type="text" id="ureaConsulta" name="urea" placeholder="Urea" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="crConsulta">CR:</label>
-                                <input type="number" id="crConsulta" name="cr" step="0.1" placeholder="Creatinina">
+                                <input type="text" id="crConsulta" name="cr" placeholder="Creatinina" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <!-- Tercera fila -->
                             <div class="form-group">
                                 <label for="gotConsulta">GOT:</label>
-                                <input type="number" id="gotConsulta" name="got" step="0.1" placeholder="GOT">
+                                <input type="text" id="gotConsulta" name="got" placeholder="GOT" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="gptConsulta">GPT:</label>
-                                <input type="number" id="gptConsulta" name="gpt" step="0.1" placeholder="GPT">
+                                <input type="text" id="gptConsulta" name="gpt" placeholder="GPT" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="ctConsulta">CT:</label>
-                                <input type="number" id="ctConsulta" name="ct" step="0.1" placeholder="Colesterol Total">
+                                <input type="text" id="ctConsulta" name="ct" placeholder="Colesterol Total" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="tgConsulta">TG:</label>
-                                <input type="number" id="tgConsulta" name="tg" step="0.1" placeholder="Triglicéridos">
+                                <input type="text" id="tgConsulta" name="tg" placeholder="Triglicéridos" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <!-- Cuarta fila -->
                             <div class="form-group">
                                 <label for="vitdConsulta">VITD:</label>
-                                <input type="number" id="vitdConsulta" name="vitd" step="0.1" placeholder="Vitamina D">
+                                <input type="text" id="vitdConsulta" name="vitd" placeholder="Vitamina D" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="falConsulta">FAL:</label>
-                                <input type="number" id="falConsulta" name="fal" step="0.1" placeholder="Fosfatasa Alcalina">
+                                <input type="text" id="falConsulta" name="fal" placeholder="Fosfatasa Alcalina" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="colConsulta">COL:</label>
-                                <input type="number" id="colConsulta" name="col" step="0.1" placeholder="Colesterol">
+                                <input type="text" id="colConsulta" name="col" placeholder="Colesterol" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="b12Consulta">B12:</label>
-                                <input type="number" id="b12Consulta" name="b12" step="0.1" placeholder="Vitamina B12">
+                                <input type="text" id="b12Consulta" name="b12" placeholder="Vitamina B12" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <!-- Quinta fila -->
                             <div class="form-group">
                                 <label for="tshConsulta">TSH:</label>
-                                <input type="number" id="tshConsulta" name="tsh" step="0.1" placeholder="TSH">
+                                <input type="text" id="tshConsulta" name="tsh" placeholder="TSH" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="uricoConsulta">URICO:</label>
-                                <input type="number" id="uricoConsulta" name="urico" step="0.1" placeholder="Ácido Úrico">
+                                <input type="text" id="uricoConsulta" name="urico" placeholder="Ácido Úrico" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group full-width">
                                 <label for="orinaConsulta">ORINA:</label>
                                 <input type="text" id="orinaConsulta" name="orina" placeholder="Análisis de orina">
                             </div>
                             
+                            <!-- Quinta fila -->
+                            <div class="form-group full-width">
+                                <label for="valoresNoIncluidosConsulta">Valores no incluidos:</label>
+                                <input type="text" id="valoresNoIncluidosConsulta" name="valoresNoIncluidos" placeholder="Otros valores de laboratorio no incluidos">
+                            </div>
 
                         </div>
                     </div>
@@ -1668,6 +1828,60 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Medicación Actual -->
+    <div id="modalMedicacion" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-pills"></i> Medicación Actual</h3>
+                <button id="closeModalMedicacion" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="medicacion-content">
+                    <div class="medicacion-info">
+                        <p id="medicacionTexto">No hay información de medicación registrada.</p>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-primary" id="editarModalMedicacion">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cerrarModalMedicacion">
+                            <i class="fas fa-times"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Antecedentes Médicos -->
+    <div id="modalAntecedentes" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-history"></i> Antecedentes Médicos</h3>
+                <button id="closeModalAntecedentes" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="antecedentes-content">
+                    <div class="antecedentes-info">
+                        <p id="antecedentesTexto">No hay antecedentes médicos registrados.</p>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-primary" id="editarModalAntecedentes">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cerrarModalAntecedentes">
+                            <i class="fas fa-times"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

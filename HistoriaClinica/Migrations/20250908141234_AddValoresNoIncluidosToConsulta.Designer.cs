@@ -4,6 +4,7 @@ using HistoriaClinica.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HistoriaClinica.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250908141234_AddValoresNoIncluidosToConsulta")]
+    partial class AddValoresNoIncluidosToConsulta
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,9 +88,6 @@ namespace HistoriaClinica.Migrations
                     b.Property<string>("Ome")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("OmeRevisado")
-                        .HasColumnType("bit");
-
                     b.Property<double?>("PLAQ")
                         .HasColumnType("float");
 
@@ -96,9 +96,6 @@ namespace HistoriaClinica.Migrations
 
                     b.Property<string>("Recetar")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("RecetarRevisado")
-                        .HasColumnType("bit");
 
                     b.Property<double?>("TG")
                         .HasColumnType("float");
