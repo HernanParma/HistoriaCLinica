@@ -409,7 +409,8 @@ namespace HistoriaClinica.Controllers
                     B12 = c.B12,
                     TSH = c.TSH,
                     ORINA = c.ORINA,
-                    URICO = c.URICO
+                    URICO = c.URICO,
+                    ValoresNoIncluidos = c.ValoresNoIncluidos
                 }).ToList();
                 
                 // Logging detallado de cada consulta para debug
@@ -423,8 +424,8 @@ namespace HistoriaClinica.Controllers
                         consulta.GR, consulta.HTO, consulta.HB, consulta.GB, consulta.PLAQ, consulta.GLUC, consulta.UREA, consulta.CR);
                     _logger.LogInformation("[API] Laboratorio - GOT={GOT}, GPT={GPT}, CT={CT}, TG={TG}, VITD={VITD}, FAL={FAL}, COL={COL}, B12={B12}", 
                         consulta.GOT, consulta.GPT, consulta.CT, consulta.TG, consulta.VITD, consulta.FAL, consulta.COL, consulta.B12);
-                    _logger.LogInformation("[API] Laboratorio - TSH={TSH}, URICO={URICO}, ORINA={ORINA}", 
-                        consulta.TSH, consulta.URICO, consulta.ORINA);
+                    _logger.LogInformation("[API] Laboratorio - TSH={TSH}, URICO={URICO}, ORINA={ORINA}, ValoresNoIncluidos={ValoresNoIncluidos}", 
+                        consulta.TSH, consulta.URICO, consulta.ORINA, consulta.ValoresNoIncluidos);
                 }
 
                 _logger.LogInformation("[API] Preparando respuesta JSON...");
@@ -757,6 +758,7 @@ namespace HistoriaClinica.Controllers
             consulta.TSH = actualizarConsultaDto.TSH;
             consulta.ORINA = actualizarConsultaDto.ORINA;
             consulta.URICO = actualizarConsultaDto.URICO;
+            consulta.ValoresNoIncluidos = actualizarConsultaDto.ValoresNoIncluidos?.Trim();
 
             // Guardar cambios
             await _context.SaveChangesAsync();
@@ -792,7 +794,8 @@ namespace HistoriaClinica.Controllers
                 B12 = consulta.B12,
                 TSH = consulta.TSH,
                 ORINA = consulta.ORINA,
-                URICO = consulta.URICO
+                URICO = consulta.URICO,
+                ValoresNoIncluidos = consulta.ValoresNoIncluidos
             };
             
             return Ok(consultaActualizada);
@@ -871,6 +874,8 @@ namespace HistoriaClinica.Controllers
             try
             {
                 _logger.LogInformation("[API] Actualizando paciente con ID: {PatientId} (PUT)", id);
+                _logger.LogInformation("[API] Datos recibidos - FechaNacimiento: {FechaNacimiento}, Email: {Email}, Telefono: {Telefono}", 
+                    actualizarPacienteDto.FechaNacimiento, actualizarPacienteDto.Email, actualizarPacienteDto.Telefono);
                 
                 // Verificar conexión a la base de datos
                 if (!await _context.Database.CanConnectAsync())
@@ -916,8 +921,8 @@ namespace HistoriaClinica.Controllers
                     paciente.Medicacion = actualizarPacienteDto.Medicacion.Trim();
 
                 // Actualizar campos opcionales
-                if (actualizarPacienteDto.FechaNacimiento.HasValue)
-                    paciente.FechaNacimiento = actualizarPacienteDto.FechaNacimiento.Value;
+                paciente.FechaNacimiento = actualizarPacienteDto.FechaNacimiento;
+                _logger.LogInformation("[API] FechaNacimiento actualizada a: {FechaNacimiento}", paciente.FechaNacimiento);
                 
                 if (actualizarPacienteDto.Peso.HasValue)
                     paciente.Peso = actualizarPacienteDto.Peso.Value;

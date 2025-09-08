@@ -83,12 +83,6 @@ function renderPatientSidebar(p) {
     box.innerHTML = `
         <div class="patient-data-container">
             <div class="patient-section" data-section="personal">
-                <div class="section-header">
-                    <h4><i class="fas fa-user"></i> Información Personal</h4>
-                    <button class="btn-edit-section" onclick="toggleEditMode('personal')">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                </div>
                 <div class="editable-field">
                     <label>Nombre:</label>
                     <input type="text" id="edit-nombre" value="${p.nombre || p.Nombre || ''}" placeholder="Nombre del paciente" disabled>
@@ -113,6 +107,26 @@ function renderPatientSidebar(p) {
                     <label>Teléfono:</label>
                     <input type="tel" id="edit-telefono" value="${p.telefono || p.Telefono || ''}" placeholder="Teléfono" disabled>
                 </div>
+                <div class="editable-field">
+                    <label>Email:</label>
+                    <input type="email" id="edit-email" value="${p.email || p.Email || ''}" placeholder="Email del paciente" disabled>
+                </div>
+                <div class="editable-field">
+                    <label>Fecha de Nacimiento:</label>
+                    <input type="date" id="edit-fechaNacimiento" value="${p.fechaNacimiento || p.FechaNacimiento || ''}" disabled>
+                </div>
+                <div class="editable-field">
+                    <label>Edad:</label>
+                    <input type="text" id="edit-edad" value="${p.edad || p.Edad || ''}" placeholder="Edad (calculada automáticamente)" readonly style="background-color: #f3f4f6; color: #6b7280;">
+                </div>
+                <div class="editable-field">
+                    <label>Peso (kg):</label>
+                    <input type="number" id="edit-peso" value="${p.peso || p.Peso || ''}" placeholder="Peso en kilogramos" disabled>
+                </div>
+                <div class="editable-field">
+                    <label>Altura (cm):</label>
+                    <input type="number" id="edit-altura" value="${p.altura || p.Altura || ''}" placeholder="Altura en centímetros" disabled>
+                </div>
                 <div class="section-actions hidden">
                     <button class="btn-save-section" onclick="saveSection('personal')">
                         <i class="fas fa-save"></i> Guardar
@@ -120,28 +134,37 @@ function renderPatientSidebar(p) {
                 </div>
             </div>
             
-            <div class="patient-section" data-section="medicacion">
-                <div class="section-header">
-                    <button class="btn-edit-section" onclick="abrirModalMedicacion()">
-                        <i class="fas fa-pills"></i> Medicación
-                    </button>
-                </div>
-                <textarea id="edit-medicacion" style="display: none;">${p.medicacion || p.Medicacion || ''}</textarea>
-            </div>
-            
-            <div class="patient-section" data-section="antecedentes">
-                <div class="section-header">
-                    <button class="btn-edit-section" onclick="abrirModalAntecedentes()">
-                        <i class="fas fa-history"></i> Antecedentes
-                    </button>
-                </div>
-                <textarea id="edit-antecedentes" style="display: none;">${p.antecedentes || p.Antecedentes || ''}</textarea>
-            </div>
+            <!-- Los botones de Medicación y Antecedentes ahora están en el header principal -->
+            <textarea id="edit-medicacion" style="display: none;">${p.medicacion || p.Medicacion || ''}</textarea>
+            <textarea id="edit-antecedentes" style="display: none;">${p.antecedentes || p.Antecedentes || ''}</textarea>
         </div>
     `;
     
     // Configurar eventos de edición
     setupEditEvents();
+    
+    // Configurar evento para calcular edad automáticamente
+    const fechaNacimientoInput = document.getElementById('edit-fechaNacimiento');
+    const edadInput = document.getElementById('edit-edad');
+    
+    if (fechaNacimientoInput && edadInput) {
+        fechaNacimientoInput.addEventListener('change', function() {
+            if (this.value) {
+                const fechaNacimiento = new Date(this.value);
+                const hoy = new Date();
+                let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+                const mes = hoy.getMonth() - fechaNacimiento.getMonth();
+                
+                if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+                    edad--;
+                }
+                
+                edadInput.value = edad;
+            } else {
+                edadInput.value = '';
+            }
+        });
+    }
 }
 
 // ===== NUEVO SISTEMA DE EDICIÓN POR SECCIONES =====
@@ -162,8 +185,16 @@ function toggleEditMode(section) {
         return;
     }
     
-    const editButton = sectionElement.querySelector('.btn-edit-section');
-    const saveButton = sectionElement.querySelector('.section-actions');
+    // Para la sección personal, el botón de editar está en el sidebar-header
+    let editButton, saveButton;
+    if (section === 'personal') {
+        editButton = document.querySelector('.btn-edit-sidebar');
+        saveButton = sectionElement.querySelector('.section-actions');
+    } else {
+        editButton = sectionElement.querySelector('.btn-edit-section');
+        saveButton = sectionElement.querySelector('.section-actions');
+    }
+    
     const fields = getSectionFields(section);
     
     if (fields.length === 0) {
@@ -176,16 +207,24 @@ function toggleEditMode(section) {
     if (isEditing) {
         // Cancelar edición
         fields.forEach(field => field.disabled = true);
-        editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
-        editButton.classList.remove('editing');
-        saveButton.classList.add('hidden');
+        if (editButton) {
+            editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
+            editButton.classList.remove('editing');
+        }
+        if (saveButton) {
+            saveButton.classList.add('hidden');
+        }
         console.log(`❌ Edición cancelada para sección: ${section}`);
     } else {
         // Activar edición
         fields.forEach(field => field.disabled = false);
-        editButton.innerHTML = '<i class="fas fa-times"></i> Cancelar';
-        editButton.classList.add('editing');
-        saveButton.classList.remove('hidden');
+        if (editButton) {
+            editButton.innerHTML = '<i class="fas fa-times"></i> Cancelar';
+            editButton.classList.add('editing');
+        }
+        if (saveButton) {
+            saveButton.classList.remove('hidden');
+        }
         console.log(`✏️ Edición activada para sección: ${section}`);
     }
 }
@@ -202,7 +241,11 @@ function getSectionFields(section) {
                 document.getElementById('edit-dni'),
                 document.getElementById('edit-numeroAfiliado'),
                 document.getElementById('edit-obraSocial'),
-                document.getElementById('edit-telefono')
+                document.getElementById('edit-telefono'),
+                document.getElementById('edit-email'),
+                document.getElementById('edit-fechaNacimiento'),
+                document.getElementById('edit-peso'),
+                document.getElementById('edit-altura')
             ];
             break;
         case 'medicacion':
@@ -238,14 +281,24 @@ async function saveSection(section) {
     const sectionData = {};
     const patientId = getPatientIdFromUrl();
     
+    if (!patientId) {
+        console.error('❌ No se encontró ID del paciente en la URL');
+        showErrorMessage('Error: No se encontró ID del paciente');
+        return;
+    }
+    
     switch (section) {
         case 'personal':
-            sectionData.nombre = document.getElementById('edit-nombre')?.value || '';
-            sectionData.apellido = document.getElementById('edit-apellido')?.value || '';
-            sectionData.dni = document.getElementById('edit-dni')?.value || '';
-            sectionData.numeroAfiliado = document.getElementById('edit-numeroAfiliado')?.value || '';
-            sectionData.obraSocial = document.getElementById('edit-obraSocial')?.value || '';
-            sectionData.telefono = document.getElementById('edit-telefono')?.value || '';
+            sectionData.nombre = document.getElementById('edit-nombre')?.value?.trim() || '';
+            sectionData.apellido = document.getElementById('edit-apellido')?.value?.trim() || '';
+            sectionData.dni = document.getElementById('edit-dni')?.value?.trim() || '';
+            sectionData.numeroAfiliado = document.getElementById('edit-numeroAfiliado')?.value?.trim() || null;
+            sectionData.obraSocial = document.getElementById('edit-obraSocial')?.value?.trim() || null;
+            sectionData.telefono = document.getElementById('edit-telefono')?.value?.trim() || null;
+            sectionData.email = document.getElementById('edit-email')?.value?.trim() || null;
+            sectionData.fechaNacimiento = document.getElementById('edit-fechaNacimiento')?.value || null;
+            sectionData.peso = document.getElementById('edit-peso')?.value ? parseFloat(document.getElementById('edit-peso').value) : null;
+            sectionData.altura = document.getElementById('edit-altura')?.value ? parseInt(document.getElementById('edit-altura').value) : null;
             break;
         case 'medicacion':
             sectionData.medicacion = document.getElementById('edit-medicacion')?.value || '';
@@ -259,9 +312,9 @@ async function saveSection(section) {
     }
     
     try {
-        // Hacer petición POST para actualizar el paciente
-        const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/actualizar`, {
-            method: 'POST',
+        // Hacer petición PUT para actualizar el paciente
+        const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 ...getAuthHeaders()
@@ -399,8 +452,6 @@ async function loadPatientConsultations(patientId) {
 
 // Función para renderizar valores de laboratorio
 function renderLaboratorioValues(consulta) {
-    // Debug: Log de la consulta completa para ver qué datos tenemos
-    console.log('🔍 Debug - Datos de consulta para laboratorio:', consulta);
     
     // Función auxiliar para obtener el valor de laboratorio
     function getLabValue(consulta, ...keys) {
@@ -436,9 +487,8 @@ function renderLaboratorioValues(consulta) {
         { key: 'valoresNoIncluidos', label: 'Valores no incluidos', value: getLabValue(consulta, 'valoresNoIncluidos', 'ValoresNoIncluidos') }
     ];
 
-    // Debug: Log de valores encontrados
+    // Filtrar valores que tienen datos
     const valoresConDatos = labValues.filter(item => item.value !== null && item.value !== undefined && item.value !== '');
-    console.log('🔍 Debug - Valores de laboratorio encontrados:', valoresConDatos);
 
     const labHTML = valoresConDatos
         .map(item => `
@@ -449,12 +499,9 @@ function renderLaboratorioValues(consulta) {
         `).join('');
 
     if (labHTML === '') {
-        console.log('⚠️ Debug - No se encontraron valores de laboratorio para la consulta');
-        console.log('🔍 Debug - Todos los valores de laboratorio:', labValues);
         return '<div class="no-lab-values">No hay valores de laboratorio registrados para esta consulta.</div>';
     }
 
-    console.log('✅ Debug - HTML de laboratorio generado:', labHTML);
     return labHTML;
 }
 
@@ -625,6 +672,9 @@ function renderConsultas(consultas) {
                     <span>${new Date(consulta.fecha || consulta.Fecha).toLocaleDateString()}</span>
                 </div>
                 <div class="consulta-actions">
+                    <button class="btn-editar-consulta" onclick="editarConsulta(${consulta.id || consulta.Id})" title="Editar consulta">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
                     <button class="btn-eliminar-consulta" onclick="eliminarConsulta(${consulta.id || consulta.Id})" title="Eliminar consulta">
                         <i class="fas fa-trash-alt"></i> Eliminar
                     </button>
@@ -1887,4 +1937,285 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         }
     });
+
+    // ===== FUNCIONALIDAD PARA EDITAR CONSULTAS =====
+    
+    // Variable global para almacenar el ID de la consulta que se está editando
+    let consultaEditandoId = null;
+    
+    // Función para abrir el modal de edición de consulta
+    window.editarConsulta = async function(consultaId) {
+        console.log('✏️ Editando consulta:', consultaId);
+        
+        consultaEditandoId = consultaId;
+        const modal = document.getElementById('modalEditarConsulta');
+        const form = document.getElementById('formEditarConsulta');
+        
+        if (!modal || !form) {
+            console.error('❌ Modal o formulario de edición no encontrados');
+            return;
+        }
+        
+        try {
+            // Obtener datos de la consulta
+            const patientId = getPatientIdFromUrl();
+            const consultas = await apiGet(`/api/pacientes/${patientId}/consultas`);
+            const consulta = consultas.find(c => (c.id || c.Id) == consultaId);
+            
+            if (!consulta) {
+                console.error('❌ Consulta no encontrada');
+                alert('Error: No se encontró la consulta');
+                return;
+            }
+            
+            // Llenar el formulario con los datos actuales
+            llenarFormularioEdicion(consulta);
+            
+            // Mostrar modal
+            modal.classList.remove('hidden');
+            modal.classList.add('show');
+            
+        } catch (error) {
+            console.error('❌ Error al cargar datos de la consulta:', error);
+            alert('Error al cargar los datos de la consulta');
+        }
+    };
+    
+    // Función para llenar el formulario con los datos de la consulta
+    function llenarFormularioEdicion(consulta) {
+        // Campos básicos (la fecha se muestra pero no se puede modificar)
+        document.getElementById('fechaEditarConsulta').value = consulta.fecha || consulta.Fecha || '';
+        document.getElementById('motivoEditarConsulta').value = consulta.motivo || consulta.Motivo || '';
+        document.getElementById('recetarEditarConsulta').value = consulta.recetar || consulta.Recetar || '';
+        document.getElementById('omeEditarConsulta').value = consulta.ome || consulta.Ome || '';
+        document.getElementById('notasEditarConsulta').value = consulta.notas || consulta.Notas || '';
+        
+        // Valores de laboratorio
+        document.getElementById('grEditarConsulta').value = consulta.gr || consulta.GR || '';
+        document.getElementById('htoEditarConsulta').value = consulta.hto || consulta.HTO || '';
+        document.getElementById('hbEditarConsulta').value = consulta.hb || consulta.HB || '';
+        document.getElementById('gbEditarConsulta').value = consulta.gb || consulta.GB || '';
+        document.getElementById('plaqEditarConsulta').value = consulta.plaq || consulta.PLAQ || '';
+        document.getElementById('glucEditarConsulta').value = consulta.gluc || consulta.GLUC || '';
+        document.getElementById('ureaEditarConsulta').value = consulta.urea || consulta.UREA || '';
+        document.getElementById('crEditarConsulta').value = consulta.cr || consulta.CR || '';
+        document.getElementById('gotEditarConsulta').value = consulta.got || consulta.GOT || '';
+        document.getElementById('gptEditarConsulta').value = consulta.gpt || consulta.GPT || '';
+        document.getElementById('ctEditarConsulta').value = consulta.ct || consulta.CT || '';
+        document.getElementById('tgEditarConsulta').value = consulta.tg || consulta.TG || '';
+        document.getElementById('vitdEditarConsulta').value = consulta.vitd || consulta.VITD || '';
+        document.getElementById('falEditarConsulta').value = consulta.fal || consulta.FAL || '';
+        document.getElementById('colEditarConsulta').value = consulta.col || consulta.COL || '';
+        document.getElementById('b12EditarConsulta').value = consulta.b12 || consulta.B12 || '';
+        document.getElementById('tshEditarConsulta').value = consulta.tsh || consulta.TSH || '';
+        document.getElementById('uricoEditarConsulta').value = consulta.urico || consulta.URICO || '';
+        document.getElementById('orinaEditarConsulta').value = consulta.orina || consulta.ORINA || '';
+        document.getElementById('valoresNoIncluidosEditarConsulta').value = consulta.valoresNoIncluidos || consulta.ValoresNoIncluidos || '';
+    }
+    
+    // Función para cerrar el modal de edición
+    function cerrarModalEditarConsulta() {
+        const modal = document.getElementById('modalEditarConsulta');
+        if (modal) {
+            modal.classList.remove('show');
+            modal.classList.add('hidden');
+            // Limpiar formulario
+            document.getElementById('formEditarConsulta').reset();
+            consultaEditandoId = null;
+        }
+    }
+    
+    // Función para guardar los cambios de la consulta
+    async function guardarCambiosConsulta(event) {
+        event.preventDefault();
+        
+        if (!consultaEditandoId) {
+            console.error('❌ No hay consulta seleccionada para editar');
+            return;
+        }
+        
+        const form = document.getElementById('formEditarConsulta');
+        const formData = new FormData(form);
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        try {
+            // Deshabilitar botón y mostrar loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+            
+            // Preparar datos para actualizar (no incluir fecha ya que está deshabilitada)
+            const consultaData = {
+                motivo: formData.get('motivo'),
+                recetar: formData.get('recetar') || null,
+                ome: formData.get('ome') || null,
+                notas: formData.get('notas') || null,
+                // Valores de laboratorio (convertir comas a puntos para el backend)
+                gr: formData.get('gr') ? parseFloat(formData.get('gr').replace(',', '.')) : null,
+                hto: formData.get('hto') ? parseFloat(formData.get('hto').replace(',', '.')) : null,
+                hb: formData.get('hb') ? parseFloat(formData.get('hb').replace(',', '.')) : null,
+                gb: formData.get('gb') ? parseFloat(formData.get('gb').replace(',', '.')) : null,
+                plaq: formData.get('plaq') ? parseFloat(formData.get('plaq').replace(',', '.')) : null,
+                gluc: formData.get('gluc') ? parseFloat(formData.get('gluc').replace(',', '.')) : null,
+                urea: formData.get('urea') ? parseFloat(formData.get('urea').replace(',', '.')) : null,
+                cr: formData.get('cr') ? parseFloat(formData.get('cr').replace(',', '.')) : null,
+                got: formData.get('got') ? parseFloat(formData.get('got').replace(',', '.')) : null,
+                gpt: formData.get('gpt') ? parseFloat(formData.get('gpt').replace(',', '.')) : null,
+                ct: formData.get('ct') ? parseFloat(formData.get('ct').replace(',', '.')) : null,
+                tg: formData.get('tg') ? parseFloat(formData.get('tg').replace(',', '.')) : null,
+                vitd: formData.get('vitd') ? parseFloat(formData.get('vitd').replace(',', '.')) : null,
+                fal: formData.get('fal') ? parseFloat(formData.get('fal').replace(',', '.')) : null,
+                col: formData.get('col') ? parseFloat(formData.get('col').replace(',', '.')) : null,
+                b12: formData.get('b12') ? parseFloat(formData.get('b12').replace(',', '.')) : null,
+                tsh: formData.get('tsh') ? parseFloat(formData.get('tsh').replace(',', '.')) : null,
+                orina: formData.get('orina') || null,
+                urico: formData.get('urico') ? parseFloat(formData.get('urico').replace(',', '.')) : null,
+                valoresNoIncluidos: formData.get('valoresNoIncluidos') || null
+            };
+
+            // Validar motivo (requerido)
+            if (!consultaData.motivo || consultaData.motivo.trim() === '') {
+                alert('El motivo de la consulta es requerido');
+                return;
+            }
+
+            console.log('📝 Actualizando consulta:', consultaData);
+            
+            const patientId = getPatientIdFromUrl();
+            
+            // Enviar actualización a la API
+            const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/consultas/${consultaEditandoId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeaders()
+                },
+                body: JSON.stringify(consultaData)
+            });
+
+            if (response.ok) {
+                console.log('✅ Consulta actualizada exitosamente');
+                
+                // Mostrar mensaje de éxito
+                alert('Consulta actualizada exitosamente');
+                
+                // Cerrar modal
+                cerrarModalEditarConsulta();
+                
+                // Recargar consultas para mostrar los cambios
+                await loadPatientConsultations(patientId);
+                
+            } else {
+                const errorText = await response.text();
+                console.error('❌ Error al actualizar consulta:', response.status, errorText);
+                alert(`Error al actualizar consulta: ${errorText}`);
+            }
+            
+        } catch (error) {
+            console.error('❌ Error de conexión:', error);
+            alert('Error de conexión al actualizar la consulta');
+        } finally {
+            // Restaurar botón
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    }
+    
+    // Configurar eventos del modal de edición
+    function initializeModalEditarConsulta() {
+        console.log('🔧 Inicializando modal de editar consulta...');
+        
+        const modal = document.getElementById('modalEditarConsulta');
+        const form = document.getElementById('formEditarConsulta');
+        const closeBtn = document.getElementById('closeModalEditarConsulta');
+        const cancelBtn = document.getElementById('cancelarEditarConsulta');
+        
+        // Event listener para el formulario
+        if (form) {
+            form.addEventListener('submit', guardarCambiosConsulta);
+        }
+        
+        // Event listeners para cerrar modal
+        if (closeBtn) {
+            closeBtn.addEventListener('click', cerrarModalEditarConsulta);
+        }
+        
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', cerrarModalEditarConsulta);
+        }
+        
+        // Cerrar modal al hacer clic fuera
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    cerrarModalEditarConsulta();
+                }
+            });
+        }
+        
+        // Cerrar modal con Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+                cerrarModalEditarConsulta();
+            }
+        });
+        
+        // Configurar formato de decimales para campos de laboratorio
+        const camposLaboratorioEditar = [
+            'grEditarConsulta', 'htoEditarConsulta', 'hbEditarConsulta', 'gbEditarConsulta',
+            'plaqEditarConsulta', 'glucEditarConsulta', 'ureaEditarConsulta', 'crEditarConsulta',
+            'gotEditarConsulta', 'gptEditarConsulta', 'ctEditarConsulta', 'tgEditarConsulta',
+            'vitdEditarConsulta', 'falEditarConsulta', 'colEditarConsulta', 'b12EditarConsulta',
+            'tshEditarConsulta', 'uricoEditarConsulta'
+        ];
+        
+        camposLaboratorioEditar.forEach(campoId => {
+            const campo = document.getElementById(campoId);
+            if (campo) {
+                // Formatear cuando el usuario presiona Enter
+                campo.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        formatearADosDecimales(this);
+                        this.blur();
+                    }
+                });
+                
+                // Validación de entrada en tiempo real
+                campo.addEventListener('input', function(e) {
+                    let valor = e.target.value;
+                    
+                    // Reemplazar punto por coma automáticamente
+                    if (valor.includes('.')) {
+                        valor = valor.replace('.', ',');
+                    }
+                    
+                    // Permitir solo números y comas
+                    valor = valor.replace(/[^0-9,]/g, '');
+                    
+                    // Limitar a una sola coma
+                    const partes = valor.split(',');
+                    if (partes.length > 2) {
+                        valor = partes[0] + ',' + partes.slice(1).join('');
+                    }
+                    
+                    // Limitar decimales a máximo 2 dígitos
+                    if (partes.length === 2 && partes[1].length > 2) {
+                        valor = partes[0] + ',' + partes[1].substring(0, 2);
+                    }
+                    
+                    e.target.value = valor;
+                });
+                
+                // Validación adicional al perder el foco
+                campo.addEventListener('blur', function() {
+                    formatearADosDecimales(this);
+                });
+            }
+        });
+        
+        console.log('✅ Modal de editar consulta inicializado');
+    }
+    
+    // Inicializar el modal de edición
+    initializeModalEditarConsulta();
 });

@@ -30,6 +30,22 @@ namespace HistoriaClinica.Models
         [DataType(DataType.Date)]
         public DateTime? FechaNacimiento { get; set; }
 
+        [NotMapped]
+        public int? Edad 
+        { 
+            get 
+            {
+                if (FechaNacimiento.HasValue)
+                {
+                    var today = DateTime.Today;
+                    var age = today.Year - FechaNacimiento.Value.Year;
+                    if (FechaNacimiento.Value.Date > today.AddYears(-age)) age--;
+                    return age;
+                }
+                return null;
+            }
+        }
+
         public bool Particular { get; set; } = false;
 
         public decimal? Peso { get; set; } // Peso en kilogramos
