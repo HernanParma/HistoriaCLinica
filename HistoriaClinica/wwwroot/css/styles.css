@@ -789,15 +789,7 @@ body {
     box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
 }
 
-.patients-table tbody tr.patient-with-notifications::before {
-    content: "⚠️";
-    position: absolute;
-    left: -8px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 16px;
-    z-index: 1;
-}
+/* Símbolo de advertencia eliminado por solicitud del usuario */
 
 .patients-table tbody tr.patient-with-notifications td {
     font-weight: 600;
@@ -4695,27 +4687,724 @@ body {
     }
 }
 
-@media (max-width: 768px) {
+/* Mejoras responsivas para tablets */
+@media (max-width: 1024px) {
     .hc-layout-container {
-        gap: 10px;
-        padding: 0 5px;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 0 8px;
+    }
+
+    .patient-sidebar-fixed {
+        width: 100%;
+        min-width: auto;
+        position: static;
+        max-height: none;
+        border-radius: 16px;
+    }
+
+    .patient-sidebar-fixed .sidebar-header {
+        padding: 18px 20px;
+    }
+
+    .patient-sidebar-fixed .sidebar-header h3 {
+        font-size: 1.3em;
     }
 
     .patient-sidebar-fixed .sidebar-content {
         padding: 20px;
     }
+}
+
+@media (max-width: 768px) {
+    .hc-layout-container {
+        gap: 8px;
+        padding: 0 5px;
+    }
+
+    .patient-sidebar-fixed {
+        width: 100%;
+        min-width: auto;
+        position: static;
+        max-height: none;
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
 
     .patient-sidebar-fixed .sidebar-header {
-        padding: 15px 20px;
+        padding: 15px 18px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
     }
 
     .patient-sidebar-fixed .sidebar-header h3 {
         font-size: 1.2em;
+        margin: 0;
+    }
+
+    .btn-edit-sidebar {
+        align-self: flex-end;
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+
+    .patient-sidebar-fixed .sidebar-content {
+        padding: 15px 18px;
+    }
+
+    /* Mejorar campos de entrada en móviles */
+    .editable-field {
+        margin-bottom: 15px;
+    }
+
+    .editable-field label {
+        font-size: 0.9em;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .editable-field input,
+    .editable-field textarea {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 16px; /* Evita zoom en iOS */
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        background-color: #ffffff;
+    }
+
+    .editable-field input:focus,
+    .editable-field textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Mejorar checkbox de Particular */
+    .editable-field input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+    }
+
+    /* Botones de acción */
+    .section-actions {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .btn-save-section {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 1em;
+        font-weight: 600;
+    }
+
+    /* Mejorar contenido principal */
+    .hc-main-content {
+        width: 100%;
+        padding: 0;
+    }
+
+    .hc-section {
+        margin: 10px 0;
+        border-radius: 16px;
+    }
+
+    .hc-section h3,
+    .hc-section h4 {
+        padding: 15px 20px;
+        font-size: 1.2em;
+    }
+
+    /* Mejorar formularios en móviles */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-size: 0.95em;
+        font-weight: 600;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 16px; /* Evita zoom en iOS */
+        border-radius: 10px;
+        border: 2px solid #e5e7eb;
+        background-color: #ffffff;
+        transition: all 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Grid de laboratorio responsivo */
+    .lab-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1 !important;
+    }
+
+    /* Botones de formulario */
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 25px;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 1em;
+        font-weight: 600;
+    }
+
+    /* Modal responsivo */
+    .modal-content {
+        width: 95%;
+        max-width: 500px;
+        margin: 20px auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        padding: 15px 20px;
+    }
+
+    .modal-header h3 {
+        font-size: 1.3em;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-actions {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-actions .btn {
+        width: 100%;
+        padding: 12px 20px;
     }
     
     .hc-main-content .form-card {
         margin: 0;
         width: 100%;
+    }
+}
+
+/* Mejoras para móviles pequeños */
+@media (max-width: 480px) {
+    .hc-layout-container {
+        padding: 0 3px;
+        gap: 5px;
+    }
+
+    .patient-sidebar-fixed {
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .patient-sidebar-fixed .sidebar-header {
+        padding: 12px 15px;
+    }
+
+    .patient-sidebar-fixed .sidebar-header h3 {
+        font-size: 1.1em;
+    }
+
+    .patient-sidebar-fixed .sidebar-content {
+        padding: 12px 15px;
+    }
+
+    .editable-field {
+        margin-bottom: 12px;
+    }
+
+    .editable-field input,
+    .editable-field textarea {
+        padding: 10px 12px;
+        font-size: 16px;
+        border-radius: 6px;
+    }
+
+    .hc-section {
+        margin: 8px 0;
+        border-radius: 12px;
+    }
+
+    .hc-section h3,
+    .hc-section h4 {
+        padding: 12px 15px;
+        font-size: 1.1em;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        padding: 12px 14px;
+        font-size: 16px;
+        border-radius: 8px;
+    }
+
+    .modal-content {
+        width: 98%;
+        margin: 10px auto;
+        max-height: 95vh;
+    }
+
+    .modal-header {
+        padding: 12px 15px;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    .modal-actions {
+        padding: 12px 15px;
+    }
+
+    /* Mejorar botones en móviles pequeños */
+    .btn-edit-sidebar {
+        padding: 6px 12px;
+        font-size: 0.85em;
+    }
+
+    .btn-save-section {
+        padding: 10px 16px;
+        font-size: 0.95em;
+    }
+
+    .form-actions .btn {
+        padding: 12px 16px;
+        font-size: 0.95em;
+    }
+
+    /* Mejoras adicionales para consultas en móviles pequeños */
+    .consulta-item {
+        margin-bottom: 12px !important;
+        border-radius: 10px !important;
+    }
+
+    .consulta-header {
+        padding: 10px 12px !important;
+    }
+
+    .consulta-fecha {
+        font-size: 0.95em;
+    }
+
+    .consulta-actions .btn-editar-consulta,
+    .consulta-actions .btn-eliminar-consulta {
+        padding: 6px 10px;
+        font-size: 0.8em;
+        min-width: 70px;
+    }
+
+    .consulta-content {
+        padding: 12px !important;
+    }
+
+    .detail-item {
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+
+    .detail-item strong {
+        font-size: 0.85em;
+    }
+
+    .btn-ver-laboratorio {
+        padding: 10px 14px;
+        font-size: 0.95em;
+    }
+
+    .laboratorio-section {
+        padding: 12px;
+        margin-top: 12px;
+    }
+
+    .lab-result-item {
+        padding: 10px;
+    }
+
+    .lab-result-item .lab-label {
+        font-size: 0.85em;
+    }
+
+    .lab-result-item .lab-value {
+        font-size: 0.95em;
+    }
+
+    .recetar-item,
+    .ome-item {
+        padding: 10px !important;
+        margin: 8px 0 !important;
+    }
+
+    .no-consultations {
+        padding: 30px 15px;
+    }
+
+    .no-consultations i {
+        font-size: 2.5em;
+        margin-bottom: 12px;
+    }
+
+    .no-consultations span {
+        font-size: 1em;
+    }
+
+    .no-consultations small {
+        font-size: 0.85em;
+    }
+}
+
+/* Mejoras adicionales para la navegación móvil */
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .header {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .header h1 {
+        font-size: 1.8em;
+        margin: 0;
+    }
+
+    .header .user-info {
+        font-size: 0.9em;
+    }
+
+    /* Botones de navegación en móviles */
+    .nav-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .nav-buttons .btn {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 1em;
+        font-weight: 600;
+    }
+
+    /* Mejorar tabs de consultas */
+    .consultation-tabs {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .consultation-tabs .btn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 1em;
+        text-align: center;
+    }
+
+    /* Mejorar grid de laboratorio en móviles */
+    .lab-results-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+
+    .lab-result-item {
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .lab-result-item .lab-label {
+        font-size: 0.9em;
+        margin-bottom: 5px;
+    }
+
+    .lab-result-item .lab-value {
+        font-size: 1.1em;
+        font-weight: 600;
+    }
+
+    /* Mejorar detalles de consulta */
+    .consulta-details {
+        padding: 15px;
+    }
+
+    .detail-item {
+        margin-bottom: 15px;
+        padding: 12px;
+        border-radius: 8px;
+    }
+
+    .detail-item h4 {
+        font-size: 1.1em;
+        margin-bottom: 8px;
+    }
+
+    /* Mejorar botones de acción */
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 15px;
+    }
+
+    .action-buttons .btn {
+        width: 100%;
+        padding: 10px 16px;
+        font-size: 0.9em;
+    }
+
+    /* Mejorar archivos adjuntos */
+    .file-list {
+        margin-top: 15px;
+    }
+
+    .file-item {
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 6px;
+    }
+
+    .file-item .file-name {
+        font-size: 0.9em;
+        word-break: break-all;
+    }
+
+    .file-item .file-actions {
+        margin-top: 8px;
+    }
+
+    .file-item .file-actions .btn {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+
+    /* Mejoras específicas para consultas en móviles */
+    .consulta-item {
+        margin-bottom: 15px !important;
+        border-radius: 12px !important;
+    }
+
+    .consulta-header {
+        padding: 12px 15px !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+    }
+
+    .consulta-fecha {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1em;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .consulta-fecha i {
+        color: #667eea;
+        font-size: 1.1em;
+    }
+
+    .consulta-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .consulta-actions .btn-editar-consulta,
+    .consulta-actions .btn-eliminar-consulta {
+        flex: 1;
+        min-width: 80px;
+        padding: 8px 12px;
+        font-size: 0.85em;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .consulta-actions .btn-editar-consulta {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+    }
+
+    .consulta-actions .btn-eliminar-consulta {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        border: none;
+    }
+
+    .consulta-actions .toggle-icon {
+        font-size: 1.2em;
+        color: #6b7280;
+        transition: transform 0.3s ease;
+    }
+
+    .consulta-content {
+        padding: 15px !important;
+    }
+
+    .consulta-details {
+        margin-bottom: 15px;
+    }
+
+    .detail-item {
+        margin-bottom: 12px;
+        padding: 10px;
+        background: #f8fafc;
+        border-radius: 8px;
+        border-left: 3px solid #667eea;
+    }
+
+    .detail-item strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #1e293b;
+        font-size: 0.9em;
+    }
+
+    /* Mejorar botones de laboratorio */
+    .consulta-actions-bottom {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .btn-ver-laboratorio {
+        width: 100%;
+        padding: 12px 16px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1em;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-ver-laboratorio:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        transform: translateY(-1px);
+    }
+
+    /* Mejorar sección de laboratorio */
+    .laboratorio-section {
+        margin-top: 15px;
+        padding: 15px;
+        background: #f8fafc;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .laboratorio-grid {
+        display: grid;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .lab-result-item {
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .lab-result-item .lab-label {
+        font-size: 0.9em;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .lab-result-item .lab-value {
+        font-size: 1em;
+        color: #1e293b;
+        font-weight: 600;
+    }
+
+    /* Mejorar elementos RECETAR y OME */
+    .recetar-item,
+    .ome-item {
+        margin: 10px 0 !important;
+        padding: 12px !important;
+        border-radius: 8px !important;
+    }
+
+    .recetar-item {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+        border-left: 4px solid #f59e0b !important;
+    }
+
+    .ome-item {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+        border-left: 4px solid #ef4444 !important;
+    }
+
+    /* Mejorar mensaje de no consultas */
+    .no-consultations {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6b7280;
+    }
+
+    .no-consultations i {
+        font-size: 3em;
+        margin-bottom: 15px;
+        color: #d1d5db;
+    }
+
+    .no-consultations span {
+        display: block;
+        font-size: 1.1em;
+        margin-bottom: 8px;
+        color: #374151;
+    }
+
+    .no-consultations small {
+        font-size: 0.9em;
+        color: #9ca3af;
     }
 }
 

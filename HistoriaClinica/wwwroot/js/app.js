@@ -597,31 +597,62 @@ if (typeof CONFIG === 'undefined') {
         nombreCell.textContent = correctedPatient.nombre || '';
         nombreCell.setAttribute('data-column', 'nombre');
         
-        // Agregar indicador de notificación si el paciente tiene notificaciones pendientes
-        if (patient.tieneNotificaciones) {
-          const indicador = document.createElement('span');
-          indicador.className = 'notification-indicator';
-          
-          // Usar los campos optimizados del backend
-          if (patient.tieneRecetarPendiente && patient.tieneOmePendiente) {
-            indicador.innerHTML = '<i class="fas fa-pills"></i> RECETAR + OME';
-          } else if (patient.tieneRecetarPendiente) {
-            indicador.innerHTML = '<i class="fas fa-pills"></i> RECETAR';
-          } else if (patient.tieneOmePendiente) {
-            indicador.innerHTML = '<i class="fas fa-capsules"></i> OME';
-          }
-          
-          nombreCell.appendChild(indicador);
-        }
-        
         const particularCell = document.createElement('td');
         particularCell.setAttribute('data-column', 'particular');
+        particularCell.style.display = 'flex';
+        particularCell.style.alignItems = 'center';
+        particularCell.style.gap = '8px';
+        particularCell.style.justifyContent = 'center';
+        
+        // Crear contenedor para el checkbox y los indicadores
+        const particularContent = document.createElement('div');
+        particularContent.style.display = 'flex';
+        particularContent.style.flexDirection = 'column';
+        particularContent.style.alignItems = 'center';
+        particularContent.style.gap = '4px';
+        
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.checked = correctedPatient.particular || false;
         checkbox.disabled = true;
         checkbox.style.pointerEvents = 'none';
-        particularCell.appendChild(checkbox);
+        particularContent.appendChild(checkbox);
+        
+        // Agregar indicador de notificación si el paciente tiene notificaciones pendientes
+        if (patient.tieneNotificaciones) {
+          const indicador = document.createElement('span');
+          indicador.className = 'notification-indicator';
+          indicador.style.display = 'inline-flex';
+          indicador.style.alignItems = 'center';
+          indicador.style.gap = '4px';
+          indicador.style.padding = '4px 8px';
+          indicador.style.borderRadius = '12px';
+          indicador.style.fontSize = '0.75em';
+          indicador.style.fontWeight = '600';
+          indicador.style.whiteSpace = 'nowrap';
+          
+          // Usar los campos optimizados del backend
+          if (patient.tieneRecetarPendiente && patient.tieneOmePendiente) {
+            indicador.innerHTML = '<i class="fas fa-pills"></i> RECETAR + OME';
+            indicador.style.background = 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)';
+            indicador.style.color = '#92400e';
+            indicador.style.border = '1px solid #f59e0b';
+          } else if (patient.tieneRecetarPendiente) {
+            indicador.innerHTML = '<i class="fas fa-pills"></i> RECETAR';
+            indicador.style.background = 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)';
+            indicador.style.color = '#92400e';
+            indicador.style.border = '1px solid #f59e0b';
+          } else if (patient.tieneOmePendiente) {
+            indicador.innerHTML = '<i class="fas fa-capsules"></i> OME';
+            indicador.style.background = 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)';
+            indicador.style.color = '#dc2626';
+            indicador.style.border = '1px solid #ef4444';
+          }
+          
+          particularContent.appendChild(indicador);
+        }
+        
+        particularCell.appendChild(particularContent);
         
         const telefonoCell = document.createElement('td');
         telefonoCell.textContent = correctedPatient.telefono || '';

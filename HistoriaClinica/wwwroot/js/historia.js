@@ -76,6 +76,32 @@ function showHCLoading() {
     `;
 }
 
+// Función para formatear fecha para input de tipo date
+function formatDateForInput(dateValue) {
+    if (!dateValue) return '';
+    
+    try {
+        // Si ya es una fecha válida en formato ISO (YYYY-MM-DD)
+        if (typeof dateValue === 'string' && dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            return dateValue;
+        }
+        
+        // Si es una fecha ISO completa, extraer solo la parte de fecha
+        if (typeof dateValue === 'string' && dateValue.includes('T')) {
+            return dateValue.split('T')[0];
+        }
+        
+        // Crear objeto Date y formatear
+        const date = new Date(dateValue);
+        if (isNaN(date.getTime())) return '';
+        
+        return date.toISOString().split('T')[0];
+    } catch (error) {
+        console.error('Error formateando fecha:', error);
+        return '';
+    }
+}
+
 // Render de datos del paciente con nuevo sistema de edición por secciones
 function renderPatientSidebar(p) {
     const box = document.getElementById('sidebar-content');
@@ -113,7 +139,7 @@ function renderPatientSidebar(p) {
                 </div>
                 <div class="editable-field">
                     <label>Fecha de Nacimiento:</label>
-                    <input type="date" id="edit-fechaNacimiento" value="${p.fechaNacimiento || p.FechaNacimiento || ''}" disabled>
+                    <input type="date" id="edit-fechaNacimiento" value="${formatDateForInput(p.fechaNacimiento || p.FechaNacimiento)}" disabled>
                 </div>
                 <div class="editable-field">
                     <label>Edad:</label>
@@ -126,6 +152,13 @@ function renderPatientSidebar(p) {
                 <div class="editable-field">
                     <label>Altura (cm):</label>
                     <input type="number" id="edit-altura" value="${p.altura || p.Altura || ''}" placeholder="Altura en centímetros" disabled>
+                </div>
+                <div class="editable-field">
+                    <label>Particular:</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="edit-particular" ${(p.particular || p.Particular) ? 'checked' : ''} disabled style="transform: scale(1.2);">
+                        <span style="color: #6b7280; font-size: 0.9em;">Marcar si es paciente particular</span>
+                    </div>
                 </div>
                 <div class="section-actions hidden">
                     <button class="btn-save-section" onclick="saveSection('personal')">
@@ -245,7 +278,8 @@ function getSectionFields(section) {
                 document.getElementById('edit-email'),
                 document.getElementById('edit-fechaNacimiento'),
                 document.getElementById('edit-peso'),
-                document.getElementById('edit-altura')
+                document.getElementById('edit-altura'),
+                document.getElementById('edit-particular')
             ];
             break;
         case 'medicacion':
@@ -299,6 +333,7 @@ async function saveSection(section) {
             sectionData.fechaNacimiento = document.getElementById('edit-fechaNacimiento')?.value || null;
             sectionData.peso = document.getElementById('edit-peso')?.value ? parseFloat(document.getElementById('edit-peso').value) : null;
             sectionData.altura = document.getElementById('edit-altura')?.value ? parseInt(document.getElementById('edit-altura').value) : null;
+            sectionData.particular = document.getElementById('edit-particular')?.checked || false;
             break;
         case 'medicacion':
             sectionData.medicacion = document.getElementById('edit-medicacion')?.value || '';
@@ -479,11 +514,14 @@ function renderLaboratorioValues(consulta) {
         { key: 'tg', label: 'TG (Triglicéridos)', value: getLabValue(consulta, 'tg', 'TG') },
         { key: 'vitd', label: 'VITD (Vitamina D)', value: getLabValue(consulta, 'vitd', 'VITD') },
         { key: 'fal', label: 'FAL (Fosfatasa Alcalina)', value: getLabValue(consulta, 'fal', 'FAL') },
-        { key: 'col', label: 'COL (Colesterol)', value: getLabValue(consulta, 'col', 'COL') },
+        { key: 'hdl', label: 'HDL (Colesterol HDL)', value: getLabValue(consulta, 'hdl', 'HDL') },
+        { key: 'ldl', label: 'LDL (Colesterol LDL)', value: getLabValue(consulta, 'ldl', 'LDL') },
         { key: 'b12', label: 'B12 (Vitamina B12)', value: getLabValue(consulta, 'b12', 'B12') },
         { key: 'tsh', label: 'TSH', value: getLabValue(consulta, 'tsh', 'TSH') },
         { key: 'orina', label: 'ORINA', value: getLabValue(consulta, 'orina', 'ORINA') },
         { key: 'urico', label: 'URICO (Ácido Úrico)', value: getLabValue(consulta, 'urico', 'URICO') },
+        { key: 'psa', label: 'PSA (Antígeno Prostático Específico)', value: getLabValue(consulta, 'psa', 'PSA') },
+        { key: 'hba1c', label: 'HBA1C (Hemoglobina Glicosilada)', value: getLabValue(consulta, 'hba1c', 'HBA1C') },
         { key: 'valoresNoIncluidos', label: 'Valores no incluidos', value: getLabValue(consulta, 'valoresNoIncluidos', 'ValoresNoIncluidos') }
     ];
 
@@ -591,20 +629,26 @@ function renderRecetarConBoton(consulta) {
         return '';
     }
     
-    let html = `<div class="detail-item recetar-item">`;
-    html += `<strong>Recetar:</strong> ${recetar}`;
+    let html = `<div class="detail-item recetar-item" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; border-radius: 8px; margin: 8px 0;">`;
     
+    // Contenido principal con mejor estructura
+    html += `<div style="display: flex; align-items: flex-start; gap: 12px;">
+        <div style="min-width: 80px; font-weight: 700; color: #92400e; font-size: 0.95em;">Recetar:</div>
+        <div style="flex: 1; color: #451a03; line-height: 1.5; font-size: 0.95em;">${recetar}</div>
+    </div>`;
+    
+    // Controles de revisión con mejor alineación
     if (!recetarRevisado) {
         const consultaId = consulta.id || consulta.Id;
         console.log(`🔧 Generando botón RECETAR para consulta ${consultaId}`);
-        html += `<div class="revision-controls-historial">
-            <button type="button" class="btn btn-success btn-sm marcar-revisado-btn" data-consulta-id="${consultaId}" data-campo="recetar">
+        html += `<div class="revision-controls-historial" style="display: flex; justify-content: flex-end; margin-top: 8px;">
+            <button type="button" class="btn btn-success btn-sm marcar-revisado-btn" data-consulta-id="${consultaId}" data-campo="recetar" style="padding: 8px 16px; border-radius: 6px; font-size: 0.85em; font-weight: 600; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: white; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
                 <i class="fas fa-check"></i> Realizado
             </button>
         </div>`;
     } else {
-        html += `<div class="revision-status-historial">
-            <span class="revision-status">
+        html += `<div class="revision-status-historial" style="display: flex; justify-content: flex-end; margin-top: 8px;">
+            <span class="revision-status" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #065f46; border-radius: 6px; font-size: 0.85em; font-weight: 600; border: 1px solid #a7f3d0;">
                 <i class="fas fa-check-circle"></i>
                 Revisado
             </span>
@@ -624,20 +668,26 @@ function renderOmeConBoton(consulta) {
         return '';
     }
     
-    let html = `<div class="detail-item ome-item">`;
-    html += `<strong>OME:</strong> ${ome}`;
+    let html = `<div class="detail-item ome-item" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-left: 4px solid #ef4444; border-radius: 8px; margin: 8px 0;">`;
     
+    // Contenido principal con mejor estructura
+    html += `<div style="display: flex; align-items: flex-start; gap: 12px;">
+        <div style="min-width: 80px; font-weight: 700; color: #dc2626; font-size: 0.95em;">OME:</div>
+        <div style="flex: 1; color: #7f1d1d; line-height: 1.5; font-size: 0.95em;">${ome}</div>
+    </div>`;
+    
+    // Controles de revisión con mejor alineación
     if (!omeRevisado) {
         const consultaId = consulta.id || consulta.Id;
         console.log(`🔧 Generando botón OME para consulta ${consultaId}`);
-        html += `<div class="revision-controls-historial">
-            <button type="button" class="btn btn-success btn-sm marcar-revisado-btn" data-consulta-id="${consultaId}" data-campo="ome">
+        html += `<div class="revision-controls-historial" style="display: flex; justify-content: flex-end; margin-top: 8px;">
+            <button type="button" class="btn btn-success btn-sm marcar-revisado-btn" data-consulta-id="${consultaId}" data-campo="ome" style="padding: 8px 16px; border-radius: 6px; font-size: 0.85em; font-weight: 600; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: white; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
                 <i class="fas fa-check"></i> Realizado
             </button>
         </div>`;
     } else {
-        html += `<div class="revision-status-historial">
-            <span class="revision-status">
+        html += `<div class="revision-status-historial" style="display: flex; justify-content: flex-end; margin-top: 8px;">
+            <span class="revision-status" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #065f46; border-radius: 6px; font-size: 0.85em; font-weight: 600; border: 1px solid #a7f3d0;">
                 <i class="fas fa-check-circle"></i>
                 Revisado
             </span>
@@ -932,11 +982,14 @@ function initializeModal() {
                     tg: formData.get('tg') ? parseFloat(formData.get('tg').replace(',', '.')) : null,
                     vitd: formData.get('vitd') ? parseFloat(formData.get('vitd').replace(',', '.')) : null,
                     fal: formData.get('fal') ? parseFloat(formData.get('fal').replace(',', '.')) : null,
-                    col: formData.get('col') ? parseFloat(formData.get('col').replace(',', '.')) : null,
+                    hdl: formData.get('hdl') ? parseFloat(formData.get('hdl').replace(',', '.')) : null,
                     b12: formData.get('b12') ? parseFloat(formData.get('b12').replace(',', '.')) : null,
                     tsh: formData.get('tsh') ? parseFloat(formData.get('tsh').replace(',', '.')) : null,
                     orina: formData.get('orina') || null,
                     urico: formData.get('urico') ? parseFloat(formData.get('urico').replace(',', '.')) : null,
+                    ldl: formData.get('ldl') ? parseFloat(formData.get('ldl').replace(',', '.')) : null,
+                    psa: formData.get('psa') ? parseFloat(formData.get('psa').replace(',', '.')) : null,
+                    hba1c: formData.get('hba1c') ? parseFloat(formData.get('hba1c').replace(',', '.')) : null,
                     valoresNoIncluidos: formData.get('valoresNoIncluidos') || null,
                     // Incluir archivos subidos
                     archivos: archivosSubidos
@@ -1112,8 +1165,8 @@ function initializeModal() {
         'grConsulta', 'htoConsulta', 'hbConsulta', 'gbConsulta',
         'plaqConsulta', 'glucConsulta', 'ureaConsulta', 'crConsulta',
         'gotConsulta', 'gptConsulta', 'ctConsulta', 'tgConsulta',
-        'vitdConsulta', 'falConsulta', 'colConsulta', 'b12Consulta',
-        'tshConsulta', 'uricoConsulta'
+        'vitdConsulta', 'falConsulta', 'hdlConsulta', 'ldlConsulta', 'b12Consulta',
+        'tshConsulta', 'uricoConsulta', 'psaConsulta', 'hba1cConsulta'
     ];
     
     // Función para formatear a 2 decimales
@@ -2005,10 +2058,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('tgEditarConsulta').value = consulta.tg || consulta.TG || '';
         document.getElementById('vitdEditarConsulta').value = consulta.vitd || consulta.VITD || '';
         document.getElementById('falEditarConsulta').value = consulta.fal || consulta.FAL || '';
-        document.getElementById('colEditarConsulta').value = consulta.col || consulta.COL || '';
+        document.getElementById('hdlEditarConsulta').value = consulta.hdl || consulta.HDL || '';
+        document.getElementById('ldlEditarConsulta').value = consulta.ldl || consulta.LDL || '';
         document.getElementById('b12EditarConsulta').value = consulta.b12 || consulta.B12 || '';
         document.getElementById('tshEditarConsulta').value = consulta.tsh || consulta.TSH || '';
         document.getElementById('uricoEditarConsulta').value = consulta.urico || consulta.URICO || '';
+        document.getElementById('psaEditarConsulta').value = consulta.psa || consulta.PSA || '';
+        document.getElementById('hba1cEditarConsulta').value = consulta.hba1c || consulta.HBA1C || '';
         document.getElementById('orinaEditarConsulta').value = consulta.orina || consulta.ORINA || '';
         document.getElementById('valoresNoIncluidosEditarConsulta').value = consulta.valoresNoIncluidos || consulta.ValoresNoIncluidos || '';
     }
@@ -2065,11 +2121,14 @@ document.addEventListener('DOMContentLoaded', async function() {
                 tg: formData.get('tg') ? parseFloat(formData.get('tg').replace(',', '.')) : null,
                 vitd: formData.get('vitd') ? parseFloat(formData.get('vitd').replace(',', '.')) : null,
                 fal: formData.get('fal') ? parseFloat(formData.get('fal').replace(',', '.')) : null,
-                col: formData.get('col') ? parseFloat(formData.get('col').replace(',', '.')) : null,
+                hdl: formData.get('hdl') ? parseFloat(formData.get('hdl').replace(',', '.')) : null,
                 b12: formData.get('b12') ? parseFloat(formData.get('b12').replace(',', '.')) : null,
                 tsh: formData.get('tsh') ? parseFloat(formData.get('tsh').replace(',', '.')) : null,
                 orina: formData.get('orina') || null,
                 urico: formData.get('urico') ? parseFloat(formData.get('urico').replace(',', '.')) : null,
+                ldl: formData.get('ldl') ? parseFloat(formData.get('ldl').replace(',', '.')) : null,
+                psa: formData.get('psa') ? parseFloat(formData.get('psa').replace(',', '.')) : null,
+                hba1c: formData.get('hba1c') ? parseFloat(formData.get('hba1c').replace(',', '.')) : null,
                 valoresNoIncluidos: formData.get('valoresNoIncluidos') || null
             };
 
@@ -2165,8 +2224,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             'grEditarConsulta', 'htoEditarConsulta', 'hbEditarConsulta', 'gbEditarConsulta',
             'plaqEditarConsulta', 'glucEditarConsulta', 'ureaEditarConsulta', 'crEditarConsulta',
             'gotEditarConsulta', 'gptEditarConsulta', 'ctEditarConsulta', 'tgEditarConsulta',
-            'vitdEditarConsulta', 'falEditarConsulta', 'colEditarConsulta', 'b12EditarConsulta',
-            'tshEditarConsulta', 'uricoEditarConsulta'
+            'vitdEditarConsulta', 'falEditarConsulta', 'hdlEditarConsulta', 'ldlEditarConsulta', 'b12EditarConsulta',
+            'tshEditarConsulta', 'uricoEditarConsulta', 'psaEditarConsulta', 'hba1cEditarConsulta'
         ];
         
         camposLaboratorioEditar.forEach(campoId => {
