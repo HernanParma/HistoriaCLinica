@@ -890,14 +890,14 @@ function initializeModal() {
         cancelarNuevaConsulta.addEventListener('click', closeModal);
     }
 
-    // Cerrar modal al hacer clic fuera
-    if (modalNuevaConsulta) {
-        modalNuevaConsulta.addEventListener('click', (e) => {
-            if (e.target === modalNuevaConsulta) {
-                closeModal();
-            }
-        });
-    }
+    // Cerrar modal al hacer clic fuera - DESHABILITADO
+    // if (modalNuevaConsulta) {
+    //     modalNuevaConsulta.addEventListener('click', (e) => {
+    //         if (e.target === modalNuevaConsulta) {
+    //             closeModal();
+    //         }
+    //     });
+    // }
 
     // Cerrar modal con Escape
     document.addEventListener('keydown', (e) => {
