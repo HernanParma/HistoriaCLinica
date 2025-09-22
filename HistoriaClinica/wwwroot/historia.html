@@ -249,6 +249,47 @@
         grid-column: 1 / -1 !important;
     }
 
+    /* Estilos para el campo de fecha inline en laboratorio */
+    .date-inline {
+        font-weight: normal !important;
+        color: #4a5568 !important;
+        margin-left: 20px !important;
+    }
+
+    .date-inline input[type="date"] {
+        margin-left: 8px !important;
+        padding: 6px 10px !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 6px !important;
+        font-size: 13px !important;
+        background: white !important;
+        transition: border-color 0.3s ease !important;
+        width: 140px !important;
+    }
+
+    .date-inline input[type="date"]:focus {
+        border-color: #667eea !important;
+        outline: none !important;
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1) !important;
+    }
+
+    /* Estilos para labels de laboratorio clickeables */
+    .lab-grid .form-group label {
+        cursor: pointer !important;
+        transition: color 0.3s ease !important;
+        user-select: none !important;
+    }
+
+    .lab-grid .form-group label:hover {
+        color: #e53e3e !important;
+    }
+
+    .lab-grid .form-group label.highlighted {
+        color: #e53e3e !important;
+        font-weight: bold !important;
+        text-shadow: 0 0 3px rgba(229, 62, 62, 0.3) !important;
+    }
+
 
 
     /* Estilos para archivos */
@@ -1764,7 +1805,7 @@
                     
                     <!-- Campos de Laboratorio -->
                     <div class="form-section">
-                        <h4><i class="fas fa-flask"></i> Valores de Laboratorio</h4>
+                        <h4><i class="fas fa-flask"></i> Valores de Laboratorio <span class="date-inline">Fecha: <input type="date" id="fechaLaboratorioConsulta" name="fechaLaboratorio"></span></h4>
                         <div class="lab-grid">
                             <!-- Primera fila -->
                             <div class="form-group">
@@ -1799,6 +1840,10 @@
                             <div class="form-group">
                                 <label for="crConsulta">CR:</label>
                                 <input type="text" id="crConsulta" name="cr" placeholder="Creatinina" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+                            </div>
+                            <div class="form-group">
+                                <label for="vfsConsulta">VFS:</label>
+                                <input type="text" id="vfsConsulta" name="vfs" placeholder="VFS" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <!-- Tercera fila -->
                             <div class="form-group">
@@ -1993,7 +2038,7 @@
                     
                     <!-- Valores de Laboratorio -->
                     <div class="form-group">
-                        <label><i class="fas fa-flask"></i> Valores de Laboratorio</label>
+                        <label><i class="fas fa-flask"></i> Valores de Laboratorio <span class="date-inline">Fecha: <input type="date" id="fechaLaboratorioEditarConsulta" name="fechaLaboratorio"></span></label>
                         <div class="lab-grid">
                             <div class="form-group">
                                 <label for="grEditarConsulta">GR (Glóbulos Rojos):</label>
@@ -2026,6 +2071,10 @@
                             <div class="form-group">
                                 <label for="crEditarConsulta">CR (Creatinina):</label>
                                 <input type="text" id="crEditarConsulta" name="cr" placeholder="Ej: 0,8">
+                            </div>
+                            <div class="form-group">
+                                <label for="vfsEditarConsulta">VFS (Velocidad de Filtración Glomerular):</label>
+                                <input type="text" id="vfsEditarConsulta" name="vfs" placeholder="Ej: 85">
                             </div>
                             <div class="form-group">
                                 <label for="gotEditarConsulta">GOT:</label>
@@ -2139,6 +2188,29 @@
                 window.location.href = 'index.html';
             });
         }
+
+        // Función para manejar el clic en labels de laboratorio
+        function setupLabLabelClickHandlers() {
+            const labLabels = document.querySelectorAll('.lab-grid .form-group label');
+            
+            labLabels.forEach(label => {
+                label.addEventListener('click', function() {
+                    // Toggle de la clase highlighted
+                    this.classList.toggle('highlighted');
+                    
+                    // Opcional: mostrar un mensaje o tooltip
+                    const fieldName = this.textContent.replace(':', '').trim();
+                    if (this.classList.contains('highlighted')) {
+                        console.log(`Campo ${fieldName} marcado como fuera de rango`);
+                    } else {
+                        console.log(`Campo ${fieldName} desmarcado`);
+                    }
+                });
+            });
+        }
+
+        // Configurar los event listeners para los labels de laboratorio
+        setupLabLabelClickHandlers();
     });
     </script>
 </body>

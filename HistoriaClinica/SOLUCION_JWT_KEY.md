@@ -102,3 +102,5 @@ curl -X POST http://localhost:5156/api/usuarios/login \
 **Fecha de resolución**: 22 de septiembre de 2025
 **Estado**: ✅ **RESUELTO**
 **Impacto**: Login y autenticación funcionando correctamente
+
+
