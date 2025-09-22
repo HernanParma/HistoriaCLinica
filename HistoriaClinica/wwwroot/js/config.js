@@ -20,6 +20,13 @@
             return apiUrl;
         }
         
+        // Si estamos en puerto 5000 (Live Server), usar puerto 5156 para la API
+        if (currentHost === 'localhost' && (currentProtocol === 'http:' || currentProtocol === 'https:')) {
+            const apiUrl = 'http://localhost:5156';
+            console.log('🏠 Live Server detectado, usando API en puerto 5156:', apiUrl);
+            return apiUrl;
+        }
+        
         // Si estamos en producción (historia.runasp.net)
         if (currentHost.includes('historia.runasp.net') || currentHost.includes('runasp.net')) {
             const apiUrl = 'https://historia.runasp.net';

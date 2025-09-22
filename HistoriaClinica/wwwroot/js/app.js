@@ -2,6 +2,39 @@
 if (typeof CONFIG === 'undefined') {
     var CONFIG = { API_BASE_URL: window.location.origin };
 }
+
+// Verificar si estamos en modo demo (usando window para evitar conflictos)
+window.isDemoMode = () => {
+    return localStorage.getItem('demoMode') === 'true';
+};
+
+// Función para hacer llamadas API (demo o real)
+async function makeApiCall(endpoint, method = 'GET', data = null) {
+    if (window.isDemoMode()) {
+        console.log('🎭 Modo demo: simulando llamada API a', endpoint);
+        return await simulateApiCall(endpoint, method, data);
+    } else {
+        // Llamada API real
+        const url = `${CONFIG.API_BASE_URL}${endpoint}`;
+        const options = {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+        
+        if (data) {
+            options.body = JSON.stringify(data);
+        }
+        
+        const token = localStorage.getItem('jwtToken');
+        if (token) {
+            options.headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        return await fetch(url, options);
+    }
+}
   
   // Estado global
   let isLoggedIn = false;
@@ -38,6 +71,9 @@ if (typeof CONFIG === 'undefined') {
     const newPasswordMessage = document.getElementById('newPasswordMessage');
     const switchToLoginFromResetBtn = document.getElementById('switchToLoginFromResetBtn');
     const switchToLoginFromNewPasswordBtn = document.getElementById('switchToLoginFromNewPasswordBtn');
+
+    // ---- Elemento de modo demo ----
+    const demoModeBtn = document.getElementById('demoModeBtn');
   
     // ---- Elementos de la app (index.html) ----
     const backToListBtn = document.getElementById('backToListBtn');
@@ -196,10 +232,9 @@ if (typeof CONFIG === 'undefined') {
           btn.disabled = true;
           btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
   
-          const resp = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ NombreUsuario: username, Contrasena: password })
+          const resp = await makeApiCall('/api/usuarios/login', 'POST', { 
+            NombreUsuario: username, 
+            Contrasena: password 
           });
   
           if (resp.ok) {
@@ -319,6 +354,11 @@ if (typeof CONFIG === 'undefined') {
       if (userInfo) userInfo.classList.remove('hidden');
       if (userName) userName.textContent = username;
       if (userGreeting) userGreeting.textContent = 'Hola!';
+      
+      // Agregar botón de salir del modo demo si estamos en modo demo
+      if (window.isDemoMode()) {
+        addExitDemoButton();
+      }
     }
   
     function updateHeaderForLoggedOutUser() {
@@ -358,6 +398,10 @@ if (typeof CONFIG === 'undefined') {
       patientForm?.classList.add('hidden');
       clearMessages();
       loadPatients();
+      // Verificar modo demo cuando se muestra la lista de pacientes
+      if (isLoggedIn) {
+        verificarModoDemo();
+      }
     }
   
     function showPatientForm() {
@@ -397,6 +441,12 @@ if (typeof CONFIG === 'undefined') {
       if (savedLoginStatus === 'true' && savedUsername) {
         isLoggedIn = true;
         updateHeaderForLoggedInUser(savedUsername);
+        
+        // Agregar indicador de modo demo si estamos en modo demo
+        if (window.isDemoMode()) {
+          addDemoIndicator();
+        }
+        
         showPatientsList();
       } else {
         updateHeaderForLoggedOutUser();
@@ -458,9 +508,7 @@ if (typeof CONFIG === 'undefined') {
 
       try {
         // Usar el endpoint optimizado que incluye información de notificaciones
-        const response = await fetch(`${CONFIG.API_BASE_URL}/api/pacientes/con-notificaciones`, {
-          headers: { ...getAuthHeaders() }
-        });
+        const response = await makeApiCall('/api/pacientes/con-notificaciones');
         if (response.ok) {
           allPatients = await response.json();
           
@@ -1609,6 +1657,14 @@ if (typeof CONFIG === 'undefined') {
       });
     }
 
+    // ---- Event listener para modo demo ----
+    if (demoModeBtn) {
+      demoModeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        activateDemoMode();
+      });
+    }
+
     // Actualizar funciones para incluir los nuevos formularios
     function showLoginFormHard() {
       loginForm?.classList.remove('hidden');
@@ -2008,6 +2064,154 @@ if (typeof CONFIG === 'undefined') {
       else if (location.hash === '#reset') showResetPasswordFormHard();
       else if (location.hash === '#newpassword') showNewPasswordFormHard();
       else showLoginFormHard();
+    }
+
+    // ======================
+    //  VERIFICACIÓN MODO DEMO
+    // ======================
+    
+    // Verificar si el modo demo está activo
+    async function verificarModoDemo() {
+      try {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/api/pacientes/con-notificaciones`, {
+          headers: getAuthHeaders()
+        });
+
+        if (response.ok) {
+          const pacientes = await response.json();
+          const pacientesDemo = pacientes.filter(p => 
+            p.nombre.includes('DEMO') || p.apellido.includes('DEMO')
+          );
+
+          if (pacientesDemo.length > 0) {
+            mostrarIndicadorDemo(pacientesDemo.length);
+          } else {
+            ocultarIndicadorDemo();
+          }
+        }
+      } catch (error) {
+        console.error('Error al verificar modo demo:', error);
+      }
+    }
+
+    // Mostrar indicador de modo demo
+    function mostrarIndicadorDemo(cantidadPacientes) {
+      // Remover indicador existente si existe
+      ocultarIndicadorDemo();
+
+      const indicador = document.createElement('div');
+      indicador.id = 'demo-indicator';
+      indicador.innerHTML = `
+        <div class="demo-indicator">
+          <i class="fas fa-desktop"></i>
+          <span>Modo Demo Activo - ${cantidadPacientes} pacientes ficticios</span>
+          <button onclick="ocultarIndicadorDemo()" class="demo-close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `;
+
+      // Agregar estilos CSS si no existen
+      if (!document.getElementById('demo-indicator-styles')) {
+        const styles = document.createElement('style');
+        styles.id = 'demo-indicator-styles';
+        styles.textContent = `
+          .demo-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            font-weight: 600;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            animation: slideDown 0.3s ease-out;
+          }
+          
+          .demo-indicator i {
+            font-size: 1.1em;
+          }
+          
+          .demo-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background 0.2s ease;
+          }
+          
+          .demo-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+          }
+          
+          @keyframes slideDown {
+            from {
+              transform: translateY(-100%);
+            }
+            to {
+              transform: translateY(0);
+            }
+          }
+          
+          /* Ajustar el contenido principal cuando hay indicador */
+          body.demo-active {
+            padding-top: 50px;
+          }
+        `;
+        document.head.appendChild(styles);
+      }
+
+      document.body.appendChild(indicador);
+      document.body.classList.add('demo-active');
+    }
+
+    // Ocultar indicador de modo demo
+    function ocultarIndicadorDemo() {
+      const indicador = document.getElementById('demo-indicator');
+      if (indicador) {
+        indicador.remove();
+        document.body.classList.remove('demo-active');
+      }
+    }
+
+    // Hacer la función global para que pueda ser llamada desde el botón
+    window.ocultarIndicadorDemo = ocultarIndicadorDemo;
+
+    // Función para agregar botón de salir del modo demo
+    function addExitDemoButton() {
+      const userDropdown = document.getElementById('userDropdown');
+      if (userDropdown && !document.getElementById('exitDemoBtn')) {
+        const exitDemoBtn = document.createElement('button');
+        exitDemoBtn.id = 'exitDemoBtn';
+        exitDemoBtn.className = 'btn btn-warning';
+        exitDemoBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Salir del Modo Demo';
+        exitDemoBtn.style.marginTop = '10px';
+        exitDemoBtn.style.width = '100%';
+        
+        exitDemoBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (confirm('¿Estás seguro de que quieres salir del modo demo?')) {
+            deactivateDemoMode();
+          }
+        });
+        
+        userDropdown.appendChild(exitDemoBtn);
+      }
+    }
+
+    // Verificar modo demo cuando se carga la aplicación
+    if (isLoggedIn) {
+      verificarModoDemo();
     }
 
     // Fin DOMContentLoaded

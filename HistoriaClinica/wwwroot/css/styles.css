@@ -5659,3 +5659,112 @@ body.historia .row.hc-layout > :nth-child(2),
 .archivo-info .fa-file-alt {
     color: #6c757d;
 }
+
+/* Estilos para Modo Demo */
+.demo-section {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.demo-divider {
+    position: relative;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.demo-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #ddd, transparent);
+}
+
+.demo-divider span {
+    background: white;
+    padding: 0 15px;
+    color: #666;
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
+}
+
+.btn-demo {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.btn-demo:hover {
+    background: linear-gradient(135deg, #ee5a24 0%, #ff6b6b 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
+}
+
+.btn-demo:active {
+    transform: translateY(-1px);
+}
+
+.demo-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* Indicador de modo demo */
+.demo-mode-indicator {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.demo-mode-indicator i {
+    font-size: 1.1rem;
+}
+
+/* Responsive para modo demo */
+@media (max-width: 768px) {
+    .demo-mode-indicator {
+        top: 70px;
+        right: 10px;
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+    
+    .btn-demo {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+}

@@ -44,6 +44,19 @@
                         <br>
                         <a href="#" id="showResetPassword">Blanquear clave</a>
                     </div>
+                    
+                    <!-- Botón de Modo Demo -->
+                    <div class="demo-section">
+                        <div class="demo-divider">
+                            <span>o</span>
+                        </div>
+                        <button type="button" id="demoModeBtn" class="btn btn-demo">
+                            <i class="fas fa-play-circle"></i> Modo Demo
+                        </button>
+                        <p class="demo-description">
+                            Explora la aplicación con datos de ejemplo
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -107,8 +120,8 @@
                             <input type="text" id="verificationCode" name="verificationCode" required>
                         </div>
                         <div class="form-group">
-                            <label for="newPassword">Nueva Contraseña:</label>
-                            <input type="password" id="newPassword" name="newPassword" required>
+                            <label for="newPasswordReset">Nueva Contraseña:</label>
+                            <input type="password" id="newPasswordReset" name="newPassword" required>
                         </div>
                         <div class="form-group">
                             <label for="confirmNewPassword">Confirmación de Clave:</label>
@@ -128,6 +141,7 @@
         </main>
     </div>
     <script src="js/environment-config.js"></script>
+    <script src="js/demo-mode.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html> 
