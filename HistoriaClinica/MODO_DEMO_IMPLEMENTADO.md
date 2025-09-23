@@ -172,3 +172,5 @@ animation: pulse 2s infinite;
 Los usuarios pueden ahora explorar la aplicación de Historia Clínica de forma segura con datos de ejemplo, sin afectar la base de datos real.
 
 
+
+

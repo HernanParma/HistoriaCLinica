@@ -117,3 +117,5 @@ La aplicación está completamente funcional. Puedes:
 **Estado**: ✅ **FUNCIONANDO CORRECTAMENTE**
 
 
+
+

@@ -290,6 +290,29 @@
         text-shadow: 0 0 3px rgba(229, 62, 62, 0.3) !important;
     }
 
+    /* Estilos para labels resaltados en consultas guardadas */
+    .lab-label.highlighted {
+        color: #e53e3e !important;
+        font-weight: bold !important;
+        text-shadow: 0 0 3px rgba(229, 62, 62, 0.3) !important;
+    }
+
+    /* Estilos para la fecha del laboratorio */
+    .lab-date-info {
+        background: #f7fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        padding: 12px 16px !important;
+        margin-bottom: 16px !important;
+        font-size: 14px !important;
+        color: #4a5568 !important;
+    }
+
+    .lab-date-info strong {
+        color: #2d3748 !important;
+        font-weight: 600 !important;
+    }
+
 
 
     /* Estilos para archivos */
@@ -2154,7 +2177,7 @@
 
     <script src="js/config.js"></script>
     <script src="js/user-functionality.js"></script>
-    <script src="js/historia.js?v=3"></script>
+    <script src="js/historia.js?v=7"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Redirigir a login.html si no está autenticado
@@ -2206,6 +2229,41 @@
                         console.log(`Campo ${fieldName} desmarcado`);
                     }
                 });
+            });
+        }
+
+        // Función para obtener los campos resaltados
+        function getHighlightedFields() {
+            const highlightedFields = [];
+            const labLabels = document.querySelectorAll('.lab-grid .form-group label.highlighted');
+            
+            labLabels.forEach(label => {
+                const fieldName = label.textContent.replace(':', '').trim().toLowerCase();
+                highlightedFields.push(fieldName);
+            });
+            
+            return highlightedFields;
+        }
+
+        // Función para aplicar campos resaltados
+        function applyHighlightedFields(highlightedFields) {
+            if (!highlightedFields || highlightedFields.length === 0) return;
+            
+            const labLabels = document.querySelectorAll('.lab-grid .form-group label');
+            
+            labLabels.forEach(label => {
+                const fieldName = label.textContent.replace(':', '').trim().toLowerCase();
+                if (highlightedFields.includes(fieldName)) {
+                    label.classList.add('highlighted');
+                }
+            });
+        }
+
+        // Función para limpiar campos resaltados
+        function clearHighlightedFields() {
+            const labLabels = document.querySelectorAll('.lab-grid .form-group label');
+            labLabels.forEach(label => {
+                label.classList.remove('highlighted');
             });
         }
 

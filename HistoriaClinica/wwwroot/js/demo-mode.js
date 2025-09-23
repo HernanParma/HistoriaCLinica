@@ -534,8 +534,59 @@ function simulateApiCall(endpoint, method = 'GET', data = null) {
                     response = DEMO_PATIENTS;
                 }
             } else if (endpoint.includes('/consultas')) {
-                const id = parseInt(endpoint.match(/\/pacientes\/(\d+)\/consultas/)[1]);
-                response = getDemoConsultas(id);
+                if (method === 'POST') {
+                    // Simular creación de consulta en modo demo
+                    const pacienteId = parseInt(endpoint.match(/\/pacientes\/(\d+)\/consultas/)[1]);
+                    const nuevaConsulta = {
+                        id: Date.now(), // ID único basado en timestamp
+                        pacienteId: pacienteId,
+                        fecha: data.fecha || new Date().toISOString().split('T')[0],
+                        fechaLaboratorio: data.fechaLaboratorio || null,
+                        motivo: data.motivo || 'Consulta de demo',
+                        recetar: data.recetar || null,
+                        ome: data.ome || null,
+                        notas: data.notas || null,
+                        // Valores de laboratorio
+                        gr: data.gr || null,
+                        hto: data.hto || null,
+                        hb: data.hb || null,
+                        gb: data.gb || null,
+                        plaq: data.plaq || null,
+                        gluc: data.gluc || null,
+                        urea: data.urea || null,
+                        cr: data.cr || null,
+                        vfs: data.vfs || null,
+                        got: data.got || null,
+                        gpt: data.gpt || null,
+                        ct: data.ct || null,
+                        tg: data.tg || null,
+                        vitd: data.vitd || null,
+                        fal: data.fal || null,
+                        hdl: data.hdl || null,
+                        b12: data.b12 || null,
+                        tsh: data.tsh || null,
+                        orina: data.orina || null,
+                        urico: data.urico || null,
+                        ldl: data.ldl || null,
+                        psa: data.psa || null,
+                        hba1c: data.hba1c || null,
+                        valoresNoIncluidos: data.valoresNoIncluidos || null,
+                        archivos: data.archivos || [],
+                        camposResaltados: data.camposResaltados || []
+                    };
+                    
+                    // Agregar la consulta a los datos de demo
+                    if (!DEMO_CONSULTAS[pacienteId]) {
+                        DEMO_CONSULTAS[pacienteId] = [];
+                    }
+                    DEMO_CONSULTAS[pacienteId].unshift(nuevaConsulta); // Agregar al inicio
+                    
+                    response = nuevaConsulta;
+                } else {
+                    // GET - obtener consultas
+                    const id = parseInt(endpoint.match(/\/pacientes\/(\d+)\/consultas/)[1]);
+                    response = getDemoConsultas(id);
+                }
             } else if (endpoint.includes('/api/usuarios/login')) {
                 // Simular login exitoso en modo demo
                 response = {

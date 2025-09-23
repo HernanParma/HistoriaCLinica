@@ -399,6 +399,7 @@ namespace HistoriaClinica.Controllers
                     GLUC = c.GLUC,
                     UREA = c.UREA,
                     CR = c.CR,
+                    VFS = c.VFS,
                     GOT = c.GOT,
                     GPT = c.GPT,
                     CT = c.CT,
@@ -410,7 +411,9 @@ namespace HistoriaClinica.Controllers
                     TSH = c.TSH,
                     ORINA = c.ORINA,
                     URICO = c.URICO,
-                    ValoresNoIncluidos = c.ValoresNoIncluidos
+                    ValoresNoIncluidos = c.ValoresNoIncluidos,
+                    FechaLaboratorio = c.FechaLaboratorio,
+                    CamposResaltados = c.CamposResaltados != null ? JsonSerializer.Deserialize<List<string>>(c.CamposResaltados) : null
                 }).ToList();
                 
                 // Logging detallado de cada consulta para debug
@@ -420,8 +423,8 @@ namespace HistoriaClinica.Controllers
                         consulta.Id, consulta.Fecha, consulta.Motivo, consulta.Archivos?.Count ?? 0);
                     
                     // Debug específico para valores de laboratorio
-                    _logger.LogInformation("[API] Laboratorio - GR={GR}, HTO={HTO}, HB={HB}, GB={GB}, PLAQ={PLAQ}, GLUC={GLUC}, UREA={UREA}, CR={CR}", 
-                        consulta.GR, consulta.HTO, consulta.HB, consulta.GB, consulta.PLAQ, consulta.GLUC, consulta.UREA, consulta.CR);
+                    _logger.LogInformation("[API] Laboratorio - GR={GR}, HTO={HTO}, HB={HB}, GB={GB}, PLAQ={PLAQ}, GLUC={GLUC}, UREA={UREA}, CR={CR}, VFS={VFS}", 
+                        consulta.GR, consulta.HTO, consulta.HB, consulta.GB, consulta.PLAQ, consulta.GLUC, consulta.UREA, consulta.CR, consulta.VFS);
                     _logger.LogInformation("[API] Laboratorio - GOT={GOT}, GPT={GPT}, CT={CT}, TG={TG}, VITD={VITD}, FAL={FAL}, COL={COL}, B12={B12}", 
                         consulta.GOT, consulta.GPT, consulta.CT, consulta.TG, consulta.VITD, consulta.FAL, consulta.COL, consulta.B12);
                     _logger.LogInformation("[API] Laboratorio - TSH={TSH}, URICO={URICO}, ORINA={ORINA}, ValoresNoIncluidos={ValoresNoIncluidos}", 
@@ -472,9 +475,9 @@ namespace HistoriaClinica.Controllers
             // Debug: Log de los datos recibidos
             _logger.LogInformation("[API] Datos de consulta recibidos: Motivo={Motivo}, Fecha={Fecha}", 
                 crearConsultaDto.Motivo, crearConsultaDto.Fecha);
-            _logger.LogInformation("[API] Laboratorio recibido - GR={GR}, HTO={HTO}, HB={HB}, GB={GB}, PLAQ={PLAQ}, GLUC={GLUC}, UREA={UREA}, CR={CR}", 
+            _logger.LogInformation("[API] Laboratorio recibido - GR={GR}, HTO={HTO}, HB={HB}, GB={GB}, PLAQ={PLAQ}, GLUC={GLUC}, UREA={UREA}, CR={CR}, VFS={VFS}", 
                 crearConsultaDto.GR, crearConsultaDto.HTO, crearConsultaDto.HB, crearConsultaDto.GB, 
-                crearConsultaDto.PLAQ, crearConsultaDto.GLUC, crearConsultaDto.UREA, crearConsultaDto.CR);
+                crearConsultaDto.PLAQ, crearConsultaDto.GLUC, crearConsultaDto.UREA, crearConsultaDto.CR, crearConsultaDto.VFS);
             _logger.LogInformation("[API] Laboratorio recibido - GOT={GOT}, GPT={GPT}, CT={CT}, TG={TG}, VITD={VITD}, FAL={FAL}, COL={COL}, B12={B12}", 
                 crearConsultaDto.GOT, crearConsultaDto.GPT, crearConsultaDto.CT, crearConsultaDto.TG, 
                 crearConsultaDto.VITD, crearConsultaDto.FAL, crearConsultaDto.COL, crearConsultaDto.B12);
@@ -537,6 +540,7 @@ namespace HistoriaClinica.Controllers
                 GLUC = crearConsultaDto.GLUC,
                 UREA = crearConsultaDto.UREA,
                 CR = crearConsultaDto.CR,
+                VFS = crearConsultaDto.VFS,
                 GOT = crearConsultaDto.GOT,
                 GPT = crearConsultaDto.GPT,
                 CT = crearConsultaDto.CT,
@@ -548,7 +552,9 @@ namespace HistoriaClinica.Controllers
                 TSH = crearConsultaDto.TSH,
                 ORINA = crearConsultaDto.ORINA,
                 URICO = crearConsultaDto.URICO,
-                ValoresNoIncluidos = crearConsultaDto.ValoresNoIncluidos?.Trim()
+                ValoresNoIncluidos = crearConsultaDto.ValoresNoIncluidos?.Trim(),
+                FechaLaboratorio = crearConsultaDto.FechaLaboratorio,
+                CamposResaltados = crearConsultaDto.CamposResaltados != null ? JsonSerializer.Serialize(crearConsultaDto.CamposResaltados) : null
             };
 
             // Agregar a la base de datos
@@ -558,9 +564,9 @@ namespace HistoriaClinica.Controllers
             _logger.LogInformation("[API] Consulta creada exitosamente con ID: {ConsultaId}", nuevaConsulta.Id);
             
             // Debug: Verificar que los valores se guardaron correctamente
-            _logger.LogInformation("[API] Verificación - Laboratorio guardado - GR={GR}, HTO={HTO}, HB={HB}, GB={GB}, PLAQ={PLAQ}, GLUC={GLUC}, UREA={UREA}, CR={CR}", 
+            _logger.LogInformation("[API] Verificación - Laboratorio guardado - GR={GR}, HTO={HTO}, HB={HB}, GB={GB}, PLAQ={PLAQ}, GLUC={GLUC}, UREA={UREA}, CR={CR}, VFS={VFS}", 
                 nuevaConsulta.GR, nuevaConsulta.HTO, nuevaConsulta.HB, nuevaConsulta.GB, 
-                nuevaConsulta.PLAQ, nuevaConsulta.GLUC, nuevaConsulta.UREA, nuevaConsulta.CR);
+                nuevaConsulta.PLAQ, nuevaConsulta.GLUC, nuevaConsulta.UREA, nuevaConsulta.CR, nuevaConsulta.VFS);
             _logger.LogInformation("[API] Verificación - Laboratorio guardado - GOT={GOT}, GPT={GPT}, CT={CT}, TG={TG}, VITD={VITD}, FAL={FAL}, COL={COL}, B12={B12}", 
                 nuevaConsulta.GOT, nuevaConsulta.GPT, nuevaConsulta.CT, nuevaConsulta.TG, 
                 nuevaConsulta.VITD, nuevaConsulta.FAL, nuevaConsulta.COL, nuevaConsulta.B12);
@@ -588,6 +594,7 @@ namespace HistoriaClinica.Controllers
                 GLUC = nuevaConsulta.GLUC,
                 UREA = nuevaConsulta.UREA,
                 CR = nuevaConsulta.CR,
+                VFS = nuevaConsulta.VFS,
                 GOT = nuevaConsulta.GOT,
                 GPT = nuevaConsulta.GPT,
                 CT = nuevaConsulta.CT,
@@ -599,7 +606,9 @@ namespace HistoriaClinica.Controllers
                 TSH = nuevaConsulta.TSH,
                 ORINA = nuevaConsulta.ORINA,
                 URICO = nuevaConsulta.URICO,
-                ValoresNoIncluidos = nuevaConsulta.ValoresNoIncluidos
+                ValoresNoIncluidos = nuevaConsulta.ValoresNoIncluidos,
+                FechaLaboratorio = nuevaConsulta.FechaLaboratorio,
+                CamposResaltados = nuevaConsulta.CamposResaltados != null ? JsonSerializer.Deserialize<List<string>>(nuevaConsulta.CamposResaltados) : null
             };
             
             return CreatedAtAction(nameof(ObtenerConsultasPorPaciente), new { id = pacienteId }, consultaCreada);
@@ -1612,6 +1621,7 @@ namespace HistoriaClinica.Controllers
         public double? GLUC { get; set; }
         public double? UREA { get; set; }
         public double? CR { get; set; }
+        public double? VFS { get; set; }
         public double? GOT { get; set; }
         public double? GPT { get; set; }
         public double? CT { get; set; }
@@ -1624,6 +1634,8 @@ namespace HistoriaClinica.Controllers
         public string? ORINA { get; set; }
         public double? URICO { get; set; }
         public string? ValoresNoIncluidos { get; set; }
+        public DateTime? FechaLaboratorio { get; set; }
+        public List<string>? CamposResaltados { get; set; }
     }
 
     /// <summary>
@@ -1661,6 +1673,7 @@ namespace HistoriaClinica.Controllers
         public double? GLUC { get; set; }
         public double? UREA { get; set; }
         public double? CR { get; set; }
+        public double? VFS { get; set; }
         public double? GOT { get; set; }
         public double? GPT { get; set; }
         public double? CT { get; set; }
@@ -1673,6 +1686,12 @@ namespace HistoriaClinica.Controllers
         public string? ORINA { get; set; }
         public double? URICO { get; set; }
         public string? ValoresNoIncluidos { get; set; }
+        
+        // Fecha específica del laboratorio
+        public DateTime? FechaLaboratorio { get; set; }
+        
+        // Campos resaltados (valores fuera de rango)
+        public List<string>? CamposResaltados { get; set; }
         
         // Archivos adjuntos
         public List<ArchivoConsultaDto>? Archivos { get; set; }

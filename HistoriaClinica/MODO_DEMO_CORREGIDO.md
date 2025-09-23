@@ -124,3 +124,5 @@ if (endpoint.includes('/con-notificaciones')) {
 Ahora los usuarios pueden explorar la aplicación con 20 pacientes de ejemplo, consultas médicas realistas y notificaciones simuladas, todo sin afectar la base de datos real.
 
 
+
+

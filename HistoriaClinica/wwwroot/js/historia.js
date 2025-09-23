@@ -1,9 +1,75 @@
-// Configuración global
+// Configuración global - Actualizado: 2025-09-22 23:40
 if (typeof window.CONFIG === 'undefined') {
-    window.CONFIG = {
+window.CONFIG = {
         API_BASE_URL: window.location.origin
     };
 }
+
+// ===== FUNCIONES GLOBALES PARA CAMPOS RESALTADOS (LAB) =====
+function getHighlightedFields() {
+  const highlighted = [];
+  const labels = document.querySelectorAll('.lab-grid .form-group label.highlighted');
+
+  const keyFrom = (label) => {
+    // 1) data-key="gr" etc (recomendado en el HTML)
+    if (label.dataset && label.dataset.key) return label.dataset.key.toLowerCase();
+
+    // 2) for="grConsulta" → "gr"
+    const f = label.getAttribute('for');
+    if (f) return f.replace(/Consulta$/i, '').toLowerCase();
+
+    // 3) fallback por texto (GR:, HTO:, HB:)
+    const txt = (label.textContent || '').toLowerCase().replace(':', '').trim();
+    // map explícito para evitar desmatches
+    const map = ['gr','hto','hb','gb','plaq','gluc','urea','cr','vfs','got','gpt','ct','tg','vitd','fal','hdl','ldl','b12','tsh','orina','urico','psa','hba1c','valoresNoIncluidos'];
+    const hit = map.find(k => txt.startsWith(k));
+    return hit || txt;
+  };
+
+  labels.forEach(l => {
+    const key = keyFrom(l);
+    highlighted.push(key);
+    console.log(`🔴 Campo resaltado detectado: ${key} (texto: "${l.textContent}")`);
+  });
+  
+  console.log('🔴 Campos resaltados totales:', highlighted);
+  return highlighted;
+}
+
+function applyHighlightedFields(highlightedFields) {
+  if (!highlightedFields || !highlightedFields.length) return;
+  const labels = document.querySelectorAll('.lab-grid .form-group label');
+  labels.forEach(label => {
+    // usar misma lógica de key que arriba para comparar
+    const key = (label.dataset?.key || label.getAttribute('for')?.replace(/Consulta$/i,'') || label.textContent).toLowerCase().replace(':','').trim();
+    if (highlightedFields.includes(key)) {
+      label.classList.add('highlighted');
+    }
+  });
+}
+
+function clearHighlightedFields() {
+  document.querySelectorAll('.lab-grid .form-group label.highlighted')
+    .forEach(l => l.classList.remove('highlighted'));
+}
+
+function setupLabLabelClickHandlers() {
+  document.querySelectorAll('.lab-grid .form-group label').forEach(label => {
+    label.addEventListener('click', function () {
+      this.classList.toggle('highlighted');
+      const key = (this.dataset?.key || this.getAttribute('for')?.replace(/Consulta$/i,'') || this.textContent).toLowerCase().replace(':','').trim();
+      console.log(this.classList.contains('highlighted')
+        ? `Campo ${key} marcado como fuera de rango`
+        : `Campo ${key} desmarcado`);
+    });
+  });
+}
+
+// Exponer explícitamente en window para compatibilidad
+window.getHighlightedFields = getHighlightedFields;
+window.applyHighlightedFields = applyHighlightedFields;
+window.clearHighlightedFields = clearHighlightedFields;
+window.setupLabLabelClickHandlers = setupLabLabelClickHandlers;
 
 console.log('🔧 Configuración de API:', window.CONFIG);
 
@@ -51,6 +117,31 @@ async function apiGet(path) {
         console.error('❌ Error en petición:', error);
         throw error;
     }
+}
+
+// Helper genérico para POST/PUT/DELETE (compat con modo demo si lo necesitás luego)
+async function makeApiCall(path, method = 'GET', data = null, extraHeaders = {}) {
+  const url = `${window.CONFIG.API_BASE_URL}${path}`;
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    ...getAuthHeaders(),
+    ...extraHeaders
+  };
+
+  const options = { method, headers };
+  if (data !== null) options.body = JSON.stringify(data);
+
+  const resp = await fetch(url, options);
+  // Opcional: manejo uniforme de 401 como en apiGet
+  if (resp.status === 401) {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('username');
+    localStorage.removeItem('jwtToken');
+    window.location.replace('login.html');
+    throw new Error('401 No autorizado');
+  }
+  return resp; // el caller ya está haciendo resp.ok / resp.text() / resp.json()
 }
 
 // UI helpers
@@ -348,7 +439,7 @@ async function saveSection(section) {
     
     try {
         // Hacer petición PUT para actualizar el paciente
-        const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}`, {
+            const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -356,8 +447,8 @@ async function saveSection(section) {
             },
             body: JSON.stringify(sectionData)
         });
-        
-        if (response.ok) {
+            
+            if (response.ok) {
             showSuccessMessage('Guardado con éxito');
             // Desactivar modo de edición
             toggleEditMode(section);
@@ -430,14 +521,14 @@ async function loadPatientData(patientId) {
     try {
         const paciente = await apiGet(`/api/pacientes/${patientId}`);
         renderPatientSidebar(paciente);
-        
-        // Mostrar la tarjeta de consultas
+                
+                // Mostrar la tarjeta de consultas
         const hcCard = document.getElementById('hc-card');
-        if (hcCard) {
-            hcCard.classList.remove('hidden');
-        }
-        
-        await loadPatientConsultations(patientId);
+                if (hcCard) {
+                    hcCard.classList.remove('hidden');
+                }
+                
+                await loadPatientConsultations(patientId);
     } catch (err) {
         console.error('❌ Error al cargar datos del paciente:', err);
         showSidebarError(`Error al cargar datos del paciente: ${String(err.message)}`);
@@ -465,7 +556,7 @@ async function loadPatientConsultations(patientId) {
         if (paciente && paciente.consultas) {
             console.log('🔍 Debug - Consultas desde datos del paciente:', paciente.consultas);
             renderConsultas(paciente.consultas);
-        } else {
+            } else {
             console.log('⚠️ No se encontraron consultas en los datos del paciente');
             renderConsultas([]);
         }
@@ -475,12 +566,12 @@ async function loadPatientConsultations(patientId) {
         const hcBody = document.getElementById('hc-body');
         if (hcBody) {
             hcBody.innerHTML = `
-                <div class="error-message">
-                    <i class="fas fa-exclamation-triangle"></i>
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
                     <span>Ocurrió un error al cargar las consultas.</span>
                     <small>${String(err.message)}</small>
-                </div>
-            `;
+                        </div>
+                    `;
         }
     }
 }
@@ -508,6 +599,7 @@ function renderLaboratorioValues(consulta) {
         { key: 'gluc', label: 'GLUC (Glucosa)', value: getLabValue(consulta, 'gluc', 'GLUC') },
         { key: 'urea', label: 'UREA', value: getLabValue(consulta, 'urea', 'UREA') },
         { key: 'cr', label: 'CR (Creatinina)', value: getLabValue(consulta, 'cr', 'CR') },
+        { key: 'vfs', label: 'VFS (Velocidad de Filtración Glomerular)', value: getLabValue(consulta, 'vfs', 'VFS') },
         { key: 'got', label: 'GOT', value: getLabValue(consulta, 'got', 'GOT') },
         { key: 'gpt', label: 'GPT', value: getLabValue(consulta, 'gpt', 'GPT') },
         { key: 'ct', label: 'CT (Colesterol Total)', value: getLabValue(consulta, 'ct', 'CT') },
@@ -528,13 +620,33 @@ function renderLaboratorioValues(consulta) {
     // Filtrar valores que tienen datos
     const valoresConDatos = labValues.filter(item => item.value !== null && item.value !== undefined && item.value !== '');
 
-    const labHTML = valoresConDatos
-        .map(item => `
-            <div class="lab-value-item">
-                <span class="lab-label">${item.label}:</span>
-                <span class="lab-value">${item.value}</span>
-            </div>
-        `).join('');
+    // Obtener campos resaltados de la consulta
+    const camposResaltados = consulta.camposResaltados || consulta.CamposResaltados || [];
+    console.log('🔍 Campos resaltados en consulta:', camposResaltados);
+    console.log('🔍 Consulta completa:', consulta);
+    
+    // Obtener fecha del laboratorio
+    const fechaLaboratorio = consulta.fechaLaboratorio || consulta.FechaLaboratorio;
+    const fechaLabHTML = fechaLaboratorio ? 
+        `<div class="lab-date-info"><strong>Fecha del Laboratorio:</strong> ${new Date(fechaLaboratorio).toLocaleDateString()}</div>` : '';
+    
+    const labHTML = fechaLabHTML + valoresConDatos
+        .map(item => {
+            // Verificar si este campo está resaltado
+            const isHighlighted = camposResaltados.includes(item.key.toLowerCase());
+            const labelClass = isHighlighted ? 'lab-label highlighted' : 'lab-label';
+            
+            if (isHighlighted) {
+                console.log(`🔴 Campo ${item.key} está resaltado - aplicando clase: ${labelClass}`);
+            }
+            
+            return `
+                <div class="lab-value-item">
+                    <span class="${labelClass}">${item.label}:</span>
+                    <span class="lab-value">${item.value}</span>
+                    </div>
+                `;
+        }).join('');
 
     if (labHTML === '') {
         return '<div class="no-lab-values">No hay valores de laboratorio registrados para esta consulta.</div>';
@@ -581,8 +693,8 @@ function renderArchivosAdjuntos(archivos) {
                         <a href="${downloadUrl}" target="_blank" class="archivo-link">${fileName}</a>
                         <small class="archivo-size">${fileSize}</small>
                     </div>
-                </div>
-            </div>
+                    </div>
+                    </div>
         `;
     }).join('');
     
@@ -592,12 +704,12 @@ function renderArchivosAdjuntos(archivos) {
                 <strong><i class="fas fa-paperclip"></i> Archivos Adjuntos (${archivos.length}):</strong>
                 <div class="archivos-lista">
                     ${archivosHtml}
+                    </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    `;
-}
-
+            `;
+        }
+        
 // Obtener icono según extensión del archivo
 function getFileIcon(extension) {
     if (!extension) return 'fa-file';
@@ -646,7 +758,7 @@ function renderRecetarConBoton(consulta) {
                 <i class="fas fa-check"></i> Realizado
             </button>
         </div>`;
-    } else {
+            } else {
         html += `<div class="revision-status-historial" style="display: flex; justify-content: flex-end; margin-top: 8px;">
             <span class="revision-status" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #065f46; border-radius: 6px; font-size: 0.85em; font-weight: 600; border: 1px solid #a7f3d0;">
                 <i class="fas fa-check-circle"></i>
@@ -701,38 +813,38 @@ function renderOmeConBoton(consulta) {
 // Renderizar consultas
 function renderConsultas(consultas) {
     const hcBody = document.getElementById('hc-body');
-    if (!hcBody) return;
-
+        if (!hcBody) return;
+        
     if (!consultas || !consultas.length) {
-        hcBody.innerHTML = `
-            <div class="no-consultations">
+            hcBody.innerHTML = `
+                <div class="no-consultations">
                 <i class="fas fa-notes-medical"></i>
-                <span>No hay consultas registradas para este paciente</span>
+                    <span>No hay consultas registradas para este paciente</span>
                 <br><small>Puede agregar una nueva consulta cuando sea necesario</small>
-            </div>
-        `;
-        return;
-    }
-
-    const consultasHtml = consultas.map(consulta => `
-        <div class="consulta-item">
-            <div class="consulta-header" onclick="toggleConsultaDetalle(this)">
-                <div class="consulta-fecha">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>${new Date(consulta.fecha || consulta.Fecha).toLocaleDateString()}</span>
                 </div>
-                <div class="consulta-actions">
+            `;
+            return;
+        }
+        
+        const consultasHtml = consultas.map(consulta => `
+            <div class="consulta-item">
+                <div class="consulta-header" onclick="toggleConsultaDetalle(this)">
+                    <div class="consulta-fecha">
+                        <i class="fas fa-calendar-alt"></i>
+                    <span>${new Date(consulta.fecha || consulta.Fecha).toLocaleDateString()}</span>
+                    </div>
+                    <div class="consulta-actions">
                     <button class="btn-editar-consulta" onclick="editarConsulta(${consulta.id || consulta.Id})" title="Editar consulta">
                         <i class="fas fa-edit"></i> Editar
                     </button>
                     <button class="btn-eliminar-consulta" onclick="eliminarConsulta(${consulta.id || consulta.Id})" title="Eliminar consulta">
                         <i class="fas fa-trash-alt"></i> Eliminar
-                    </button>
-                    <i class="fas fa-chevron-down toggle-icon"></i>
+                        </button>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
                 </div>
-            </div>
-            <div class="consulta-content collapsed">
-                <div class="consulta-details">
+                <div class="consulta-content collapsed">
+                    <div class="consulta-details">
                     ${consulta.motivo || consulta.Motivo ? `<div class="detail-item"><strong>Motivo:</strong> ${consulta.motivo || consulta.Motivo}</div>` : ''}
                     ${renderRecetarConBoton(consulta)}
                     ${renderOmeConBoton(consulta)}
@@ -740,7 +852,7 @@ function renderConsultas(consultas) {
                     
                     <!-- Archivos adjuntos -->
                     ${renderArchivosAdjuntos(consulta.archivos || consulta.Archivos)}
-                </div>
+                    </div>
                 
                 <!-- Botón para ver valores de laboratorio -->
                 <div class="consulta-actions-bottom">
@@ -755,56 +867,56 @@ function renderConsultas(consultas) {
                         ${renderLaboratorioValues(consulta)}
                     </div>
                 </div>
+                </div>
             </div>
-        </div>
-    `).join('');
-
-    hcBody.innerHTML = consultasHtml;
-}
-
-// Función para alternar detalles de consulta
-window.toggleConsultaDetalle = function(header) {
-    const content = header.nextElementSibling;
-    const icon = header.querySelector('.toggle-icon');
-    
-    if (content.classList.contains('collapsed')) {
-        content.classList.remove('collapsed');
-        content.classList.add('expanded');
-        icon.style.transform = 'rotate(180deg)';
-    } else {
-        content.classList.remove('expanded');
-        content.classList.add('collapsed');
-        icon.style.transform = 'rotate(0deg)';
-    }
-};
-
-// Función para eliminar consulta
-window.eliminarConsulta = async function(consultaId) {
-    const patientId = getPatientIdFromUrl();
-    
-    if (!confirm('¿Estás seguro de que quieres eliminar esta consulta?')) {
-        return;
-    }
-    
-    try {
-        const headers = getAuthHeaders();
-        const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/consultas/${consultaId}`, {
-            method: 'DELETE',
-            headers: headers
-        });
+        `).join('');
         
-        if (response.ok) {
-            console.log('✅ Consulta eliminada exitosamente');
-            // Recargar consultas
-            await loadPatientConsultations(patientId);
+        hcBody.innerHTML = consultasHtml;
+    }
+
+    // Función para alternar detalles de consulta
+    window.toggleConsultaDetalle = function(header) {
+        const content = header.nextElementSibling;
+        const icon = header.querySelector('.toggle-icon');
+        
+        if (content.classList.contains('collapsed')) {
+            content.classList.remove('collapsed');
+            content.classList.add('expanded');
+            icon.style.transform = 'rotate(180deg)';
         } else {
-            console.error(`❌ Error al eliminar consulta: ${response.status}`);
+            content.classList.remove('expanded');
+            content.classList.add('collapsed');
+            icon.style.transform = 'rotate(0deg)';
+        }
+    };
+
+    // Función para eliminar consulta
+    window.eliminarConsulta = async function(consultaId) {
+        const patientId = getPatientIdFromUrl();
+        
+        if (!confirm('¿Estás seguro de que quieres eliminar esta consulta?')) {
+            return;
         }
         
-    } catch (error) {
-        console.error('❌ Error al eliminar consulta:', error);
-    }
-};
+        try {
+            const headers = getAuthHeaders();
+            const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/consultas/${consultaId}`, {
+                method: 'DELETE',
+                headers: headers
+            });
+            
+            if (response.ok) {
+                console.log('✅ Consulta eliminada exitosamente');
+                // Recargar consultas
+                await loadPatientConsultations(patientId);
+            } else {
+                console.error(`❌ Error al eliminar consulta: ${response.status}`);
+            }
+            
+        } catch (error) {
+            console.error('❌ Error al eliminar consulta:', error);
+        }
+    };
 
 // ===== FUNCIONALIDAD DEL MODAL DE NUEVA CONSULTA =====
 
@@ -878,6 +990,8 @@ function initializeModal() {
             // Limpiar archivos
             archivosList = [];
             mostrarArchivosSeleccionados();
+            // Limpiar campos resaltados
+            clearHighlightedFields();
         }
     }
 
@@ -963,6 +1077,7 @@ function initializeModal() {
                 
                 const consultaData = {
                     fecha: formData.get('fecha') || new Date().toISOString().split('T')[0],
+                    fechaLaboratorio: formData.get('fechaLaboratorio') || null,
                     motivo: formData.get('motivo'),
                     recetar: formData.get('recetar') || null,
                     ome: formData.get('ome') || null,
@@ -976,6 +1091,7 @@ function initializeModal() {
                     gluc: formData.get('gluc') ? parseFloat(formData.get('gluc').replace(',', '.')) : null,
                     urea: formData.get('urea') ? parseFloat(formData.get('urea').replace(',', '.')) : null,
                     cr: formData.get('cr') ? parseFloat(formData.get('cr').replace(',', '.')) : null,
+                    vfs: formData.get('vfs') ? parseFloat(formData.get('vfs').replace(',', '.')) : null,
                     got: formData.get('got') ? parseFloat(formData.get('got').replace(',', '.')) : null,
                     gpt: formData.get('gpt') ? parseFloat(formData.get('gpt').replace(',', '.')) : null,
                     ct: formData.get('ct') ? parseFloat(formData.get('ct').replace(',', '.')) : null,
@@ -992,7 +1108,9 @@ function initializeModal() {
                     hba1c: formData.get('hba1c') ? parseFloat(formData.get('hba1c').replace(',', '.')) : null,
                     valoresNoIncluidos: formData.get('valoresNoIncluidos') || null,
                     // Incluir archivos subidos
-                    archivos: archivosSubidos
+                    archivos: archivosSubidos,
+                    // Incluir campos resaltados (valores fuera de rango)
+                    camposResaltados: getHighlightedFields()
                 };
 
                 // Validar motivo (requerido)
@@ -1005,15 +1123,8 @@ function initializeModal() {
                 
                 const patientId = getPatientIdFromUrl();
                 
-                // Enviar a la API
-                const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/consultas`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...getAuthHeaders()
-                    },
-                    body: JSON.stringify(consultaData)
-                });
+                // Enviar a la API usando makeApiCall para manejar modo demo
+                const response = await makeApiCall(`/api/pacientes/${patientId}/consultas`, 'POST', consultaData);
 
                 if (response.ok) {
                     const nuevaConsulta = await response.json();
@@ -1925,32 +2036,30 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     // Event listeners para los botones de confirmación
-    document.addEventListener('DOMContentLoaded', function() {
-        const marcarRecetarBtn = document.getElementById('marcarRecetarRevisado');
-        const marcarOmeBtn = document.getElementById('marcarOmeRevisado');
-        const recetarTextarea = document.getElementById('recetarConsulta');
-        const omeTextarea = document.getElementById('omeConsulta');
-        
-        if (marcarRecetarBtn) {
-            marcarRecetarBtn.addEventListener('click', () => marcarComoRevisado('recetar'));
-        }
-        
-        if (marcarOmeBtn) {
-            marcarOmeBtn.addEventListener('click', () => marcarComoRevisado('ome'));
-        }
-        
-        // Mostrar/ocultar controles cuando cambie el contenido
-        if (recetarTextarea) {
-            recetarTextarea.addEventListener('input', toggleRevisionControls);
-        }
-        
-        if (omeTextarea) {
-            omeTextarea.addEventListener('input', toggleRevisionControls);
-        }
-        
-        // Verificar controles al cargar la página
-        setTimeout(toggleRevisionControls, 500);
-    });
+    const marcarRecetarBtn = document.getElementById('marcarRecetarRevisado');
+    const marcarOmeBtn = document.getElementById('marcarOmeRevisado');
+    const recetarTextarea = document.getElementById('recetarConsulta');
+    const omeTextarea = document.getElementById('omeConsulta');
+    
+    if (marcarRecetarBtn) {
+        marcarRecetarBtn.addEventListener('click', () => marcarComoRevisado('recetar'));
+    }
+    
+    if (marcarOmeBtn) {
+        marcarOmeBtn.addEventListener('click', () => marcarComoRevisado('ome'));
+    }
+    
+    // Mostrar/ocultar controles cuando cambie el contenido
+    if (recetarTextarea) {
+        recetarTextarea.addEventListener('input', toggleRevisionControls);
+    }
+    
+    if (omeTextarea) {
+        omeTextarea.addEventListener('input', toggleRevisionControls);
+    }
+    
+    // Verificar controles al cargar la página
+    setTimeout(toggleRevisionControls, 500);
 
     // Event listener global para botones de "Realizado" usando delegación de eventos
     document.addEventListener('click', async function(event) {
@@ -2038,6 +2147,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     function llenarFormularioEdicion(consulta) {
         // Campos básicos (la fecha se muestra pero no se puede modificar)
         document.getElementById('fechaEditarConsulta').value = consulta.fecha || consulta.Fecha || '';
+        document.getElementById('fechaLaboratorioEditarConsulta').value = consulta.fechaLaboratorio || consulta.FechaLaboratorio || '';
         document.getElementById('motivoEditarConsulta').value = consulta.motivo || consulta.Motivo || '';
         document.getElementById('recetarEditarConsulta').value = consulta.recetar || consulta.Recetar || '';
         document.getElementById('omeEditarConsulta').value = consulta.ome || consulta.Ome || '';
@@ -2052,6 +2162,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('glucEditarConsulta').value = consulta.gluc || consulta.GLUC || '';
         document.getElementById('ureaEditarConsulta').value = consulta.urea || consulta.UREA || '';
         document.getElementById('crEditarConsulta').value = consulta.cr || consulta.CR || '';
+        document.getElementById('vfsEditarConsulta').value = consulta.vfs || consulta.VFS || '';
         document.getElementById('gotEditarConsulta').value = consulta.got || consulta.GOT || '';
         document.getElementById('gptEditarConsulta').value = consulta.gpt || consulta.GPT || '';
         document.getElementById('ctEditarConsulta').value = consulta.ct || consulta.CT || '';
@@ -2067,6 +2178,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('hba1cEditarConsulta').value = consulta.hba1c || consulta.HBA1C || '';
         document.getElementById('orinaEditarConsulta').value = consulta.orina || consulta.ORINA || '';
         document.getElementById('valoresNoIncluidosEditarConsulta').value = consulta.valoresNoIncluidos || consulta.ValoresNoIncluidos || '';
+        
+        // Aplicar campos resaltados si existen
+        const camposResaltados = consulta.camposResaltados || consulta.CamposResaltados || [];
+        if (camposResaltados.length > 0) {
+            // Limpiar campos resaltados primero
+            clearHighlightedFields();
+            // Aplicar los campos resaltados
+            applyHighlightedFields(camposResaltados);
+        }
     }
     
     // Función para cerrar el modal de edición
@@ -2078,6 +2198,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Limpiar formulario
             document.getElementById('formEditarConsulta').reset();
             consultaEditandoId = null;
+            // Limpiar campos resaltados
+            clearHighlightedFields();
         }
     }
     
@@ -2102,6 +2224,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             // Preparar datos para actualizar (no incluir fecha ya que está deshabilitada)
             const consultaData = {
+                fechaLaboratorio: formData.get('fechaLaboratorio') || null,
                 motivo: formData.get('motivo'),
                 recetar: formData.get('recetar') || null,
                 ome: formData.get('ome') || null,
@@ -2115,6 +2238,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 gluc: formData.get('gluc') ? parseFloat(formData.get('gluc').replace(',', '.')) : null,
                 urea: formData.get('urea') ? parseFloat(formData.get('urea').replace(',', '.')) : null,
                 cr: formData.get('cr') ? parseFloat(formData.get('cr').replace(',', '.')) : null,
+                vfs: formData.get('vfs') ? parseFloat(formData.get('vfs').replace(',', '.')) : null,
                 got: formData.get('got') ? parseFloat(formData.get('got').replace(',', '.')) : null,
                 gpt: formData.get('gpt') ? parseFloat(formData.get('gpt').replace(',', '.')) : null,
                 ct: formData.get('ct') ? parseFloat(formData.get('ct').replace(',', '.')) : null,
@@ -2129,7 +2253,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                 ldl: formData.get('ldl') ? parseFloat(formData.get('ldl').replace(',', '.')) : null,
                 psa: formData.get('psa') ? parseFloat(formData.get('psa').replace(',', '.')) : null,
                 hba1c: formData.get('hba1c') ? parseFloat(formData.get('hba1c').replace(',', '.')) : null,
-                valoresNoIncluidos: formData.get('valoresNoIncluidos') || null
+                valoresNoIncluidos: formData.get('valoresNoIncluidos') || null,
+                // Incluir campos resaltados (valores fuera de rango)
+                camposResaltados: getHighlightedFields()
             };
 
             // Validar motivo (requerido)
@@ -2277,4 +2403,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // Inicializar el modal de edición
     initializeModalEditarConsulta();
+    
+    // Configurar los event listeners cuando se abre el modal
+    const originalOpenModal = document.getElementById('btnNuevaConsulta');
+    if (originalOpenModal) {
+        originalOpenModal.addEventListener('click', function() {
+            setTimeout(() => {
+                setupLabLabelClickHandlers();
+            }, 100);
+        });
+    }
 });

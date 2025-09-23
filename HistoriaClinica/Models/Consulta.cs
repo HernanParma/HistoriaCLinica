@@ -21,6 +21,7 @@ namespace HistoriaClinica.Models
         public double? GLUC { get; set; }
         public double? UREA { get; set; }
         public double? CR { get; set; }
+        public double? VFS { get; set; }
         public double? GOT { get; set; }
         public double? GPT { get; set; }
         public double? CT { get; set; }
@@ -45,6 +46,12 @@ namespace HistoriaClinica.Models
 
         // Archivos adjuntos
         public string? ArchivosJson { get; set; } // JSON con información de archivos
+
+        // Fecha específica del laboratorio
+        public DateTime? FechaLaboratorio { get; set; }
+
+        // Campos resaltados (valores fuera de rango)
+        public string? CamposResaltados { get; set; } // JSON con lista de campos resaltados
 
         // Relación con Paciente
         public int PacienteId { get; set; }
