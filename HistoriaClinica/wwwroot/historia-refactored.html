@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://historia.runasp.net http://localhost:5156;">
+    <title>Historia Clínica del Paciente</title>
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Configuración global -->
+    <script>
+        if (!window.CONFIG) {
+            window.CONFIG = { API_BASE_URL: window.location.origin };
+        }
+    </script>
+</head>
+<body>
+    <!-- Componente Header -->
+    <div id="header-container"></div>
+    
+    <!-- Layout principal -->
+    <div class="main-layout">
+        <!-- Componente Sidebar -->
+        <div id="sidebar-container"></div>
+        
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <!-- Componente ConsultaList -->
+            <div id="consulta-list-container"></div>
+        </main>
+    </div>
+    
+    <!-- Componente Modal Template -->
+    <div id="modal-template-container"></div>
+    
+    <!-- Modales específicos -->
+    <div id="modals-container"></div>
+    
+    <!-- Scripts de componentes -->
+    <script src="js/classes/load-classes.js"></script>
+    <script src="js/historia-refactored.js"></script>
+    
+    <!-- Scripts de componentes -->
+    <script src="components/Header.html"></script>
+    <script src="components/Sidebar.html"></script>
+    <script src="components/LabFields.html"></script>
+    <script src="components/Modal.html"></script>
+    <script src="components/ConsultaList.html"></script>
+    
+    <!-- Script principal -->
+    <script>
+        // Inicialización de la aplicación
+        class HistoriaClinicaApp {
+            constructor() {
+                this.components = {};
+                this.init();
+            }
+
+            async init() {
+                try {
+                    await this.loadComponents();
+                    this.setupLayout();
+                    this.setupEventListeners();
+                    await this.loadPatientData();
+                } catch (error) {
+                    console.error('Error inicializando la aplicación:', error);
+                    this.showError('Error al inicializar la aplicación', error.message);
+                }
+            }
+
+            async loadComponents() {
+                // Cargar componentes HTML
+                await this.loadComponent('header-container', 'components/Header.html');
+                await this.loadComponent('sidebar-container', 'components/Sidebar.html');
+                await this.loadComponent('consulta-list-container', 'components/ConsultaList.html');
+                await this.loadComponent('modal-template-container', 'components/Modal.html');
+                
+                // Inicializar componentes JavaScript
+                this.components.header = new HeaderComponent();
+                this.components.sidebar = new SidebarComponent();
+                this.components.consultaList = new ConsultaListComponent('consulta-list-container', {
+                    onEdit: (consultaId) => this.editConsulta(consultaId),
+                    onDelete: (consultaId) => this.deleteConsulta(consultaId),
+                    onToggle: (consultaId, expanded) => this.toggleConsulta(consultaId, expanded),
+                    onToggleLab: (consultaId, visible) => this.toggleLaboratorio(consultaId, visible),
+                    onNewConsulta: () => this.showNuevaConsultaModal()
+                });
+            }
+
+            async loadComponent(containerId, componentPath) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                try {
+                    const response = await fetch(componentPath);
+                    const html = await response.text();
+                    container.innerHTML = html;
+                } catch (error) {
+                    console.error(`Error cargando componente ${componentPath}:`, error);
+                }
+            }
+
+            setupLayout() {
+                // Configurar layout responsive
+                const sidebar = document.getElementById('sidebar-container');
+                const mainContent = document.querySelector('.main-content');
+                
+                if (sidebar && mainContent) {
+                    // Ajustar margen del contenido principal para el sidebar
+                    mainContent.style.marginLeft = '350px';
+                    
+                    // Responsive
+                    const handleResize = () => {
+                        if (window.innerWidth <= 768) {
+                            mainContent.style.marginLeft = '0';
+                        } else {
+                            mainContent.style.marginLeft = '350px';
+                        }
+                    };
+                    
+                    window.addEventListener('resize', handleResize);
+                    handleResize();
+                }
+            }
+
+            setupEventListeners() {
+                // Event listeners globales
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeAllModals();
+                    }
+                });
+            }
+
+            async loadPatientData() {
+                const patientId = this.getPatientIdFromUrl();
+                if (!patientId) {
+                    this.showError('Error: No se encontró ID de paciente en la URL', 'Por favor, regrese al listado de pacientes');
+                    return;
+                }
+
+                try {
+                    // Cargar datos del paciente
+                    const paciente = await apiClient.getPatient(patientId);
+                    this.components.sidebar.renderPatientData(paciente);
+                    
+                    // Cargar consultas
+                    const consultas = await apiClient.getPatientConsultations(patientId);
+                    this.components.consultaList.renderConsultas(consultas);
+                    
+                } catch (error) {
+                    console.error('Error cargando datos del paciente:', error);
+                    this.showError('Error al cargar datos del paciente', error.message);
+                }
+            }
+
+            showNuevaConsultaModal() {
+                const modal = new ModalComponent({
+                    title: 'Nueva Consulta',
+                    icon: 'fas fa-plus',
+                    size: 'large',
+                    content: this.getNuevaConsultaFormHTML(),
+                    buttons: [
+                        {
+                            text: 'Cancelar',
+                            class: 'btn-secondary',
+                            icon: 'fas fa-times',
+                            handler: (e, modal) => modal.close()
+                        },
+                        {
+                            text: 'Guardar',
+                            class: 'btn-primary',
+                            icon: 'fas fa-save',
+                            handler: (e, modal) => this.saveNuevaConsulta(modal)
+                        }
+                    ]
+                });
+                modal.show();
+            }
+
+            getNuevaConsultaFormHTML() {
+                return `
+                    <form id="formNuevaConsulta">
+                        <div class="form-group">
+                            <label for="fechaConsulta">Fecha de Consulta:</label>
+                            <input type="date" id="fechaConsulta" name="fecha" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="motivoConsulta">Motivo de Consulta: *</label>
+                            <textarea id="motivoConsulta" name="motivo" rows="3" placeholder="Describa el motivo de la consulta..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="recetarConsulta">Recetar:</label>
+                            <textarea id="recetarConsulta" name="recetar" rows="2" placeholder="Medicamentos a recetar..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="omeConsulta">OME:</label>
+                            <textarea id="omeConsulta" name="ome" rows="2" placeholder="Tratamiento OME..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="notasConsulta">Notas Adicionales:</label>
+                            <textarea id="notasConsulta" name="notas" rows="3" placeholder="Observaciones, recomendaciones..."></textarea>
+                        </div>
+                        
+                        <div id="lab-fields-container"></div>
+                    </form>
+                `;
+            }
+
+            async saveNuevaConsulta(modal) {
+                const form = modal.modal.querySelector('#formNuevaConsulta');
+                if (!form) return;
+
+                const formData = new FormData(form);
+                const data = {
+                    fecha: formData.get('fecha') || new Date().toISOString().split('T')[0],
+                    motivo: formData.get('motivo'),
+                    recetar: formData.get('recetar') || null,
+                    ome: formData.get('ome') || null,
+                    notas: formData.get('notas') || null
+                };
+
+                if (!data.motivo?.trim()) {
+                    uiManager.toast('El motivo de la consulta es requerido', 'error');
+                    return;
+                }
+
+                try {
+                    const patientId = this.getPatientIdFromUrl();
+                    await apiClient.createConsultation(patientId, data);
+                    uiManager.toast('Consulta creada exitosamente', 'success');
+                    modal.close();
+                    await this.loadPatientData();
+                } catch (error) {
+                    uiManager.toast(`Error al crear consulta: ${error.message}`, 'error');
+                }
+            }
+
+            editConsulta(consultaId) {
+                // Implementar edición de consulta
+                console.log('Editar consulta:', consultaId);
+            }
+
+            deleteConsulta(consultaId) {
+                // Implementar eliminación de consulta
+                console.log('Eliminar consulta:', consultaId);
+            }
+
+            toggleConsulta(consultaId, expanded) {
+                // Implementar toggle de consulta
+                console.log('Toggle consulta:', consultaId, expanded);
+            }
+
+            toggleLaboratorio(consultaId, visible) {
+                // Implementar toggle de laboratorio
+                console.log('Toggle laboratorio:', consultaId, visible);
+            }
+
+            closeAllModals() {
+                // Cerrar todos los modales abiertos
+                const modals = document.querySelectorAll('.modal.show');
+                modals.forEach(modal => {
+                    modal.classList.remove('show');
+                    modal.classList.add('hidden');
+                });
+            }
+
+            showError(title, message) {
+                const modal = ModalComponent.alert(message, title);
+                modal.show();
+            }
+
+            getPatientIdFromUrl() {
+                return new URLSearchParams(window.location.search).get('id');
+            }
+        }
+
+        // Inicializar la aplicación cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            new HistoriaClinicaApp();
+        });
+    </script>
+    
+    <style>
+        /* Estilos específicos del layout principal */
+        .main-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column;
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+                padding: 15px;
+            }
+        }
+    </style>
+</body>
+</html>

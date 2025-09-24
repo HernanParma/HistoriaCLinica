@@ -1829,7 +1829,7 @@
                     <!-- Campos de Laboratorio -->
                     <div class="form-section">
                         <h4><i class="fas fa-flask"></i> Valores de Laboratorio <span class="date-inline">Fecha: <input type="date" id="fechaLaboratorioConsulta" name="fechaLaboratorio"></span></h4>
-                        <div class="lab-grid">
+                        <div class="lab-grid" data-lab-scope>
                             <!-- Primera fila -->
                             <div class="form-group">
                                 <label for="grConsulta">GR:</label>
@@ -2062,7 +2062,7 @@
                     <!-- Valores de Laboratorio -->
                     <div class="form-group">
                         <label><i class="fas fa-flask"></i> Valores de Laboratorio <span class="date-inline">Fecha: <input type="date" id="fechaLaboratorioEditarConsulta" name="fechaLaboratorio"></span></label>
-                        <div class="lab-grid">
+                        <div class="lab-grid" data-lab-scope>
                             <div class="form-group">
                                 <label for="grEditarConsulta">GR (Glóbulos Rojos):</label>
                                 <input type="text" id="grEditarConsulta" name="gr" placeholder="Ej: 4,27">
@@ -2213,62 +2213,127 @@
         }
 
         // Función para manejar el clic en labels de laboratorio
-        function setupLabLabelClickHandlers() {
-            const labLabels = document.querySelectorAll('.lab-grid .form-group label');
+        function setupLabLabelClickHandlers(root = document) {
+            // Remover event listeners existentes para evitar duplicados
+            root.querySelectorAll('.lab-grid .form-group label').forEach(label => {
+                label.removeEventListener('click', handleLabelClick);
+            });
+            
+            const labLabels = root.querySelectorAll('.lab-grid .form-group label');
+            console.log(`🔧 Configurando ${labLabels.length} labels de laboratorio en:`, root);
             
             labLabels.forEach(label => {
-                label.addEventListener('click', function() {
-                    // Toggle de la clase highlighted
-                    this.classList.toggle('highlighted');
-                    
-                    // Opcional: mostrar un mensaje o tooltip
-                    const fieldName = this.textContent.replace(':', '').trim();
-                    if (this.classList.contains('highlighted')) {
-                        console.log(`Campo ${fieldName} marcado como fuera de rango`);
-                    } else {
-                        console.log(`Campo ${fieldName} desmarcado`);
-                    }
-                });
+                label.addEventListener('click', handleLabelClick);
             });
+        }
+        
+        // Función separada para manejar el clic
+        function handleLabelClick(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Verificar que el clic sea en un label válido
+            if (!this || !this.classList) return;
+            
+            // Toggle de la clase highlighted
+            this.classList.toggle('highlighted');
+            
+            // Obtener el nombre del campo de manera más robusta
+            const fieldName = this.textContent.replace(':', '').trim();
+            const fieldKey = this.getAttribute('for') || this.dataset.key || fieldName.toLowerCase();
+            
+            if (this.classList.contains('highlighted')) {
+                console.log(`🔴 Campo ${fieldName} (${fieldKey}) marcado como fuera de rango`);
+            } else {
+                console.log(`⚪ Campo ${fieldName} (${fieldKey}) desmarcado`);
+            }
         }
 
         // Función para obtener los campos resaltados
-        function getHighlightedFields() {
+        function getHighlightedFields(root = document) {
             const highlightedFields = [];
-            const labLabels = document.querySelectorAll('.lab-grid .form-group label.highlighted');
+            const labLabels = root.querySelectorAll('.lab-grid .form-group label.highlighted');
             
-            labLabels.forEach(label => {
+            console.log(`🔍 Buscando campos resaltados en:`, root);
+            console.log(`🔍 Labels encontrados con clase highlighted:`, labLabels.length);
+            
+            labLabels.forEach((label, index) => {
                 const fieldName = label.textContent.replace(':', '').trim().toLowerCase();
-                highlightedFields.push(fieldName);
+                const fieldKey = label.getAttribute('for') || label.dataset.key || fieldName;
+                
+                // Normalizar la clave removiendo sufijos comunes
+                let normalizedKey = fieldKey.toLowerCase()
+                    .replace(/editarconsulta$/i, '')
+                    .replace(/consulta$/i, '')
+                    .replace(/editar$/i, '');
+                
+                // Si la clave normalizada está vacía, usar el nombre del campo
+                if (!normalizedKey || normalizedKey.length === 0) {
+                    normalizedKey = fieldName;
+                }
+                
+                highlightedFields.push(normalizedKey);
+                console.log(`  ${index + 1}. ${fieldName} -> ${fieldKey} -> ${normalizedKey}`);
             });
             
+            console.log('🔍 Campos resaltados encontrados:', highlightedFields);
             return highlightedFields;
         }
 
         // Función para aplicar campos resaltados
-        function applyHighlightedFields(highlightedFields) {
+        function applyHighlightedFields(highlightedFields, root = document) {
             if (!highlightedFields || highlightedFields.length === 0) return;
             
-            const labLabels = document.querySelectorAll('.lab-grid .form-group label');
+            const labLabels = root.querySelectorAll('.lab-grid .form-group label');
+            console.log(`🔧 Aplicando ${highlightedFields.length} campos resaltados en:`, root);
             
             labLabels.forEach(label => {
                 const fieldName = label.textContent.replace(':', '').trim().toLowerCase();
-                if (highlightedFields.includes(fieldName)) {
+                const fieldKey = label.getAttribute('for') || label.dataset.key || fieldName;
+                
+                // Usar la misma lógica de normalización que en getHighlightedFields
+                let normalizedKey = fieldKey.toLowerCase()
+                    .replace(/editarconsulta$/i, '')
+                    .replace(/consulta$/i, '')
+                    .replace(/editar$/i, '');
+                
+                if (!normalizedKey || normalizedKey.length === 0) {
+                    normalizedKey = fieldName;
+                }
+                
+                if (highlightedFields.includes(normalizedKey)) {
                     label.classList.add('highlighted');
+                    console.log(`✅ Campo ${fieldName} (${normalizedKey}) resaltado`);
                 }
             });
         }
 
         // Función para limpiar campos resaltados
-        function clearHighlightedFields() {
-            const labLabels = document.querySelectorAll('.lab-grid .form-group label');
+        function clearHighlightedFields(root = document) {
+            const labLabels = root.querySelectorAll('.lab-grid .form-group label');
             labLabels.forEach(label => {
                 label.classList.remove('highlighted');
             });
+            console.log(`🧹 Campos resaltados limpiados en:`, root);
         }
 
+        // Exponer las funciones en window para que estén disponibles globalmente
+        window.setupLabLabelClickHandlers = setupLabLabelClickHandlers;
+        window.getHighlightedFields = getHighlightedFields;
+        window.applyHighlightedFields = applyHighlightedFields;
+        window.clearHighlightedFields = clearHighlightedFields;
+        
         // Configurar los event listeners para los labels de laboratorio
         setupLabLabelClickHandlers();
+        
+        // Debug: Verificar que los labels estén disponibles
+        setTimeout(() => {
+            const labLabels = document.querySelectorAll('.lab-grid .form-group label');
+            console.log(`🔍 Labels de laboratorio encontrados: ${labLabels.length}`);
+            labLabels.forEach((label, index) => {
+                console.log(`  ${index + 1}. ${label.textContent.trim()} (clickeable: ${label.style.cursor === 'pointer'})`);
+            });
+        }, 500);
     });
     </script>
 </body>

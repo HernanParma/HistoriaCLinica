@@ -15,15 +15,15 @@
         
         // Si estamos en localhost o en desarrollo
         if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
-            const apiUrl = 'http://localhost:5156';
+            const apiUrl = 'http://localhost:5000';
             console.log('🏠 Entorno local detectado, usando:', apiUrl);
             return apiUrl;
         }
         
-        // Si estamos en puerto 5000 (Live Server), usar puerto 5156 para la API
+        // Si estamos en puerto 5000 (Live Server), usar puerto 5000 para la API
         if (currentHost === 'localhost' && (currentProtocol === 'http:' || currentProtocol === 'https:')) {
-            const apiUrl = 'http://localhost:5156';
-            console.log('🏠 Live Server detectado, usando API en puerto 5156:', apiUrl);
+            const apiUrl = 'http://localhost:5000';
+            console.log('🏠 Live Server detectado, usando API en puerto 5000:', apiUrl);
             return apiUrl;
         }
         

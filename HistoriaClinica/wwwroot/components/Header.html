@@ -1,0 +1,178 @@
+<!-- Componente Header -->
+<header class="header">
+    <div class="header-content">
+        <div class="logo-section">
+            <div class="logo">
+                <i class="fas fa-user-md"></i>
+                <span>Historia Clínica</span>
+            </div>
+        </div>
+        
+        <div class="user-section">
+            <div class="user-info">
+                <span id="username" class="username"></span>
+                <button id="logoutBtn" class="logout-btn" title="Cerrar Sesión">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<style>
+/* Estilos del Header */
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.logo i {
+    font-size: 1.8em;
+    color: #f093fb;
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.username {
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+.logout-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1em;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.logout-btn i {
+    font-size: 1.1em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-content {
+        padding: 12px 20px;
+    }
+    
+    .logo {
+        font-size: 1.3em;
+    }
+    
+    .logo i {
+        font-size: 1.5em;
+    }
+    
+    .username {
+        font-size: 1em;
+    }
+    
+    .logout-btn {
+        padding: 6px 10px;
+        font-size: 0.9em;
+    }
+}
+</style>
+
+<script>
+// Funcionalidad del Header
+class HeaderComponent {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        this.setupUserInfo();
+        this.setupEventListeners();
+    }
+
+    setupUserInfo() {
+        const username = localStorage.getItem('username');
+        const usernameElement = document.getElementById('username');
+        
+        if (username && usernameElement) {
+            usernameElement.textContent = `Bienvenido, ${username}`;
+        }
+    }
+
+    setupEventListeners() {
+        // Botón de logout
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                localStorage.removeItem('jwtToken');
+                window.location.replace('login.html');
+            });
+        }
+
+        // Redirección al hacer clic en logo
+        const logo = document.querySelector('.logo');
+        if (logo) {
+            logo.style.cursor = 'pointer';
+            logo.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+        }
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    new HeaderComponent();
+});
+</script>

@@ -1,0 +1,875 @@
+<!-- Componente ConsultaList -->
+<div class="consulta-list-component">
+    <div class="consulta-list-header">
+        <h3><i class="fas fa-notes-medical"></i> Historial de Consultas</h3>
+        <button id="btnNuevaConsulta" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nueva Consulta
+        </button>
+    </div>
+    
+    <div class="consulta-list-content" id="hc-body">
+        <!-- Las consultas se cargan dinámicamente aquí -->
+    </div>
+</div>
+
+<style>
+/* Estilos del componente ConsultaList */
+.consulta-list-component {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    margin: 20px 0;
+    position: relative;
+}
+
+.consulta-list-component::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 0%, #f093fb 100%);
+    z-index: 10;
+}
+
+.consulta-list-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin: 0;
+    padding: 25px 30px;
+    font-size: 1.6em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    border: none;
+}
+
+.consulta-list-header h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1.6em;
+    font-weight: 700;
+}
+
+.consulta-list-header h3 i {
+    font-size: 1.2em;
+    color: #f093fb;
+}
+
+.consulta-list-content {
+    padding: 0 30px 30px 30px;
+    background: #ffffff;
+    margin: 0;
+}
+
+/* Estilos para las consultas individuales */
+.consulta-item {
+    background: white;
+    border-radius: 16px;
+    margin: 20px 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.consulta-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.consulta-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 20px 25px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.consulta-header:hover {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+.consulta-fecha {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #374151;
+    font-size: 1.1em;
+}
+
+.consulta-fecha i {
+    color: #667eea;
+    font-size: 1.2em;
+}
+
+.consulta-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-editar-consulta {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.btn-editar-consulta:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.btn-eliminar-consulta {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-eliminar-consulta:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+.toggle-icon {
+    color: #6b7280;
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+}
+
+.consulta-content {
+    padding: 25px;
+    background: white;
+}
+
+.consulta-content.collapsed {
+    display: none;
+}
+
+.consulta-content.expanded {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.consulta-details {
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item strong {
+    color: #374151;
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.consulta-actions-bottom {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn-ver-laboratorio {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    margin-top: 15px;
+}
+
+.btn-ver-laboratorio:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.btn-ver-laboratorio.active {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+}
+
+.laboratorio-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.laboratorio-section.hidden {
+    display: none;
+}
+
+.laboratorio-section.show {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+.laboratorio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.lab-value-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.lab-value-item:hover {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.lab-label {
+    font-weight: 600;
+    color: #374151;
+}
+
+.lab-label.highlighted {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #f59e0b;
+}
+
+.lab-value {
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.lab-date-info {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e40af;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-weight: 600;
+    border: 1px solid #93c5fd;
+}
+
+.no-lab-values {
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px dashed #d1d5db;
+}
+
+/* Estados de carga y error */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    color: #6b7280;
+}
+
+.loading i {
+    font-size: 3em;
+    margin-bottom: 20px;
+    color: #667eea;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.error-message {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    border: 2px solid #ef4444;
+    border-radius: 16px;
+    padding: 25px;
+    margin: 20px;
+    text-align: center;
+    color: #dc2626;
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.15);
+}
+
+.error-message i {
+    font-size: 3em;
+    margin-bottom: 15px;
+    display: block;
+    color: #ef4444;
+}
+
+.no-consultations {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 2px dashed #0ea5e9;
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    color: #0369a1;
+    margin: 30px;
+}
+
+.no-consultations i {
+    font-size: 4em;
+    margin-bottom: 20px;
+    display: block;
+    color: #0ea5e9;
+    opacity: 0.8;
+}
+
+.no-consultations span {
+    font-size: 1.4em;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.no-consultations small {
+    font-size: 1.1em;
+    color: #0c4a6e;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .consulta-list-header {
+        padding: 20px;
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .consulta-list-header h3 {
+        font-size: 1.4em;
+    }
+    
+    .consulta-list-content {
+        padding: 0 20px 20px 20px;
+    }
+    
+    .consulta-header {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .consulta-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .consulta-content {
+        padding: 20px;
+    }
+    
+    .laboratorio-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .consulta-list-header {
+        padding: 15px;
+    }
+    
+    .consulta-list-header h3 {
+        font-size: 1.2em;
+    }
+    
+    .consulta-list-content {
+        padding: 0 15px 15px 15px;
+    }
+    
+    .consulta-header {
+        padding: 12px 15px;
+    }
+    
+    .consulta-content {
+        padding: 15px;
+    }
+    
+    .btn-editar-consulta,
+    .btn-eliminar-consulta {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+}
+</style>
+
+<script>
+// Funcionalidad del componente ConsultaList
+class ConsultaListComponent {
+    constructor(containerId, options = {}) {
+        this.containerId = containerId;
+        this.options = {
+            onEdit: null,
+            onDelete: null,
+            onToggle: null,
+            onToggleLab: null,
+            onNewConsulta: null,
+            ...options
+        };
+        this.consultas = [];
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        const container = document.getElementById(this.containerId);
+        if (!container) return;
+
+        // Botón nueva consulta
+        const btnNuevaConsulta = container.querySelector('#btnNuevaConsulta');
+        if (btnNuevaConsulta && this.options.onNewConsulta) {
+            btnNuevaConsulta.addEventListener('click', this.options.onNewConsulta);
+        }
+    }
+
+    renderConsultas(consultas) {
+        this.consultas = consultas;
+        const container = document.getElementById(this.containerId);
+        if (!container) return;
+
+        const hcBody = container.querySelector('#hc-body');
+        if (!hcBody) return;
+
+        if (!consultas?.length) {
+            hcBody.innerHTML = `
+                <div class="no-consultations">
+                    <i class="fas fa-notes-medical"></i>
+                    <span>No hay consultas registradas para este paciente</span>
+                    <br><small>Puede agregar una nueva consulta cuando sea necesario</small>
+                </div>`;
+            return;
+        }
+
+        hcBody.innerHTML = consultas.map(consulta => this.renderConsultaItem(consulta)).join('');
+        this.setupConsultaEventListeners();
+    }
+
+    renderConsultaItem(consulta) {
+        const id = consulta.id || consulta.Id;
+        const fecha = consulta.fecha || consulta.Fecha;
+        const motivo = consulta.motivo || consulta.Motivo;
+        const recetar = consulta.recetar || consulta.Recetar;
+        const ome = consulta.ome || consulta.Ome;
+        const notas = consulta.notas || consulta.Notas;
+        const archivos = consulta.archivos || consulta.Archivos;
+
+        return `
+            <div class="consulta-item">
+                <div class="consulta-header" data-consulta-id="${id}">
+                    <div class="consulta-fecha">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>${new Date(fecha).toLocaleDateString()}</span>
+                    </div>
+                    <div class="consulta-actions">
+                        <button class="btn-editar-consulta" data-consulta-id="${id}" title="Editar consulta">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="btn-eliminar-consulta" data-consulta-id="${id}" title="Eliminar consulta">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </button>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                </div>
+
+                <div class="consulta-content collapsed" data-consulta-id="${id}">
+                    <div class="consulta-details">
+                        ${motivo ? `<div class="detail-item"><strong>Motivo:</strong> ${motivo}</div>` : ''}
+                        ${this.renderCardConBoton('recetar', 'Recetar', 'linear-gradient(135deg,#fef3c7,#fde68a)', consulta)}
+                        ${this.renderCardConBoton('ome', 'OME', 'linear-gradient(135deg,#fee2e2,#fecaca)', consulta)}
+                        ${notas ? `<div class="detail-item"><strong>Notas:</strong> ${notas}</div>` : ''}
+                        ${this.renderArchivosAdjuntos(archivos)}
+                    </div>
+
+                    <div class="consulta-actions-bottom">
+                        <button class="btn-ver-laboratorio" data-consulta-id="${id}" title="Ver valores de laboratorio">
+                            <i class="fas fa-flask"></i> Ver Laboratorio
+                        </button>
+                    </div>
+
+                    <div id="laboratorio-${id}" class="laboratorio-section hidden">
+                        <div class="laboratorio-grid">${this.renderLaboratorioValues(consulta)}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    renderCardConBoton(key, title, gradient, consulta) {
+        const texto = consulta[key] || consulta[key.charAt(0).toUpperCase() + key.slice(1)];
+        const revisado = consulta[`${key}Revisado`] || consulta[`${key.charAt(0).toUpperCase() + key.slice(1)}Revisado`];
+        
+        if (!texto || String(texto).trim() === '') return '';
+
+        const id = consulta.id || consulta.Id;
+        return `
+            <div class="detail-item ${key}-item" style="display:flex;flex-direction:column;gap:12px;padding:16px;background:${gradient};border-left:4px solid rgba(0,0,0,.18);border-radius:8px;margin:8px 0;">
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                    <div style="min-width:80px;font-weight:700;color:#111827;font-size:.95em;">${title}:</div>
+                    <div style="flex:1;color:#111827;line-height:1.5;font-size:.95em;">${texto}</div>
+                </div>
+                ${
+                    !revisado
+                        ? `<div class="revision-controls-historial" style="display:flex;justify-content:flex-end;margin-top:8px;">
+                             <button type="button" class="btn btn-success btn-sm marcar-revisado-btn" data-consulta-id="${id}" data-campo="${key}" style="padding:8px 16px;border-radius:6px;font-size:.85em;font-weight:600;background:linear-gradient(135deg,#10b981,#059669);border:none;color:#fff;cursor:pointer;box-shadow:0 2px 4px rgba(16,185,129,.3)">
+                               <i class="fas fa-check"></i> Realizado
+                             </button>
+                           </div>`
+                        : `<div class="revision-status-historial" style="display:flex;justify-content:flex-end;margin-top:8px;">
+                             <span class="revision-status" style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#065f46;border-radius:6px;font-size:.85em;font-weight:600;border:1px solid #a7f3d0;">
+                               <i class="fas fa-check-circle"></i> Revisado
+                             </span>
+                           </div>`
+                }
+            </div>
+        `;
+    }
+
+    renderArchivosAdjuntos(archivos) {
+        if (!Array.isArray(archivos) || !archivos.length) return '';
+
+        const items = archivos.map(archivo => {
+            const ext = (archivo.extension || archivo.Extension || '').toLowerCase();
+            const icon = this.getFileIcon(ext);
+            const size = this.formatFileSize(archivo.tamañoBytes || archivo.TamañoBytes);
+            const name = archivo.nombreOriginal || archivo.NombreOriginal || 'archivo';
+            const url = archivo.urlDescarga || archivo.UrlDescarga || `/api/pacientes/archivos/${archivo.nombreArchivo || archivo.NombreArchivo || ''}`;
+            
+            return `
+                <div class="archivo-adjunto">
+                    <div class="archivo-info">
+                        <i class="fas ${icon}"></i>
+                        <div class="archivo-details">
+                            <a href="${url}" target="_blank" class="archivo-link">${name}</a>
+                            <small class="archivo-size">${size}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="archivos-section">
+                <div class="detail-item">
+                    <strong><i class="fas fa-paperclip"></i> Archivos Adjuntos (${archivos.length}):</strong>
+                    <div class="archivos-lista">${items}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    renderLaboratorioValues(consulta) {
+        const pick = (...keys) => {
+            const foundKey = keys.find(k => consulta[k] !== null && consulta[k] !== undefined && consulta[k] !== '');
+            return foundKey ? consulta[foundKey] : null;
+        };
+
+        const items = [
+            ['gr','GR','GR (Glóbulos Rojos)'],
+            ['hto','HTO','HTO (Hematocrito)'],
+            ['hb','HB','HB (Hemoglobina)'],
+            ['gb','GB','GB (Glóbulos Blancos)'],
+            ['plaq','PLAQ','PLAQ (Plaquetas)'],
+            ['gluc','GLUC','GLUC (Glucosa)'],
+            ['urea','UREA','UREA'],
+            ['cr','CR','CR (Creatinina)'],
+            ['vfs','VFS','VFS (Velocidad de Filtración Glomerular)'],
+            ['got','GOT','GOT'],
+            ['gpt','GPT','GPT'],
+            ['ct','CT','CT (Colesterol Total)'],
+            ['tg','TG','TG (Triglicéridos)'],
+            ['vitd','VITD','VITD (Vitamina D)'],
+            ['fal','FAL','FAL (Fosfatasa Alcalina)'],
+            ['hdl','HDL','HDL (Colesterol HDL)'],
+            ['ldl','LDL','LDL (Colesterol LDL)'],
+            ['b12','B12','B12 (Vitamina B12)'],
+            ['tsh','TSH','TSH'],
+            ['orina','ORINA','ORINA'],
+            ['urico','URICO','URICO (Ácido Úrico)'],
+            ['psa','PSA','PSA (Antígeno Prostático Específico)'],
+            ['hba1c','HBA1C','HBA1C (Hemoglobina Glicosilada)'],
+            ['valoresNoIncluidos','ValoresNoIncluidos','Valores no incluidos']
+        ].map(([lower, upper, label]) => {
+            const value = pick(lower, upper);
+            return value != null && value !== '' ? { key: lower, label, value } : null;
+        }).filter(Boolean);
+
+        if (!items.length) {
+            return '<div class="no-lab-values">No hay valores de laboratorio registrados para esta consulta.</div>';
+        }
+
+        const camposRes = this.normalizeHighlighted(consulta.camposResaltados || consulta.CamposResaltados || []);
+        const fechaLab = consulta.fechaLaboratorio || consulta.FechaLaboratorio;
+        const fechaHtml = fechaLab ? 
+            `<div class="lab-date-info"><strong>Fecha del Laboratorio:</strong> ${new Date(fechaLab).toLocaleDateString()}</div>` : '';
+
+        return fechaHtml + items.map(item => `
+            <div class="lab-value-item">
+                <span class="lab-label ${camposRes.includes(item.key) ? 'highlighted' : ''}">${item.label}:</span>
+                <span class="lab-value">${item.value}</span>
+            </div>
+        `).join('');
+    }
+
+    setupConsultaEventListeners() {
+        const container = document.getElementById(this.containerId);
+        if (!container) return;
+
+        // Toggle de consultas
+        const headers = container.querySelectorAll('.consulta-header');
+        headers.forEach(header => {
+            header.addEventListener('click', (e) => {
+                if (e.target.closest('button')) return; // No toggle si se hace clic en botón
+                this.toggleConsultaDetalle(header);
+            });
+        });
+
+        // Botones de editar
+        const editButtons = container.querySelectorAll('.btn-editar-consulta');
+        editButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const consultaId = btn.getAttribute('data-consulta-id');
+                if (this.options.onEdit) {
+                    this.options.onEdit(consultaId);
+                }
+            });
+        });
+
+        // Botones de eliminar
+        const deleteButtons = container.querySelectorAll('.btn-eliminar-consulta');
+        deleteButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const consultaId = btn.getAttribute('data-consulta-id');
+                if (this.options.onDelete) {
+                    this.options.onDelete(consultaId);
+                }
+            });
+        });
+
+        // Botones de laboratorio
+        const labButtons = container.querySelectorAll('.btn-ver-laboratorio');
+        labButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const consultaId = btn.getAttribute('data-consulta-id');
+                this.toggleLaboratorio(consultaId, e);
+            });
+        });
+
+        // Botones de marcar como revisado
+        const reviewButtons = container.querySelectorAll('.marcar-revisado-btn');
+        reviewButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const consultaId = btn.getAttribute('data-consulta-id');
+                const campo = btn.getAttribute('data-campo');
+                // Aquí se podría implementar la lógica para marcar como revisado
+                console.log(`Marcar como revisado: consulta ${consultaId}, campo ${campo}`);
+            });
+        });
+    }
+
+    toggleConsultaDetalle(header) {
+        const consultaId = header.getAttribute('data-consulta-id');
+        const content = header.nextElementSibling;
+        const icon = header.querySelector('.toggle-icon');
+        const isCollapsed = content.classList.contains('collapsed');
+        
+        content.classList.toggle('collapsed', !isCollapsed);
+        content.classList.toggle('expanded', isCollapsed);
+        icon.style.transform = isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
+        
+        if (this.options.onToggle) {
+            this.options.onToggle(consultaId, !isCollapsed);
+        }
+    }
+
+    toggleLaboratorio(consultaId, event) {
+        const lab = document.getElementById(`laboratorio-${consultaId}`);
+        const btn = event?.target.closest('.btn-ver-laboratorio');
+        const hidden = lab.classList.contains('hidden');
+        
+        lab.classList.toggle('hidden', !hidden);
+        lab.classList.toggle('show', hidden);
+        
+        if (btn) {
+            btn.innerHTML = hidden ? '<i class="fas fa-eye-slash"></i> Ocultar Laboratorio' : '<i class="fas fa-flask"></i> Ver Laboratorio';
+            btn.classList.toggle('active', hidden);
+        }
+        
+        if (this.options.onToggleLab) {
+            this.options.onToggleLab(consultaId, !hidden);
+        }
+    }
+
+    showLoading() {
+        const container = document.getElementById(this.containerId);
+        if (!container) return;
+
+        const hcBody = container.querySelector('#hc-body');
+        if (hcBody) {
+            hcBody.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>Cargando historia clínica...</span>
+                </div>`;
+        }
+    }
+
+    showError(message, details = '') {
+        const container = document.getElementById(this.containerId);
+        if (!container) return;
+
+        const hcBody = container.querySelector('#hc-body');
+        if (hcBody) {
+            hcBody.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>${message}</span>
+                    ${details ? `<small>${details}</small>` : ''}
+                </div>`;
+        }
+    }
+
+    // Métodos de utilidad
+    normalizeHighlighted(input) {
+        if (Array.isArray(input)) {
+            return [...new Set(input.filter(Boolean))];
+        }
+        
+        if (typeof input === 'string') {
+            const s = input.trim();
+            if (!s) return [];
+            
+            try {
+                const parsed = JSON.parse(s);
+                if (Array.isArray(parsed)) {
+                    return [...new Set(parsed.filter(Boolean))];
+                }
+            } catch (e) {
+                // Si no es JSON válido, tratar como string separado por comas
+            }
+            
+            return [...new Set(s.split(/[,\s]+/).filter(Boolean))];
+        }
+        
+        return [];
+    }
+
+    getFileIcon(extension) {
+        const ext = extension.toLowerCase();
+        const iconMap = {
+            '.pdf': 'fa-file-pdf',
+            '.jpg': 'fa-file-image',
+            '.jpeg': 'fa-file-image',
+            '.png': 'fa-file-image',
+            '.gif': 'fa-file-image',
+            '.bmp': 'fa-file-image',
+            '.doc': 'fa-file-word',
+            '.docx': 'fa-file-word',
+            '.xls': 'fa-file-excel',
+            '.xlsx': 'fa-file-excel',
+            '.csv': 'fa-file-excel',
+            '.txt': 'fa-file-alt'
+        };
+        return iconMap[ext] || 'fa-file';
+    }
+
+    formatFileSize(bytes = 0) {
+        if (!bytes) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
+    }
+
+    // Método estático para crear instancia
+    static create(containerId, options = {}) {
+        return new ConsultaListComponent(containerId, options);
+    }
+}
+
+// Exportar para uso global
+window.ConsultaListComponent = ConsultaListComponent;
+</script>

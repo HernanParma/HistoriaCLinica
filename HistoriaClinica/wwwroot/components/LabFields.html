@@ -1,0 +1,450 @@
+<!-- Componente LabFields -->
+<div class="lab-fields-component">
+    <div class="form-section">
+        <h4><i class="fas fa-flask"></i> Valores de Laboratorio 
+            <span class="date-inline">Fecha: <input type="date" id="fechaLaboratorio" name="fechaLaboratorio"></span>
+        </h4>
+        <div class="lab-grid" data-lab-scope>
+            <!-- Primera fila -->
+            <div class="form-group">
+                <label for="gr" data-key="gr">GR (Glóbulos Rojos):</label>
+                <input type="text" id="gr" name="gr" placeholder="Ej: 4,27" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="hto" data-key="hto">HTO (Hematocrito):</label>
+                <input type="text" id="hto" name="hto" placeholder="Ej: 38" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="hb" data-key="hb">HB (Hemoglobina):</label>
+                <input type="text" id="hb" name="hb" placeholder="Ej: 12,6" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="gb" data-key="gb">GB (Glóbulos Blancos):</label>
+                <input type="text" id="gb" name="gb" placeholder="Ej: 7220" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            
+            <!-- Segunda fila -->
+            <div class="form-group">
+                <label for="plaq" data-key="plaq">PLAQ (Plaquetas):</label>
+                <input type="text" id="plaq" name="plaq" placeholder="Ej: 250000" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="gluc" data-key="gluc">GLUC (Glucosa):</label>
+                <input type="text" id="gluc" name="gluc" placeholder="Ej: 95" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="urea" data-key="urea">UREA:</label>
+                <input type="text" id="urea" name="urea" placeholder="Ej: 27" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="cr" data-key="cr">CR (Creatinina):</label>
+                <input type="text" id="cr" name="cr" placeholder="Ej: 0,8" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="vfs" data-key="vfs">VFS (Velocidad de Filtración Glomerular):</label>
+                <input type="text" id="vfs" name="vfs" placeholder="Ej: 90" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            
+            <!-- Tercera fila -->
+            <div class="form-group">
+                <label for="got" data-key="got">GOT:</label>
+                <input type="text" id="got" name="got" placeholder="Ej: 25" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="gpt" data-key="gpt">GPT:</label>
+                <input type="text" id="gpt" name="gpt" placeholder="Ej: 30" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="ct" data-key="ct">CT (Colesterol Total):</label>
+                <input type="text" id="ct" name="ct" placeholder="Ej: 180" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="tg" data-key="tg">TG (Triglicéridos):</label>
+                <input type="text" id="tg" name="tg" placeholder="Ej: 120" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            
+            <!-- Cuarta fila -->
+            <div class="form-group">
+                <label for="vitd" data-key="vitd">VITD (Vitamina D):</label>
+                <input type="text" id="vitd" name="vitd" placeholder="Ej: 35" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="fal" data-key="fal">FAL (Fosfatasa Alcalina):</label>
+                <input type="text" id="fal" name="fal" placeholder="Ej: 85" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="hdl" data-key="hdl">HDL (Colesterol HDL):</label>
+                <input type="text" id="hdl" name="hdl" placeholder="Ej: 45" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="ldl" data-key="ldl">LDL (Colesterol LDL):</label>
+                <input type="text" id="ldl" name="ldl" placeholder="Ej: 110" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            
+            <!-- Quinta fila -->
+            <div class="form-group">
+                <label for="b12" data-key="b12">B12 (Vitamina B12):</label>
+                <input type="text" id="b12" name="b12" placeholder="Ej: 400" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="tsh" data-key="tsh">TSH:</label>
+                <input type="text" id="tsh" name="tsh" placeholder="Ej: 2.5" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="urico" data-key="urico">URICO (Ácido Úrico):</label>
+                <input type="text" id="urico" name="urico" placeholder="Ej: 5.5" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="psa" data-key="psa">PSA (Antígeno Prostático Específico):</label>
+                <input type="text" id="psa" name="psa" placeholder="Ej: 1.2" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label for="hba1c" data-key="hba1c">HBA1C (Hemoglobina Glicosilada):</label>
+                <input type="text" id="hba1c" name="hba1c" placeholder="Ej: 5.8" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+            </div>
+            
+            <!-- Campos adicionales -->
+            <div class="form-group full-width">
+                <label for="orina" data-key="orina">ORINA:</label>
+                <input type="text" id="orina" name="orina" placeholder="Resultados de orina...">
+            </div>
+            <div class="form-group full-width">
+                <label for="valoresNoIncluidos" data-key="valoresNoIncluidos">Valores No Incluidos:</label>
+                <input type="text" id="valoresNoIncluidos" name="valoresNoIncluidos" placeholder="Otros valores de laboratorio...">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos del componente LabFields */
+.lab-fields-component {
+    margin: 20px 0;
+}
+
+.form-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
+    padding: 25px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.form-section h4 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin: -25px -25px 20px -25px;
+    padding: 20px 25px;
+    font-size: 1.3em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 16px 16px 0 0;
+}
+
+.form-section h4 i {
+    font-size: 1.2em;
+}
+
+.date-inline {
+    margin-left: auto;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.date-inline input {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.date-inline input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.lab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.form-group label:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+.form-group label.highlighted {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+    border: 2px solid #f59e0b;
+    font-weight: 700;
+    animation: pulse-highlight 2s infinite;
+}
+
+@keyframes pulse-highlight {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input::placeholder {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .lab-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .form-section {
+        padding: 20px;
+    }
+    
+    .form-section h4 {
+        margin: -20px -20px 15px -20px;
+        padding: 15px 20px;
+        font-size: 1.2em;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .date-inline {
+        margin-left: 0;
+        margin-top: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-section {
+        padding: 15px;
+    }
+    
+    .form-section h4 {
+        margin: -15px -15px 15px -15px;
+        padding: 12px 15px;
+        font-size: 1.1em;
+    }
+    
+    .form-group input {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+}
+</style>
+
+<script>
+// Funcionalidad del componente LabFields
+class LabFieldsComponent {
+    constructor(containerId, options = {}) {
+        this.containerId = containerId;
+        this.options = {
+            prefix: '',
+            ...options
+        };
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.attachDecimalMask();
+    }
+
+    setupEventListeners() {
+        const container = document.getElementById(this.containerId);
+        if (!container) return;
+
+        // Configurar manejadores de clic para etiquetas de laboratorio
+        const scope = container.querySelector('[data-lab-scope]');
+        if (scope) {
+            scope.addEventListener('click', (e) => {
+                const label = e.target.closest('label');
+                if (!label || !scope.contains(label)) return;
+                label.classList.toggle('highlighted');
+            });
+        }
+    }
+
+    attachDecimalMask() {
+        const container = document.getElementById(this.containerId);
+        if (!container) return;
+
+        const decimalInputs = container.querySelectorAll('input[pattern*="decimal"]');
+        decimalInputs.forEach(input => {
+            input.addEventListener('input', (e) => this.formatDecimal(e.target));
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.formatDecimal(e.target);
+                    e.target.blur();
+                }
+            });
+            input.addEventListener('blur', (e) => this.formatDecimal(e.target));
+        });
+    }
+
+    formatDecimal(input) {
+        const raw = input.value ?? '';
+        if (!raw) return;
+        
+        let val = raw.replace('.', ',').replace(/[^0-9,]/g, '');
+        const parts = val.split(',');
+        
+        if (parts.length > 2) {
+            val = parts[0] + ',' + parts.slice(1).join('');
+        }
+        
+        if (parts.length === 2 && parts[1].length > 2) {
+            val = parts[0] + ',' + parts[1].slice(0, 2);
+        }
+        
+        input.value = val;
+    }
+
+    getHighlightedFields() {
+        const container = document.getElementById(this.containerId);
+        if (!container) return [];
+
+        const labels = container.querySelectorAll('[data-lab-scope] label.highlighted');
+        return Array.from(labels).map(label => {
+            return label.getAttribute('data-key') || 
+                   label.textContent.replace(':', '').trim().toLowerCase();
+        });
+    }
+
+    applyHighlightedFields(fields) {
+        const container = document.getElementById(this.containerId);
+        if (!container || !fields || !fields.length) return;
+
+        const labels = container.querySelectorAll('[data-lab-scope] label');
+        labels.forEach(label => {
+            const key = label.getAttribute('data-key') || 
+                       label.textContent.replace(':', '').trim().toLowerCase();
+            if (fields.includes(key)) {
+                label.classList.add('highlighted');
+            }
+        });
+    }
+
+    clearHighlightedFields() {
+        const container = document.getElementById(this.containerId);
+        if (!container) return;
+
+        const labels = container.querySelectorAll('[data-lab-scope] label.highlighted');
+        labels.forEach(label => label.classList.remove('highlighted'));
+    }
+
+    getFormData() {
+        const container = document.getElementById(this.containerId);
+        if (!container) return {};
+
+        const formData = new FormData(container.querySelector('form') || container);
+        const data = {};
+        
+        // Campos numéricos
+        const numericFields = ['gr', 'hto', 'hb', 'gb', 'plaq', 'gluc', 'urea', 'cr', 'vfs', 
+                              'got', 'gpt', 'ct', 'tg', 'vitd', 'fal', 'hdl', 'ldl', 'b12', 
+                              'tsh', 'urico', 'psa', 'hba1c'];
+        
+        numericFields.forEach(field => {
+            const value = formData.get(field);
+            data[field] = this.toFloatOrNull(value);
+        });
+
+        // Campos de texto
+        data.orina = formData.get('orina') || null;
+        data.valoresNoIncluidos = formData.get('valoresNoIncluidos') || null;
+        data.fechaLaboratorio = formData.get('fechaLaboratorio') || null;
+        data.camposResaltados = this.getHighlightedFields();
+
+        return data;
+    }
+
+    setFormData(data) {
+        const container = document.getElementById(this.containerId);
+        if (!container) return;
+
+        // Establecer valores de campos
+        Object.keys(data).forEach(key => {
+            const input = container.querySelector(`[name="${key}"]`);
+            if (input) {
+                input.value = data[key] || '';
+            }
+        });
+
+        // Aplicar campos resaltados
+        if (data.camposResaltados) {
+            this.applyHighlightedFields(data.camposResaltados);
+        }
+    }
+
+    clearForm() {
+        const container = document.getElementById(this.containerId);
+        if (!container) return;
+
+        const inputs = container.querySelectorAll('input');
+        inputs.forEach(input => input.value = '');
+        
+        this.clearHighlightedFields();
+    }
+
+    toFloatOrNull(value) {
+        if (value == null || String(value).trim() === '') return null;
+        const v = parseFloat(String(value).replace(',', '.'));
+        return Number.isFinite(v) ? v : null;
+    }
+
+    // Método estático para crear instancia
+    static create(containerId, options = {}) {
+        return new LabFieldsComponent(containerId, options);
+    }
+}
+
+// Exportar para uso global
+window.LabFieldsComponent = LabFieldsComponent;
+</script>

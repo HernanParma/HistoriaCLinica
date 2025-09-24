@@ -6,9 +6,9 @@ window.CONFIG = {
 }
 
 // ===== FUNCIONES GLOBALES PARA CAMPOS RESALTADOS (LAB) =====
-function getHighlightedFields() {
+function getHighlightedFields(root = document) {
   const highlighted = [];
-  const labels = document.querySelectorAll('.lab-grid .form-group label.highlighted');
+  const labels = root.querySelectorAll('.lab-grid .form-group label.highlighted');
 
   const keyFrom = (label) => {
     // 1) data-key="gr" etc (recomendado en el HTML)
@@ -36,9 +36,9 @@ function getHighlightedFields() {
   return highlighted;
 }
 
-function applyHighlightedFields(highlightedFields) {
+function applyHighlightedFields(highlightedFields, root = document) {
   if (!highlightedFields || !highlightedFields.length) return;
-  const labels = document.querySelectorAll('.lab-grid .form-group label');
+  const labels = root.querySelectorAll('.lab-grid .form-group label');
   labels.forEach(label => {
     // usar misma lógica de key que arriba para comparar
     const key = (label.dataset?.key || label.getAttribute('for')?.replace(/Consulta$/i,'') || label.textContent).toLowerCase().replace(':','').trim();
@@ -48,21 +48,15 @@ function applyHighlightedFields(highlightedFields) {
   });
 }
 
-function clearHighlightedFields() {
-  document.querySelectorAll('.lab-grid .form-group label.highlighted')
+function clearHighlightedFields(root = document) {
+  root.querySelectorAll('.lab-grid .form-group label.highlighted')
     .forEach(l => l.classList.remove('highlighted'));
 }
 
-function setupLabLabelClickHandlers() {
-  document.querySelectorAll('.lab-grid .form-group label').forEach(label => {
-    label.addEventListener('click', function () {
-      this.classList.toggle('highlighted');
-      const key = (this.dataset?.key || this.getAttribute('for')?.replace(/Consulta$/i,'') || this.textContent).toLowerCase().replace(':','').trim();
-      console.log(this.classList.contains('highlighted')
-        ? `Campo ${key} marcado como fuera de rango`
-        : `Campo ${key} desmarcado`);
-    });
-  });
+function setupLabLabelClickHandlers(root = document) {
+  // Deshabilitar esta implementación para evitar conflictos
+  // El sistema de destacado se maneja desde historia.html
+  console.log('🔧 setupLabLabelClickHandlers llamado pero deshabilitado para evitar conflictos');
 }
 
 // Exponer explícitamente en window para compatibilidad
@@ -967,6 +961,11 @@ function initializeModal() {
                     motivoField.focus();
                     console.log('🎯 Campo motivo enfocado');
                 }
+                
+                // Configurar event listeners para los campos de laboratorio en el modal
+                setTimeout(() => {
+                    if (window.setupLabLabelClickHandlers) window.setupLabLabelClickHandlers(modalNuevaConsulta);
+                }, 100);
             } else {
                 console.error('❌ Modal no encontrado');
             }
@@ -1077,7 +1076,7 @@ function initializeModal() {
                 
                 const consultaData = {
                     fecha: formData.get('fecha') || new Date().toISOString().split('T')[0],
-                    fechaLaboratorio: formData.get('fechaLaboratorio') || null,
+                    fechaLaboratorio: formData.get('fechaLaboratorio') ? new Date(formData.get('fechaLaboratorio')).toISOString() : null,
                     motivo: formData.get('motivo'),
                     recetar: formData.get('recetar') || null,
                     ome: formData.get('ome') || null,
@@ -1110,7 +1109,7 @@ function initializeModal() {
                     // Incluir archivos subidos
                     archivos: archivosSubidos,
                     // Incluir campos resaltados (valores fuera de rango)
-                    camposResaltados: getHighlightedFields()
+                    camposResaltados: window.getHighlightedFields ? window.getHighlightedFields(formNuevaConsulta) : []
                 };
 
                 // Validar motivo (requerido)
@@ -2137,6 +2136,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             modal.classList.remove('hidden');
             modal.classList.add('show');
             
+            // Configurar event listeners para los campos de laboratorio en el modal
+            setTimeout(() => {
+                if (window.setupLabLabelClickHandlers) window.setupLabLabelClickHandlers(modal);
+            }, 100);
+            
         } catch (error) {
             console.error('❌ Error al cargar datos de la consulta:', error);
             alert('Error al cargar los datos de la consulta');
@@ -2183,9 +2187,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         const camposResaltados = consulta.camposResaltados || consulta.CamposResaltados || [];
         if (camposResaltados.length > 0) {
             // Limpiar campos resaltados primero
-            clearHighlightedFields();
-            // Aplicar los campos resaltados
-            applyHighlightedFields(camposResaltados);
+            const modal = document.getElementById('modalEditarConsulta');
+            if (window.clearHighlightedFields) window.clearHighlightedFields(modal);
+            // Aplicar los campos resaltados en el contexto del modal de edición
+            if (window.applyHighlightedFields) window.applyHighlightedFields(camposResaltados, modal);
         }
     }
     
@@ -2224,7 +2229,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             // Preparar datos para actualizar (no incluir fecha ya que está deshabilitada)
             const consultaData = {
-                fechaLaboratorio: formData.get('fechaLaboratorio') || null,
+                fechaLaboratorio: formData.get('fechaLaboratorio') ? new Date(formData.get('fechaLaboratorio')).toISOString() : null,
                 motivo: formData.get('motivo'),
                 recetar: formData.get('recetar') || null,
                 ome: formData.get('ome') || null,
@@ -2255,7 +2260,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 hba1c: formData.get('hba1c') ? parseFloat(formData.get('hba1c').replace(',', '.')) : null,
                 valoresNoIncluidos: formData.get('valoresNoIncluidos') || null,
                 // Incluir campos resaltados (valores fuera de rango)
-                camposResaltados: getHighlightedFields()
+                camposResaltados: (() => {
+                    const highlighted = window.getHighlightedFields ? window.getHighlightedFields(form) : [];
+                    console.log('🔍 Campos resaltados detectados para guardar:', highlighted);
+                    return highlighted;
+                })()
             };
 
             // Validar motivo (requerido)
@@ -2265,6 +2274,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
 
             console.log('📝 Actualizando consulta:', consultaData);
+            console.log('🔍 Payload completo para actualizar:', JSON.stringify(consultaData, null, 2));
             
             const patientId = getPatientIdFromUrl();
             

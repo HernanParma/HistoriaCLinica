@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo de Uso de Clases Refactorizadas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .example { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .code { background: #f5f5f5; padding: 10px; border-radius: 3px; font-family: monospace; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Ejemplo de Uso de Clases Refactorizadas</h1>
+    
+    <div class="example">
+        <h2>1. Uso de ApiClient</h2>
+        <p>Clase para manejar todas las llamadas a la API:</p>
+        <div class="code">
+const apiClient = new ApiClient();
+// Obtener paciente
+const paciente = await apiClient.getPatient(123);
+// Crear consulta
+await apiClient.createConsultation(123, { motivo: 'Control' });
+        </div>
+        <button onclick="ejemploApiClient()">Probar ApiClient</button>
+    </div>
+
+    <div class="example">
+        <h2>2. Uso de UIManager</h2>
+        <p>Clase para manejar notificaciones y mensajes:</p>
+        <div class="code">
+const uiManager = new UIManager();
+// Mostrar notificación
+uiManager.toast('Operación exitosa', 'success');
+// Mostrar confirmación
+const confirmado = await uiManager.confirm('¿Está seguro?');
+        </div>
+        <button onclick="ejemploUIManager()">Probar UIManager</button>
+    </div>
+
+    <div class="example">
+        <h2>3. Uso de FileManager</h2>
+        <p>Clase para manejo de archivos:</p>
+        <div class="code">
+const fileManager = new FileManager(apiClient);
+// Validar archivo
+const validation = fileManager.validateFile(file);
+// Subir archivo
+const result = await fileManager.uploadFile(file);
+        </div>
+        <button onclick="ejemploFileManager()">Probar FileManager</button>
+    </div>
+
+    <div class="example">
+        <h2>4. Uso de LabFieldsManager</h2>
+        <p>Clase para campos de laboratorio:</p>
+        <div class="code">
+const labManager = new LabFieldsManager();
+// Normalizar campos resaltados
+const campos = labManager.normalizeHighlighted(['GR', 'HB']);
+// Renderizar valores de laboratorio
+const html = labManager.renderLaboratorioValues(consulta);
+        </div>
+        <button onclick="ejemploLabFieldsManager()">Probar LabFieldsManager</button>
+    </div>
+
+    <div class="example">
+        <h2>5. Uso de ConsultaManager</h2>
+        <p>Clase para operaciones de consultas:</p>
+        <div class="code">
+const consultaManager = new ConsultaManager(apiClient, uiManager, fileManager, labManager);
+// Cargar consultas
+await consultaManager.loadPatientConsultations(123);
+// Crear consulta
+await consultaManager.createConsultation(123, data);
+        </div>
+        <button onclick="ejemploConsultaManager()">Probar ConsultaManager</button>
+    </div>
+
+    <div class="example">
+        <h2>6. Uso de PatientManager</h2>
+        <p>Clase para operaciones de pacientes:</p>
+        <div class="code">
+const patientManager = new PatientManager(apiClient, uiManager);
+// Cargar datos del paciente
+await patientManager.loadPatientData(123);
+// Guardar sección
+await patientManager.saveSection('personal');
+        </div>
+        <button onclick="ejemploPatientManager()">Probar PatientManager</button>
+    </div>
+
+    <div class="example">
+        <h2>7. Uso de Utils</h2>
+        <p>Clase de utilidades generales:</p>
+        <div class="code">
+// Selectores DOM
+const element = Utils.$('#miElemento');
+// Formateo de fechas
+const fecha = Utils.formatDateForInput('2024-01-15');
+// Validaciones
+const esEmailValido = Utils.isValidEmail('test@example.com');
+        </div>
+        <button onclick="ejemploUtils()">Probar Utils</button>
+    </div>
+
+    <div id="resultado"></div>
+
+    <script src="classes/ApiClient.js"></script>
+    <script src="classes/StorageManager.js"></script>
+    <script src="classes/UIManager.js"></script>
+    <script src="classes/FileManager.js"></script>
+    <script src="classes/LabFieldsManager.js"></script>
+    <script src="classes/ConsultaManager.js"></script>
+    <script src="classes/PatientManager.js"></script>
+    <script src="classes/ModalManager.js"></script>
+    <script src="classes/Utils.js"></script>
+
+    <script>
+        // Configuración global
+        window.CONFIG = { API_BASE_URL: 'http://localhost:5000' };
+
+        // Instancias globales
+        let apiClient, uiManager, fileManager, labManager, consultaManager, patientManager;
+
+        // Inicializar clases
+        function initClasses() {
+            apiClient = new ApiClient();
+            uiManager = new UIManager();
+            fileManager = new FileManager(apiClient);
+            labManager = new LabFieldsManager();
+            consultaManager = new ConsultaManager(apiClient, uiManager, fileManager, labManager);
+            patientManager = new PatientManager(apiClient, uiManager);
+        }
+
+        // Ejemplos de uso
+        function ejemploApiClient() {
+            initClasses();
+            uiManager.toast('ApiClient inicializado correctamente', 'success');
+            document.getElementById('resultado').innerHTML = '<p>✅ ApiClient listo para usar</p>';
+        }
+
+        function ejemploUIManager() {
+            initClasses();
+            uiManager.toast('Esta es una notificación de prueba', 'info');
+            uiManager.showInlineMessage('#resultado', 'Mensaje inline de prueba', 'info');
+        }
+
+        function ejemploFileManager() {
+            initClasses();
+            const validation = fileManager.validateFile({ name: 'test.pdf', size: 1024 });
+            uiManager.toast(`Validación de archivo: ${validation.isValid ? 'Válido' : 'Inválido'}`, validation.isValid ? 'success' : 'error');
+        }
+
+        function ejemploLabFieldsManager() {
+            initClasses();
+            const campos = labManager.normalizeHighlighted(['GR', 'HB', 'glucosa']);
+            uiManager.toast(`Campos normalizados: ${campos.join(', ')}`, 'success');
+        }
+
+        function ejemploConsultaManager() {
+            initClasses();
+            uiManager.toast('ConsultaManager inicializado correctamente', 'success');
+        }
+
+        function ejemploPatientManager() {
+            initClasses();
+            uiManager.toast('PatientManager inicializado correctamente', 'success');
+        }
+
+        function ejemploUtils() {
+            const fecha = Utils.formatDateForInput('2024-01-15');
+            const esEmailValido = Utils.isValidEmail('test@example.com');
+            const esDNIValido = Utils.isValidDNI('12345678');
+            
+            document.getElementById('resultado').innerHTML = `
+                <p>📅 Fecha formateada: ${fecha}</p>
+                <p>📧 Email válido: ${esEmailValido ? 'Sí' : 'No'}</p>
+                <p>🆔 DNI válido: ${esDNIValido ? 'Sí' : 'No'}</p>
+            `;
+        }
+
+        // Inicializar al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            uiManager = new UIManager();
+            uiManager.toast('Página de ejemplos cargada', 'info');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,543 @@
+<!-- Componente Modal -->
+<div id="modalTemplate" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                <i class="fas fa-info-circle"></i>
+                <span class="title-text">Título del Modal</span>
+            </h3>
+            <button class="close-btn" type="button">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-content-area">
+                <!-- El contenido se inserta aquí -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="modal-actions">
+                <!-- Los botones se insertan aquí -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos del Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+}
+
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow: hidden;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 20px 20px 0 0;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 1.4em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-title i {
+    font-size: 1.2em;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+    padding: 25px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.modal-content-area {
+    min-height: 100px;
+}
+
+.modal-footer {
+    padding: 20px 25px;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+    border-radius: 0 0 20px 20px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.modal-actions .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    min-width: 100px;
+    justify-content: center;
+}
+
+.modal-actions .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.modal-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.modal-actions .btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.modal-actions .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.modal-actions .btn-secondary {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+}
+
+.modal-actions .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3);
+}
+
+.modal-actions .btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.modal-actions .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+}
+
+.modal-actions .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-width: none;
+        margin: 20px;
+    }
+    
+    .modal-header {
+        padding: 15px 20px;
+    }
+    
+    .modal-title {
+        font-size: 1.2em;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-footer {
+        padding: 15px 20px;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .modal-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        max-height: none;
+    }
+    
+    .modal-header {
+        border-radius: 0;
+    }
+    
+    .modal-footer {
+        border-radius: 0;
+    }
+}
+</style>
+
+<script>
+// Funcionalidad del Modal
+class ModalComponent {
+    constructor(options = {}) {
+        this.options = {
+            id: 'modal_' + Date.now(),
+            title: 'Modal',
+            icon: 'fas fa-info-circle',
+            content: '',
+            buttons: [],
+            size: 'medium', // small, medium, large
+            closable: true,
+            backdrop: true,
+            ...options
+        };
+        
+        this.modal = null;
+        this.isOpen = false;
+        this.init();
+    }
+
+    init() {
+        this.createModal();
+        this.setupEventListeners();
+    }
+
+    createModal() {
+        // Crear el modal basado en el template
+        const template = document.getElementById('modalTemplate');
+        if (!template) {
+            console.error('Template de modal no encontrado');
+            return;
+        }
+
+        this.modal = template.cloneNode(true);
+        this.modal.id = this.options.id;
+        this.modal.className = 'modal hidden';
+        
+        // Configurar título
+        const titleElement = this.modal.querySelector('.title-text');
+        const iconElement = this.modal.querySelector('.modal-title i');
+        
+        if (titleElement) titleElement.textContent = this.options.title;
+        if (iconElement) iconElement.className = this.options.icon;
+
+        // Configurar contenido
+        const contentArea = this.modal.querySelector('.modal-content-area');
+        if (contentArea) {
+            contentArea.innerHTML = this.options.content;
+        }
+
+        // Configurar botones
+        this.setupButtons();
+
+        // Configurar tamaño
+        this.setupSize();
+
+        // Agregar al DOM
+        document.body.appendChild(this.modal);
+    }
+
+    setupSize() {
+        const content = this.modal.querySelector('.modal-content');
+        if (!content) return;
+
+        switch (this.options.size) {
+            case 'small':
+                content.style.maxWidth = '400px';
+                break;
+            case 'large':
+                content.style.maxWidth = '800px';
+                break;
+            case 'fullscreen':
+                content.style.width = '100%';
+                content.style.height = '100%';
+                content.style.maxWidth = 'none';
+                content.style.maxHeight = 'none';
+                content.style.borderRadius = '0';
+                break;
+            default: // medium
+                content.style.maxWidth = '600px';
+        }
+    }
+
+    setupButtons() {
+        const actionsContainer = this.modal.querySelector('.modal-actions');
+        if (!actionsContainer || !this.options.buttons.length) {
+            // Ocultar footer si no hay botones
+            const footer = this.modal.querySelector('.modal-footer');
+            if (footer) footer.style.display = 'none';
+            return;
+        }
+
+        actionsContainer.innerHTML = '';
+        
+        this.options.buttons.forEach(button => {
+            const btn = document.createElement('button');
+            btn.className = `btn ${button.class || 'btn-secondary'}`;
+            btn.textContent = button.text;
+            btn.type = button.type || 'button';
+            
+            if (button.icon) {
+                btn.innerHTML = `<i class="${button.icon}"></i> ${button.text}`;
+            }
+            
+            if (button.handler) {
+                btn.addEventListener('click', (e) => {
+                    button.handler(e, this);
+                });
+            }
+            
+            actionsContainer.appendChild(btn);
+        });
+    }
+
+    setupEventListeners() {
+        if (!this.modal) return;
+
+        // Botón de cerrar
+        const closeBtn = this.modal.querySelector('.close-btn');
+        if (closeBtn && this.options.closable) {
+            closeBtn.addEventListener('click', () => this.close());
+        }
+
+        // Cerrar con Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isOpen && this.options.closable) {
+                this.close();
+            }
+        });
+
+        // Cerrar al hacer clic en el backdrop
+        if (this.options.backdrop) {
+            this.modal.addEventListener('click', (e) => {
+                if (e.target === this.modal) {
+                    this.close();
+                }
+            });
+        }
+    }
+
+    show() {
+        if (!this.modal) return;
+        
+        this.modal.classList.remove('hidden');
+        this.modal.classList.add('show');
+        this.isOpen = true;
+        
+        // Enfocar el primer elemento interactivo
+        const firstInput = this.modal.querySelector('input, textarea, select, button');
+        if (firstInput) {
+            setTimeout(() => firstInput.focus(), 100);
+        }
+        
+        // Emitir evento personalizado
+        this.modal.dispatchEvent(new CustomEvent('modal:show', { detail: this }));
+    }
+
+    close() {
+        if (!this.modal || !this.isOpen) return;
+        
+        this.modal.classList.remove('show');
+        this.modal.classList.add('hidden');
+        this.isOpen = false;
+        
+        // Emitir evento personalizado
+        this.modal.dispatchEvent(new CustomEvent('modal:close', { detail: this }));
+    }
+
+    destroy() {
+        if (this.modal) {
+            this.modal.remove();
+            this.modal = null;
+        }
+        this.isOpen = false;
+    }
+
+    updateContent(content) {
+        const contentArea = this.modal?.querySelector('.modal-content-area');
+        if (contentArea) {
+            contentArea.innerHTML = content;
+        }
+    }
+
+    updateTitle(title, icon = null) {
+        const titleElement = this.modal?.querySelector('.title-text');
+        const iconElement = this.modal?.querySelector('.modal-title i');
+        
+        if (titleElement) titleElement.textContent = title;
+        if (iconElement && icon) iconElement.className = icon;
+    }
+
+    // Métodos estáticos para crear modales comunes
+    static alert(message, title = 'Alerta') {
+        return new ModalComponent({
+            title,
+            icon: 'fas fa-exclamation-triangle',
+            content: `<p>${message}</p>`,
+            buttons: [{
+                text: 'Aceptar',
+                class: 'btn-primary',
+                icon: 'fas fa-check',
+                handler: (e, modal) => modal.close()
+            }]
+        });
+    }
+
+    static confirm(message, title = 'Confirmar') {
+        return new Promise((resolve) => {
+            const modal = new ModalComponent({
+                title,
+                icon: 'fas fa-question-circle',
+                content: `<p>${message}</p>`,
+                buttons: [
+                    {
+                        text: 'Cancelar',
+                        class: 'btn-secondary',
+                        icon: 'fas fa-times',
+                        handler: (e, modal) => {
+                            modal.close();
+                            resolve(false);
+                        }
+                    },
+                    {
+                        text: 'Aceptar',
+                        class: 'btn-primary',
+                        icon: 'fas fa-check',
+                        handler: (e, modal) => {
+                            modal.close();
+                            resolve(true);
+                        }
+                    }
+                ]
+            });
+            modal.show();
+        });
+    }
+
+    static prompt(message, defaultValue = '', title = 'Ingresar') {
+        return new Promise((resolve) => {
+            const inputId = 'prompt_input_' + Date.now();
+            const modal = new ModalComponent({
+                title,
+                icon: 'fas fa-edit',
+                content: `
+                    <p>${message}</p>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <input type="text" id="${inputId}" value="${defaultValue}" 
+                               style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                    </div>
+                `,
+                buttons: [
+                    {
+                        text: 'Cancelar',
+                        class: 'btn-secondary',
+                        icon: 'fas fa-times',
+                        handler: (e, modal) => {
+                            modal.close();
+                            resolve(null);
+                        }
+                    },
+                    {
+                        text: 'Aceptar',
+                        class: 'btn-primary',
+                        icon: 'fas fa-check',
+                        handler: (e, modal) => {
+                            const input = document.getElementById(inputId);
+                            const value = input ? input.value : '';
+                            modal.close();
+                            resolve(value);
+                        }
+                    }
+                ]
+            });
+            modal.show();
+            
+            // Enfocar el input
+            setTimeout(() => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            }, 100);
+        });
+    }
+}
+
+// Exportar para uso global
+window.ModalComponent = ModalComponent;
+</script>
