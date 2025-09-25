@@ -102,3 +102,4 @@ namespace HistoriaClinica.DTOs
         public bool TieneOmePendiente { get; set; }
     }
 }
+

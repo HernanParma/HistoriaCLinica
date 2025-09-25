@@ -314,3 +314,4 @@ class ModalManager {
         this.uiManager.toast(message, 'success');
     }
 }
+

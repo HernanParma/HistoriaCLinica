@@ -759,6 +759,14 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
         console.log(`✅ Tabla cargada con ${rows.length} pacientes`);
       }, 100);
 
+      // Remover event listeners existentes antes de agregar nuevos
+      patientsTableBody.querySelectorAll('.btn-view').forEach(btn => {
+        // Clonar el botón para remover todos los event listeners
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+      });
+
+      // Agregar event listeners a los botones nuevos
       patientsTableBody.querySelectorAll('.btn-view').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const id = e.currentTarget.dataset.id;
@@ -770,22 +778,64 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
         });
       });
 
+      // Remover event listeners existentes antes de agregar nuevos
+      patientsTableBody.querySelectorAll('.btn-delete').forEach(btn => {
+        // Clonar el botón para remover todos los event listeners
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+      });
+
+      // Agregar event listeners a los botones nuevos
       patientsTableBody.querySelectorAll('.btn-delete').forEach(btn => {
         btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // Prevenir múltiples clics
+          if (btn.disabled) return;
+          btn.disabled = true;
+          
           const id = e.currentTarget.dataset.id;
-          if (confirm('¿Estás seguro de que deseas eliminar este paciente?')) {
+          console.log(`🗑️ Intentando eliminar paciente con ID: ${id}`);
+          
+          if (confirm('¿Estás seguro de que deseas eliminar este paciente?\n\n⚠️ ADVERTENCIA: Si el paciente tiene consultas médicas, también se eliminarán todas las consultas asociadas. Esta acción no se puede deshacer.')) {
             try {
-              const response = await fetch(`${CONFIG.API_BASE_URL}/api/Pacientes/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+              console.log(`🔄 Enviando solicitud DELETE para paciente ${id}`);
+              const response = await fetch(`${CONFIG.API_BASE_URL}/api/Pacientes/${id}`, { 
+                method: 'DELETE', 
+                headers: getAuthHeaders() 
+              });
+              
+              console.log(`📡 Respuesta del servidor: ${response.status} ${response.statusText}`);
+              
               if (response.ok || response.status === 204) {
+                console.log(`✅ Paciente ${id} eliminado exitosamente`);
                 showMessage(patientsMessage, 'Paciente eliminado correctamente', 'success');
                 await loadPatients();
               } else {
-                showMessage(patientsMessage, 'No se pudo eliminar el paciente', 'error');
+                // Intentar obtener el mensaje de error del servidor
+                let errorMessage = 'No se pudo eliminar el paciente';
+                try {
+                  const errorData = await response.json();
+                  console.log(`❌ Error del servidor:`, errorData);
+                  if (errorData.mensaje) {
+                    errorMessage = errorData.mensaje;
+                  }
+                } catch {
+                  console.log(`❌ No se pudo parsear el error del servidor`);
+                }
+                showMessage(patientsMessage, errorMessage, 'error');
               }
-            } catch {
+            } catch (error) {
+              console.error(`❌ Error de conexión:`, error);
               showMessage(patientsMessage, 'Error de conexión al eliminar paciente', 'error');
             }
           }
+          
+          // Rehabilitar el botón después de un breve delay
+          setTimeout(() => {
+            btn.disabled = false;
+          }, 1000);
         });
       });
     }
@@ -1918,21 +1968,39 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
 
     // Función global para eliminar paciente desde el sidebar
     window.deletePatientFromSidebar = async function(patientId) {
-      if (confirm('¿Estás seguro de que deseas eliminar este paciente?')) {
+      console.log(`🗑️ [SIDEBAR] Intentando eliminar paciente con ID: ${patientId}`);
+      
+      if (confirm('¿Estás seguro de que deseas eliminar este paciente?\n\n⚠️ ADVERTENCIA: Si el paciente tiene consultas médicas, también se eliminarán todas las consultas asociadas. Esta acción no se puede deshacer.')) {
         try {
+          console.log(`🔄 [SIDEBAR] Enviando solicitud DELETE para paciente ${patientId}`);
           const response = await fetch(`${CONFIG.API_BASE_URL}/api/Pacientes/${patientId}`, { 
             method: 'DELETE', 
             headers: getAuthHeaders() 
           });
           
+          console.log(`📡 [SIDEBAR] Respuesta del servidor: ${response.status} ${response.statusText}`);
+          
           if (response.ok || response.status === 204) {
+            console.log(`✅ [SIDEBAR] Paciente ${patientId} eliminado exitosamente`);
             showNotification('Paciente eliminado correctamente', 'success');
             closePatientSidebar();
             await loadPatients();
           } else {
-            showNotification('No se pudo eliminar el paciente', 'error');
+            // Intentar obtener el mensaje de error del servidor
+            let errorMessage = 'No se pudo eliminar el paciente';
+            try {
+              const errorData = await response.json();
+              console.log(`❌ [SIDEBAR] Error del servidor:`, errorData);
+              if (errorData.mensaje) {
+                errorMessage = errorData.mensaje;
+              }
+            } catch {
+              console.log(`❌ [SIDEBAR] No se pudo parsear el error del servidor`);
+            }
+            showNotification(errorMessage, 'error');
           }
-        } catch {
+        } catch (error) {
+          console.error(`❌ [SIDEBAR] Error de conexión:`, error);
           showNotification('Error de conexión al eliminar paciente', 'error');
         }
       }

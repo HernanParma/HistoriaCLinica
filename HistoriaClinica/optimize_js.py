@@ -23,3 +23,4 @@ def optimize_js_file(input_file, output_file):
 if __name__ == "__main__":
     optimize_js_file('wwwroot/js/historia.js', 'wwwroot/js/historia_optimized.js')
 
+

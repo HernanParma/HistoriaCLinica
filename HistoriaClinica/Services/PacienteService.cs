@@ -141,6 +141,40 @@ namespace HistoriaClinica.Services
             return _mapeoService.MapearPacienteADto(paciente);
         }
 
+        public async Task<bool> EliminarPacienteAsync(int id)
+        {
+            _logger.LogInformation("[SERVICE] Eliminando paciente con ID: {PatientId}", id);
+
+            var paciente = await _context.Pacientes
+                .Include(p => p.Consultas)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (paciente == null)
+            {
+                _logger.LogWarning("[SERVICE] Paciente {PatientId} no encontrado", id);
+                throw new ArgumentException("Paciente no encontrado");
+            }
+
+            // Eliminar todas las consultas asociadas primero
+            if (paciente.Consultas.Any())
+            {
+                var consultasCount = paciente.Consultas.Count;
+                _logger.LogInformation("[SERVICE] Eliminando {ConsultasCount} consultas asociadas al paciente {PatientId}", consultasCount, id);
+                
+                _context.Consultas.RemoveRange(paciente.Consultas);
+                await _context.SaveChangesAsync();
+                
+                _logger.LogInformation("[SERVICE] {ConsultasCount} consultas eliminadas exitosamente", consultasCount);
+            }
+
+            // Eliminar el paciente
+            _context.Pacientes.Remove(paciente);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("[SERVICE] Paciente {PatientId} eliminado exitosamente", id);
+            return true;
+        }
+
         public async Task<bool> ExistePacienteAsync(int id)
         {
             return await _context.Pacientes.AnyAsync(p => p.Id == id);
@@ -152,3 +186,4 @@ namespace HistoriaClinica.Services
         }
     }
 }
+

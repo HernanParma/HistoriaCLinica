@@ -234,3 +234,4 @@ window.guardarCambiosConsulta = (e) => modalManager.handleEditarConsultaSubmit(d
 // Funciones de inicialización
 window.initializeClasses = initializeClasses;
 </script>
+

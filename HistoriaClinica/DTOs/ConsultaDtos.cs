@@ -77,3 +77,4 @@ namespace HistoriaClinica.DTOs
         public string Campo { get; set; } = "";
     }
 }
+

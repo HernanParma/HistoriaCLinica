@@ -45,3 +45,4 @@ if (typeof window !== 'undefined' && document.readyState === 'loading') {
 } else if (typeof window !== 'undefined') {
     loadAllClasses();
 }
+

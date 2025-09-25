@@ -12,3 +12,4 @@ namespace HistoriaClinica.DTOs
         public string UrlDescarga { get; set; } = "";
     }
 }
+

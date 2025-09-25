@@ -116,3 +116,4 @@ class StorageManager {
         return new URLSearchParams(window.location.search).get('id');
     }
 }
+

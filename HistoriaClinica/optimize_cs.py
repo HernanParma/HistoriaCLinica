@@ -23,3 +23,4 @@ def optimize_cs_file(input_file, output_file):
 if __name__ == "__main__":
     optimize_cs_file('Controllers/PacientesController.cs', 'Controllers/PacientesController_optimized.cs')
 
+

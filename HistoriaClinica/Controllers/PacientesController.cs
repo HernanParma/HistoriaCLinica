@@ -320,6 +320,54 @@ namespace HistoriaClinica.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarPaciente(int id)
+        {
+            try
+            {
+                _logger.LogInformation("[API] Eliminando paciente con ID: {PatientId}", id);
+                
+                if (!await _context.Database.CanConnectAsync())
+                {
+                    _logger.LogError("[API] No se puede conectar a la base de datos");
+                    return StatusCode(500, "Error interno: No se puede conectar a la base de datos");
+                }
+
+                await _pacienteService.EliminarPacienteAsync(id);
+                _logger.LogInformation("[API] Paciente {PatientId} eliminado exitosamente", id);
+                
+                return NoContent();
+            }
+            catch (ArgumentException argEx)
+            {
+                _logger.LogWarning("[API] Error de validación: {Error}", argEx.Message);
+                return NotFound(new { mensaje = argEx.Message });
+            }
+            catch (InvalidOperationException invEx)
+            {
+                _logger.LogWarning("[API] Error de operación: {Error}", invEx.Message);
+                return BadRequest(new { mensaje = invEx.Message });
+            }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogError(dbEx, "[API] Error de base de datos al eliminar paciente {PatientId}", id);
+                return StatusCode(500, new { 
+                    mensaje = "Error de base de datos al eliminar el paciente",
+                    error = dbEx.InnerException?.Message ?? dbEx.Message,
+                    pacienteId = id
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[API] Error inesperado al eliminar paciente {PatientId}", id);
+                return StatusCode(500, new { 
+                    mensaje = "Error interno del servidor al eliminar el paciente",
+                    error = ex.Message,
+                    pacienteId = id
+                });
+            }
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult<PacienteDto>> ActualizarPacientePut(int id, [FromBody] ActualizarPacienteDto actualizarPacienteDto)
         {

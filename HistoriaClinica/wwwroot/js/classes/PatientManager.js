@@ -437,3 +437,4 @@ class PatientManager {
         return textarea;
     }
 }
+
