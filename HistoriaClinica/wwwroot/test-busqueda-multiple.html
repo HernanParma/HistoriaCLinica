@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Búsqueda Múltiple</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-box {
+            margin-bottom: 20px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .patient-item {
+            padding: 10px;
+            border: 1px solid #eee;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+        .patient-item.highlight {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+        }
+        .test-cases {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 4px;
+        }
+        .test-case {
+            margin: 10px 0;
+            padding: 8px;
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+        .test-case:hover {
+            background-color: #e8f4fd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Prueba de Búsqueda Múltiple de Pacientes</h1>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Buscar pacientes (ej: perez pab, juan garcía, 12345678)">
+        </div>
+        
+        <div class="results" id="results">
+            <p>Escribe en el campo de búsqueda para probar la funcionalidad...</p>
+        </div>
+        
+        <div class="test-cases">
+            <h3>🧪 Casos de Prueba</h3>
+            <p>Haz clic en cualquier caso para probarlo:</p>
+            
+            <div class="test-case" onclick="testSearch('perez')">
+                <strong>Búsqueda simple:</strong> "perez" - Debe mostrar todos los Pérez
+            </div>
+            
+            <div class="test-case" onclick="testSearch('perez pab')">
+                <strong>Búsqueda múltiple:</strong> "perez pab" - Debe mostrar solo Pérez con nombre que contenga "pab"
+            </div>
+            
+            <div class="test-case" onclick="testSearch('juan garcía')">
+                <strong>Nombre y apellido:</strong> "juan garcía" - Debe mostrar solo Juan García
+            </div>
+            
+            <div class="test-case" onclick="testSearch('maría lópez')">
+                <strong>Búsqueda con acentos:</strong> "maría lópez" - Debe mostrar María López
+            </div>
+            
+            <div class="test-case" onclick="testSearch('12345678')">
+                <strong>Búsqueda por DNI:</strong> "12345678" - Debe mostrar paciente con ese DNI
+            </div>
+            
+            <div class="test-case" onclick="testSearch('garcía 123')">
+                <strong>Apellido y DNI:</strong> "garcía 123" - Debe mostrar García con DNI que contenga "123"
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de prueba
+        const allPatients = [
+            { id: 1, nombre: "Juan", apellido: "García", dni: "12345678", numeroAfiliado: "A001", particular: false },
+            { id: 2, nombre: "María", apellido: "López", dni: "87654321", numeroAfiliado: "A002", particular: true },
+            { id: 3, nombre: "Pablo", apellido: "Pérez", dni: "11223344", numeroAfiliado: "A003", particular: false },
+            { id: 4, nombre: "Ana", apellido: "Pérez", dni: "44332211", numeroAfiliado: "A004", particular: true },
+            { id: 5, nombre: "Carlos", apellido: "García", dni: "55667788", numeroAfiliado: "A005", particular: false },
+            { id: 6, nombre: "Pablo", apellido: "Martínez", dni: "99887766", numeroAfiliado: "A006", particular: false },
+            { id: 7, nombre: "Laura", apellido: "Pérez", dni: "12345679", numeroAfiliado: "A007", particular: true },
+            { id: 8, nombre: "Pedro", apellido: "González", dni: "98765432", numeroAfiliado: "A008", particular: false }
+        ];
+
+        // Función de filtrado mejorada (copiada del app.js)
+        function filterPatients(query) {
+            query = query.trim().toLowerCase();
+            if (!query) return allPatients;
+            
+            // Dividir la consulta en términos separados por espacios
+            const searchTerms = query.split(/\s+/).filter(term => term.length > 0);
+            
+            return allPatients.filter(p => {
+                // Si solo hay un término, usar la búsqueda original
+                if (searchTerms.length === 1) {
+                    const term = searchTerms[0];
+                    return (p.nombre && p.nombre.toLowerCase().includes(term)) ||
+                           (p.apellido && p.apellido.toLowerCase().includes(term)) ||
+                           (p.dni && String(p.dni).toLowerCase().includes(term)) ||
+                           (p.numeroAfiliado && String(p.numeroAfiliado).toLowerCase().includes(term)) ||
+                           (p.particular !== undefined && (p.particular ? 'si' : 'no').includes(term));
+                }
+                
+                // Si hay múltiples términos, cada término debe coincidir con algún campo
+                return searchTerms.every(term => {
+                    return (p.nombre && p.nombre.toLowerCase().includes(term)) ||
+                           (p.apellido && p.apellido.toLowerCase().includes(term)) ||
+                           (p.dni && String(p.dni).toLowerCase().includes(term)) ||
+                           (p.numeroAfiliado && String(p.numeroAfiliado).toLowerCase().includes(term)) ||
+                           (p.particular !== undefined && (p.particular ? 'si' : 'no').includes(term));
+                });
+            });
+        }
+
+        function displayResults(query) {
+            const results = filterPatients(query);
+            const resultsDiv = document.getElementById('results');
+            
+            if (!query) {
+                resultsDiv.innerHTML = '<p>Escribe en el campo de búsqueda para probar la funcionalidad...</p>';
+                return;
+            }
+            
+            if (results.length === 0) {
+                resultsDiv.innerHTML = `<p>❌ No se encontraron pacientes para: "<strong>${query}</strong>"</p>`;
+                return;
+            }
+            
+            let html = `<h3>✅ ${results.length} paciente(s) encontrado(s) para: "<strong>${query}</strong>"</h3>`;
+            
+            results.forEach(patient => {
+                const particularText = patient.particular ? 'Sí' : 'No';
+                html += `
+                    <div class="patient-item">
+                        <strong>${patient.nombre} ${patient.apellido}</strong><br>
+                        DNI: ${patient.dni} | Afiliado: ${patient.numeroAfiliado} | Particular: ${particularText}
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function testSearch(query) {
+            document.getElementById('searchInput').value = query;
+            displayResults(query);
+        }
+
+        // Event listener para el campo de búsqueda
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            displayResults(e.target.value);
+        });
+
+        // Mostrar todos los pacientes al cargar
+        displayResults('');
+    </script>
+</body>
+</html>

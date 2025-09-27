@@ -919,13 +919,30 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
     function filterPatients(query) {
       query = query.trim().toLowerCase();
       if (!query) return allPatients;
-      return allPatients.filter(p =>
-        (p.nombre && p.nombre.toLowerCase().includes(query)) ||
-        (p.apellido && p.apellido.toLowerCase().includes(query)) ||
-        (p.dni && String(p.dni).toLowerCase().includes(query)) ||
-        (p.numeroAfiliado && String(p.numeroAfiliado).toLowerCase().includes(query)) ||
-        (p.particular !== undefined && (p.particular ? 'si' : 'no').includes(query))
-      );
+      
+      // Dividir la consulta en términos separados por espacios
+      const searchTerms = query.split(/\s+/).filter(term => term.length > 0);
+      
+      return allPatients.filter(p => {
+        // Si solo hay un término, usar la búsqueda original
+        if (searchTerms.length === 1) {
+          const term = searchTerms[0];
+          return (p.nombre && p.nombre.toLowerCase().includes(term)) ||
+                 (p.apellido && p.apellido.toLowerCase().includes(term)) ||
+                 (p.dni && String(p.dni).toLowerCase().includes(term)) ||
+                 (p.numeroAfiliado && String(p.numeroAfiliado).toLowerCase().includes(term)) ||
+                 (p.particular !== undefined && (p.particular ? 'si' : 'no').includes(term));
+        }
+        
+        // Si hay múltiples términos, cada término debe coincidir con algún campo
+        return searchTerms.every(term => {
+          return (p.nombre && p.nombre.toLowerCase().includes(term)) ||
+                 (p.apellido && p.apellido.toLowerCase().includes(term)) ||
+                 (p.dni && String(p.dni).toLowerCase().includes(term)) ||
+                 (p.numeroAfiliado && String(p.numeroAfiliado).toLowerCase().includes(term)) ||
+                 (p.particular !== undefined && (p.particular ? 'si' : 'no').includes(term));
+        });
+      });
     }
   
     function handlePatientSearch(e) {
