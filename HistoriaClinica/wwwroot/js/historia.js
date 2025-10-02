@@ -21,7 +21,7 @@ function getHighlightedFields(root = document) {
     // 3) fallback por texto (GR:, HTO:, HB:)
     const txt = (label.textContent || '').toLowerCase().replace(':', '').trim();
     // map explícito para evitar desmatches
-    const map = ['gr','hto','hb','gb','plaq','gluc','urea','cr','vfs','got','gpt','ct','tg','vitd','fal','hdl','ldl','b12','tsh','orina','urico','psa','hba1c','valoresNoIncluidos'];
+    const map = ['gr','hto','hb','gb','plaq','gluc','urea','cr','vfg','got','gpt','ct','tg','vitd','fal','hdl','ldl','b12','tsh','t4l','orina','urico','psa','hba1c','valoresNoIncluidos'];
     const hit = map.find(k => txt.startsWith(k));
     return hit || txt;
   };
@@ -593,7 +593,7 @@ function renderLaboratorioValues(consulta) {
         { key: 'gluc', label: 'GLUC (Glucosa)', value: getLabValue(consulta, 'gluc', 'GLUC') },
         { key: 'urea', label: 'UREA', value: getLabValue(consulta, 'urea', 'UREA') },
         { key: 'cr', label: 'CR (Creatinina)', value: getLabValue(consulta, 'cr', 'CR') },
-        { key: 'vfs', label: 'VFS (Velocidad de Filtración Glomerular)', value: getLabValue(consulta, 'vfs', 'VFS') },
+        { key: 'vfg', label: 'VFG (Velocidad de Filtración Glomerular)', value: getLabValue(consulta, 'vfg', 'VFG') },
         { key: 'got', label: 'GOT', value: getLabValue(consulta, 'got', 'GOT') },
         { key: 'gpt', label: 'GPT', value: getLabValue(consulta, 'gpt', 'GPT') },
         { key: 'ct', label: 'CT (Colesterol Total)', value: getLabValue(consulta, 'ct', 'CT') },
@@ -604,6 +604,7 @@ function renderLaboratorioValues(consulta) {
         { key: 'ldl', label: 'LDL (Colesterol LDL)', value: getLabValue(consulta, 'ldl', 'LDL') },
         { key: 'b12', label: 'B12 (Vitamina B12)', value: getLabValue(consulta, 'b12', 'B12') },
         { key: 'tsh', label: 'TSH', value: getLabValue(consulta, 'tsh', 'TSH') },
+        { key: 't4l', label: 'T4L', value: getLabValue(consulta, 't4l', 'T4L') },
         { key: 'orina', label: 'ORINA', value: getLabValue(consulta, 'orina', 'ORINA') },
         { key: 'urico', label: 'URICO (Ácido Úrico)', value: getLabValue(consulta, 'urico', 'URICO') },
         { key: 'psa', label: 'PSA (Antígeno Prostático Específico)', value: getLabValue(consulta, 'psa', 'PSA') },
@@ -1090,7 +1091,7 @@ function initializeModal() {
                     gluc: formData.get('gluc') ? parseFloat(formData.get('gluc').replace(',', '.')) : null,
                     urea: formData.get('urea') ? parseFloat(formData.get('urea').replace(',', '.')) : null,
                     cr: formData.get('cr') ? parseFloat(formData.get('cr').replace(',', '.')) : null,
-                    vfs: formData.get('vfs') ? parseFloat(formData.get('vfs').replace(',', '.')) : null,
+                    vfg: formData.get('vfg') ? parseFloat(formData.get('vfg').replace(',', '.')) : null,
                     got: formData.get('got') ? parseFloat(formData.get('got').replace(',', '.')) : null,
                     gpt: formData.get('gpt') ? parseFloat(formData.get('gpt').replace(',', '.')) : null,
                     ct: formData.get('ct') ? parseFloat(formData.get('ct').replace(',', '.')) : null,
@@ -1100,6 +1101,7 @@ function initializeModal() {
                     hdl: formData.get('hdl') ? parseFloat(formData.get('hdl').replace(',', '.')) : null,
                     b12: formData.get('b12') ? parseFloat(formData.get('b12').replace(',', '.')) : null,
                     tsh: formData.get('tsh') ? parseFloat(formData.get('tsh').replace(',', '.')) : null,
+                    t4l: formData.get('t4l') ? parseFloat(formData.get('t4l').replace(',', '.')) : null,
                     orina: formData.get('orina') || null,
                     urico: formData.get('urico') ? parseFloat(formData.get('urico').replace(',', '.')) : null,
                     ldl: formData.get('ldl') ? parseFloat(formData.get('ldl').replace(',', '.')) : null,
@@ -1276,7 +1278,7 @@ function initializeModal() {
         'plaqConsulta', 'glucConsulta', 'ureaConsulta', 'crConsulta',
         'gotConsulta', 'gptConsulta', 'ctConsulta', 'tgConsulta',
         'vitdConsulta', 'falConsulta', 'hdlConsulta', 'ldlConsulta', 'b12Consulta',
-        'tshConsulta', 'uricoConsulta', 'psaConsulta', 'hba1cConsulta'
+        'tshConsulta', 't4lConsulta', 'uricoConsulta', 'psaConsulta', 'hba1cConsulta'
     ];
     
     // Función para formatear a 2 decimales
@@ -2166,7 +2168,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('glucEditarConsulta').value = consulta.gluc || consulta.GLUC || '';
         document.getElementById('ureaEditarConsulta').value = consulta.urea || consulta.UREA || '';
         document.getElementById('crEditarConsulta').value = consulta.cr || consulta.CR || '';
-        document.getElementById('vfsEditarConsulta').value = consulta.vfs || consulta.VFS || '';
+        document.getElementById('vfgEditarConsulta').value = consulta.vfg || consulta.VFG || '';
         document.getElementById('gotEditarConsulta').value = consulta.got || consulta.GOT || '';
         document.getElementById('gptEditarConsulta').value = consulta.gpt || consulta.GPT || '';
         document.getElementById('ctEditarConsulta').value = consulta.ct || consulta.CT || '';
@@ -2177,6 +2179,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('ldlEditarConsulta').value = consulta.ldl || consulta.LDL || '';
         document.getElementById('b12EditarConsulta').value = consulta.b12 || consulta.B12 || '';
         document.getElementById('tshEditarConsulta').value = consulta.tsh || consulta.TSH || '';
+        document.getElementById('t4lEditarConsulta').value = consulta.t4l || consulta.T4L || '';
         document.getElementById('uricoEditarConsulta').value = consulta.urico || consulta.URICO || '';
         document.getElementById('psaEditarConsulta').value = consulta.psa || consulta.PSA || '';
         document.getElementById('hba1cEditarConsulta').value = consulta.hba1c || consulta.HBA1C || '';
@@ -2243,7 +2246,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 gluc: formData.get('gluc') ? parseFloat(formData.get('gluc').replace(',', '.')) : null,
                 urea: formData.get('urea') ? parseFloat(formData.get('urea').replace(',', '.')) : null,
                 cr: formData.get('cr') ? parseFloat(formData.get('cr').replace(',', '.')) : null,
-                vfs: formData.get('vfs') ? parseFloat(formData.get('vfs').replace(',', '.')) : null,
+                vfg: formData.get('vfg') ? parseFloat(formData.get('vfg').replace(',', '.')) : null,
                 got: formData.get('got') ? parseFloat(formData.get('got').replace(',', '.')) : null,
                 gpt: formData.get('gpt') ? parseFloat(formData.get('gpt').replace(',', '.')) : null,
                 ct: formData.get('ct') ? parseFloat(formData.get('ct').replace(',', '.')) : null,
@@ -2253,6 +2256,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 hdl: formData.get('hdl') ? parseFloat(formData.get('hdl').replace(',', '.')) : null,
                 b12: formData.get('b12') ? parseFloat(formData.get('b12').replace(',', '.')) : null,
                 tsh: formData.get('tsh') ? parseFloat(formData.get('tsh').replace(',', '.')) : null,
+                t4l: formData.get('t4l') ? parseFloat(formData.get('t4l').replace(',', '.')) : null,
                 orina: formData.get('orina') || null,
                 urico: formData.get('urico') ? parseFloat(formData.get('urico').replace(',', '.')) : null,
                 ldl: formData.get('ldl') ? parseFloat(formData.get('ldl').replace(',', '.')) : null,
@@ -2361,7 +2365,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             'plaqEditarConsulta', 'glucEditarConsulta', 'ureaEditarConsulta', 'crEditarConsulta',
             'gotEditarConsulta', 'gptEditarConsulta', 'ctEditarConsulta', 'tgEditarConsulta',
             'vitdEditarConsulta', 'falEditarConsulta', 'hdlEditarConsulta', 'ldlEditarConsulta', 'b12EditarConsulta',
-            'tshEditarConsulta', 'uricoEditarConsulta', 'psaEditarConsulta', 'hba1cEditarConsulta'
+            'tshEditarConsulta', 't4lEditarConsulta', 'uricoEditarConsulta', 'psaEditarConsulta', 'hba1cEditarConsulta'
         ];
         
         camposLaboratorioEditar.forEach(campoId => {

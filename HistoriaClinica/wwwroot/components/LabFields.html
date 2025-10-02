@@ -41,8 +41,8 @@
                 <input type="text" id="cr" name="cr" placeholder="Ej: 0,8" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
             </div>
             <div class="form-group">
-                <label for="vfs" data-key="vfs">VFS (Velocidad de Filtración Glomerular):</label>
-                <input type="text" id="vfs" name="vfs" placeholder="Ej: 90" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+                <label for="vfg" data-key="vfg">VFG (Velocidad de Filtración Glomerular):</label>
+                <input type="text" id="vfg" name="vfg" placeholder="Ej: 90" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
             </div>
             
             <!-- Tercera fila -->
@@ -387,7 +387,7 @@ class LabFieldsComponent {
         const data = {};
         
         // Campos numéricos
-        const numericFields = ['gr', 'hto', 'hb', 'gb', 'plaq', 'gluc', 'urea', 'cr', 'vfs', 
+        const numericFields = ['gr', 'hto', 'hb', 'gb', 'plaq', 'gluc', 'urea', 'cr', 'vfg', 
                               'got', 'gpt', 'ct', 'tg', 'vitd', 'fal', 'hdl', 'ldl', 'b12', 
                               'tsh', 'urico', 'psa', 'hba1c'];
         

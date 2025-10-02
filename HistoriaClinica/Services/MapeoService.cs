@@ -25,6 +25,7 @@ namespace HistoriaClinica.Services
                 DNI = paciente.DNI ?? "",
                 NumeroAfiliado = paciente.NumeroAfiliado ?? "",
                 FechaNacimiento = paciente.FechaNacimiento,
+                Edad = paciente.Edad,
                 Telefono = paciente.Telefono ?? "",
                 ObraSocial = paciente.ObraSocial ?? "",
                 Particular = paciente.Particular,
@@ -39,7 +40,7 @@ namespace HistoriaClinica.Services
 
         public ConsultaDto MapearConsultaADto(Consulta consulta)
         {
-            return new ConsultaDto
+            var dto = new ConsultaDto
             {
                 Id = consulta.Id,
                 Fecha = consulta.Fecha,
@@ -58,7 +59,7 @@ namespace HistoriaClinica.Services
                 GLUC = consulta.GLUC,
                 UREA = consulta.UREA,
                 CR = consulta.CR,
-                VFS = consulta.VFS,
+                VFG = consulta.VFG,
                 GOT = consulta.GOT,
                 GPT = consulta.GPT,
                 CT = consulta.CT,
@@ -68,14 +69,22 @@ namespace HistoriaClinica.Services
                 COL = consulta.COL,
                 B12 = consulta.B12,
                 TSH = consulta.TSH,
+                T4L = consulta.T4L,
                 ORINA = consulta.ORINA,
                 URICO = consulta.URICO,
+                PSA = consulta.PSA,
+                HDL = consulta.HDL,
+                LDL = consulta.LDL,
+                HBA1C = consulta.HBA1C,
                 ValoresNoIncluidos = consulta.ValoresNoIncluidos,
                 FechaLaboratorio = consulta.FechaLaboratorio,
                 CamposResaltados = !string.IsNullOrEmpty(consulta.CamposResaltados) 
                     ? DeserializarCamposResaltados(consulta.CamposResaltados)
                     : new List<string>()
             };
+            
+            Console.WriteLine($"[MAPEO] T4L mapeado a DTO: {dto.T4L}");
+            return dto;
         }
 
         public Paciente MapearCrearPacienteDtoAEntidad(CrearPacienteDto dto)
@@ -133,7 +142,7 @@ namespace HistoriaClinica.Services
                 GLUC = dto.GLUC,
                 UREA = dto.UREA,
                 CR = dto.CR,
-                VFS = dto.VFS,
+                VFG = dto.VFG,
                 GOT = dto.GOT,
                 GPT = dto.GPT,
                 CT = dto.CT,
@@ -143,8 +152,13 @@ namespace HistoriaClinica.Services
                 COL = dto.COL,
                 B12 = dto.B12,
                 TSH = dto.TSH,
+                T4L = dto.T4L,
                 ORINA = dto.ORINA,
                 URICO = dto.URICO,
+                PSA = dto.PSA,
+                HDL = dto.HDL,
+                LDL = dto.LDL,
+                HBA1C = dto.HBA1C,
                 ValoresNoIncluidos = dto.ValoresNoIncluidos?.Trim(),
                 FechaLaboratorio = dto.FechaLaboratorio,
                 CamposResaltados = dto.CamposResaltados != null ? JsonSerializer.Serialize(dto.CamposResaltados) : null
@@ -183,7 +197,15 @@ namespace HistoriaClinica.Services
 
         public void ActualizarConsultaDesdeDto(Consulta consulta, CrearConsultaDto dto)
         {
-            consulta.Fecha = dto.Fecha ?? consulta.Fecha;
+            if (dto.Fecha.HasValue)
+            {
+                consulta.Fecha = dto.Fecha.Value;
+                Console.WriteLine($"[MAPEO] Fecha actualizada: {dto.Fecha.Value}");
+            }
+            else
+            {
+                Console.WriteLine($"[MAPEO] Fecha no recibida o es null");
+            }
             consulta.FechaLaboratorio = dto.FechaLaboratorio ?? consulta.FechaLaboratorio;
             consulta.Motivo = dto.Motivo.Trim();
             consulta.Recetar = dto.Recetar?.Trim();
@@ -206,8 +228,15 @@ namespace HistoriaClinica.Services
             consulta.COL = dto.COL;
             consulta.B12 = dto.B12;
             consulta.TSH = dto.TSH;
+            consulta.T4L = dto.T4L;
+            Console.WriteLine($"[MAPEO] T4L recibido: {dto.T4L}");
+            Console.WriteLine($"[MAPEO] T4L asignado a consulta: {consulta.T4L}");
             consulta.ORINA = dto.ORINA;
             consulta.URICO = dto.URICO;
+            consulta.PSA = dto.PSA;
+            consulta.HDL = dto.HDL;
+            consulta.LDL = dto.LDL;
+            consulta.HBA1C = dto.HBA1C;
             consulta.ValoresNoIncluidos = dto.ValoresNoIncluidos?.Trim();
             if (dto.CamposResaltados != null)
             {

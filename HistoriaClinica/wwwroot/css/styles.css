@@ -401,8 +401,8 @@ body {
 
 .form-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 15px;
 }
 
 .form-group label {
@@ -567,7 +567,7 @@ body {
     }
     
     .form-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
         gap: 15px;
     }
     
@@ -1494,7 +1494,7 @@ body {
 
 .lab-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 15px;
     margin-bottom: 20px;
     margin-top: 10px;
@@ -1575,7 +1575,7 @@ body {
 
 .lab-results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 15px;
 }
 
@@ -2658,7 +2658,7 @@ span.consulta-motivo {
 
 .lab-results-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+    grid-template-columns: repeat(4, 1fr) !important;
     gap: 15px !important;
     margin: 0 !important;
 }
@@ -2912,7 +2912,7 @@ div.form-group > input[name="ome"]:focus {
 /* Grid de laboratorio */
 div.lab-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    grid-template-columns: repeat(4, 1fr) !important;
     gap: 20px !important;
     margin-top: 20px !important;
 }
@@ -3011,7 +3011,7 @@ button.submit-btn > i {
     }
     
     div.lab-results-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr 1fr !important;
     }
     
     div.consulta-content {
@@ -3033,7 +3033,7 @@ button.submit-btn > i {
     }
     
     div.lab-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr 1fr !important;
     }
 }
 
@@ -3340,7 +3340,7 @@ span.consulta-motivo {
 
 .lab-results-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+    grid-template-columns: repeat(4, 1fr) !important;
     gap: 15px !important;
     margin: 0 !important;
 }
@@ -3594,7 +3594,7 @@ div.form-group > input[name="ome"]:focus {
 /* Grid de laboratorio */
 div.lab-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    grid-template-columns: repeat(4, 1fr) !important;
     gap: 20px !important;
     margin-top: 20px !important;
 }
@@ -3693,7 +3693,7 @@ button.submit-btn > i {
     }
     
     div.lab-results-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr 1fr !important;
     }
     
     div.consulta-content {
@@ -3715,7 +3715,7 @@ button.submit-btn > i {
     }
     
     div.lab-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr 1fr !important;
     }
 }
 
@@ -4650,6 +4650,18 @@ body {
         grid-template-columns: 320px minmax(0, 1fr);
         gap: 10px;
         padding: 0 8px;
+    }
+    
+    .lab-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    .lab-results-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr 1fr 1fr;
     }
     
     .patient-sidebar-fixed {

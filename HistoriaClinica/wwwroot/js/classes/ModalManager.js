@@ -89,7 +89,7 @@ class ModalManager {
             'grConsulta', 'htoConsulta', 'hbConsulta', 'gbConsulta', 'plaqConsulta', 
             'glucConsulta', 'ureaConsulta', 'crConsulta', 'gotConsulta', 'gptConsulta', 
             'ctConsulta', 'tgConsulta', 'vitdConsulta', 'falConsulta', 'hdlConsulta', 
-            'ldlConsulta', 'b12Consulta', 'tshConsulta', 'uricoConsulta', 'psaConsulta', 
+            'ldlConsulta', 'b12Consulta', 'tshConsulta', 't4lConsulta', 'uricoConsulta', 'psaConsulta', 
             'hba1cConsulta'
         ]);
 
@@ -176,7 +176,7 @@ class ModalManager {
             'plaqEditarConsulta', 'glucEditarConsulta', 'ureaEditarConsulta', 'crEditarConsulta',
             'gotEditarConsulta', 'gptEditarConsulta', 'ctEditarConsulta', 'tgEditarConsulta', 
             'vitdEditarConsulta', 'falEditarConsulta', 'hdlEditarConsulta', 'ldlEditarConsulta',
-            'b12EditarConsulta', 'tshEditarConsulta', 'uricoEditarConsulta', 'psaEditarConsulta', 
+            'b12EditarConsulta', 'tshEditarConsulta', 't4lEditarConsulta', 'uricoEditarConsulta', 'psaEditarConsulta', 
             'hba1cEditarConsulta'
         ]);
     }

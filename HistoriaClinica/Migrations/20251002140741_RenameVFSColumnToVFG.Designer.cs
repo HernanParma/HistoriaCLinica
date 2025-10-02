@@ -4,6 +4,7 @@ using HistoriaClinica.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HistoriaClinica.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251002140741_RenameVFSColumnToVFG")]
+    partial class RenameVFSColumnToVFG
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,16 +78,7 @@ namespace HistoriaClinica.Migrations
                     b.Property<double?>("HB")
                         .HasColumnType("float");
 
-                    b.Property<double?>("HBA1C")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("HDL")
-                        .HasColumnType("float");
-
                     b.Property<double?>("HTO")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("LDL")
                         .HasColumnType("float");
 
                     b.Property<string>("Motivo")
@@ -106,9 +100,6 @@ namespace HistoriaClinica.Migrations
                     b.Property<double?>("PLAQ")
                         .HasColumnType("float");
 
-                    b.Property<double?>("PSA")
-                        .HasColumnType("float");
-
                     b.Property<int>("PacienteId")
                         .HasColumnType("int");
 
@@ -117,9 +108,6 @@ namespace HistoriaClinica.Migrations
 
                     b.Property<bool>("RecetarRevisado")
                         .HasColumnType("bit");
-
-                    b.Property<double?>("T4L")
-                        .HasColumnType("float");
 
                     b.Property<double?>("TG")
                         .HasColumnType("float");
