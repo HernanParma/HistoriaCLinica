@@ -238,9 +238,9 @@ class ConsultaManager {
         setValue('notasEditarConsulta', consulta.notas || consulta.Notas);
 
         // Campos de laboratorio
-        const labFields = ['gr', 'hto', 'hb', 'gb', 'plaq', 'gluc', 'urea', 'cr', 'vfs', 
+        const labFields = ['gr', 'hto', 'hb', 'gb', 'plaq', 'gluc', 'urea', 'cr', 'vfg', 
                           'got', 'gpt', 'ct', 'tg', 'vitd', 'fal', 'hdl', 'ldl', 'b12', 
-                          'tsh', 'urico', 'psa', 'hba1c', 'orina', 'valoresNoIncluidos'];
+                          'tsh', 't4l', 'urico', 'psa', 'hba1c', 'orina', 'valoresNoIncluidos'];
         
         labFields.forEach(field => {
             setValue(`${field}EditarConsulta`, consulta[field] ?? consulta[field?.toUpperCase()]);

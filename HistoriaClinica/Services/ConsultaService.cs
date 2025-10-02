@@ -116,6 +116,9 @@ namespace HistoriaClinica.Services
 
             _logger.LogInformation("[SERVICE] Campos resaltados recibidos: {CamposResaltados}", 
                 actualizarConsultaDto.CamposResaltados != null ? string.Join(", ", actualizarConsultaDto.CamposResaltados) : "null");
+            _logger.LogInformation("[SERVICE] Fecha recibida para actualización: {Fecha}", actualizarConsultaDto.Fecha);
+            _logger.LogInformation("[SERVICE] T4L recibido para actualización: {T4L}", actualizarConsultaDto.T4L);
+            _logger.LogInformation("[SERVICE] DTO completo recibido: {Dto}", System.Text.Json.JsonSerializer.Serialize(actualizarConsultaDto));
             
             _mapeoService.ActualizarConsultaDesdeDto(consulta, actualizarConsultaDto);
             await _context.SaveChangesAsync();

@@ -1857,16 +1857,16 @@
                                 <input type="text" id="glucConsulta" name="gluc" placeholder="Glucosa" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
-                                <label for="ureaConsulta">UREA:</label>
-                                <input type="text" id="ureaConsulta" name="urea" placeholder="Urea" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+                                <label for="ureaConsulta">UREA/UREMIA:</label>
+                                <input type="text" id="ureaConsulta" name="urea" placeholder="UREA/UREMIA" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="crConsulta">CR:</label>
                                 <input type="text" id="crConsulta" name="cr" placeholder="Creatinina" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
-                                <label for="vfsConsulta">VFS:</label>
-                                <input type="text" id="vfsConsulta" name="vfs" placeholder="VFS" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+                                <label for="vfgConsulta">VFG:</label>
+                                <input type="text" id="vfgConsulta" name="vfg" placeholder="VFG" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <!-- Tercera fila -->
                             <div class="form-group">
@@ -1912,8 +1912,12 @@
                                 <input type="text" id="tshConsulta" name="tsh" placeholder="TSH" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
-                                <label for="uricoConsulta">URICO:</label>
-                                <input type="text" id="uricoConsulta" name="urico" placeholder="Ácido Úrico" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+                                <label for="t4lConsulta">T4L:</label>
+                                <input type="text" id="t4lConsulta" name="t4l" placeholder="T4L" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
+                            </div>
+                            <div class="form-group">
+                                <label for="uricoConsulta">URICO/URICEMIA:</label>
+                                <input type="text" id="uricoConsulta" name="urico" placeholder="URICO/URICEMIA" pattern="[0-9]+([,][0-9]{1,2})?" inputmode="decimal">
                             </div>
                             <div class="form-group">
                                 <label for="psaConsulta">PSA:</label>
@@ -2034,9 +2038,9 @@
             <div class="modal-body">
                 <form id="formEditarConsulta">
                     <div class="form-group">
-                        <label for="fechaEditarConsulta">Fecha de Consulta:</label>
-                        <input type="date" id="fechaEditarConsulta" name="fecha" disabled style="background-color: #f3f4f6; color: #6b7280;">
-                        <small style="color: #6b7280; font-size: 0.8em; margin-top: 4px; display: block;">La fecha no se puede modificar al editar una consulta</small>
+                        <label for="fechaEditarConsulta">Fecha de Consulta: *</label>
+                        <input type="date" id="fechaEditarConsulta" name="fecha" required>
+                        <small style="color: #6b7280; font-size: 0.8em; margin-top: 4px; display: block;">Puede modificar la fecha de la consulta</small>
                     </div>
                     
                     <div class="form-group">
@@ -2088,7 +2092,7 @@
                                 <input type="text" id="glucEditarConsulta" name="gluc" placeholder="Ej: 95">
                             </div>
                             <div class="form-group">
-                                <label for="ureaEditarConsulta">UREA:</label>
+                                <label for="ureaEditarConsulta">UREA/UREMIA:</label>
                                 <input type="text" id="ureaEditarConsulta" name="urea" placeholder="Ej: 27">
                             </div>
                             <div class="form-group">
@@ -2096,8 +2100,8 @@
                                 <input type="text" id="crEditarConsulta" name="cr" placeholder="Ej: 0,8">
                             </div>
                             <div class="form-group">
-                                <label for="vfsEditarConsulta">VFS (Velocidad de Filtración Glomerular):</label>
-                                <input type="text" id="vfsEditarConsulta" name="vfs" placeholder="Ej: 85">
+                                <label for="vfgEditarConsulta">VFG (Velocidad de Filtración Glomerular):</label>
+                                <input type="text" id="vfgEditarConsulta" name="vfg" placeholder="Ej: 85">
                             </div>
                             <div class="form-group">
                                 <label for="gotEditarConsulta">GOT:</label>
@@ -2140,7 +2144,11 @@
                                 <input type="text" id="tshEditarConsulta" name="tsh" placeholder="Ej: 2,6">
                             </div>
                             <div class="form-group">
-                                <label for="uricoEditarConsulta">URICO (Ácido Úrico):</label>
+                                <label for="t4lEditarConsulta">T4L:</label>
+                                <input type="text" id="t4lEditarConsulta" name="t4l" placeholder="Ej: 1,2">
+                            </div>
+                            <div class="form-group">
+                                <label for="uricoEditarConsulta">URICO/URICEMIA:</label>
                                 <input type="text" id="uricoEditarConsulta" name="urico" placeholder="Ej: 5,3">
                             </div>
                             <div class="form-group">

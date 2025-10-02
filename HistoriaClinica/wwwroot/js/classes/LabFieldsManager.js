@@ -4,9 +4,9 @@
 class LabFieldsManager {
     constructor() {
         this.labKeys = [
-            'gr', 'hto', 'hb', 'gb', 'plaq', 'gluc', 'urea', 'cr', 'vfs', 
+            'gr', 'hto', 'hb', 'gb', 'plaq', 'gluc', 'urea', 'cr', 'vfg', 
             'got', 'gpt', 'ct', 'tg', 'vitd', 'fal', 'hdl', 'ldl', 'b12', 
-            'tsh', 'orina', 'urico', 'psa', 'hba1c', 'valoresNoIncluidos'
+            'tsh', 't4l', 'orina', 'urico', 'psa', 'hba1c', 'valoresNoIncluidos'
         ];
 
         this.labFieldMappings = [
@@ -16,9 +16,9 @@ class LabFieldsManager {
             ['gb', 'GB', 'GB (Glóbulos Blancos)'],
             ['plaq', 'PLAQ', 'PLAQ (Plaquetas)'],
             ['gluc', 'GLUC', 'GLUC (Glucosa)'],
-            ['urea', 'UREA', 'UREA'],
+            ['urea', 'UREA', 'UREA/UREMIA'],
             ['cr', 'CR', 'CR (Creatinina)'],
-            ['vfs', 'VFS', 'VFS (Velocidad de Filtración Glomerular)'],
+            ['vfg', 'VFG', 'VFG (Velocidad de Filtración Glomerular)'],
             ['got', 'GOT', 'GOT'],
             ['gpt', 'GPT', 'GPT'],
             ['ct', 'CT', 'CT (Colesterol Total)'],
@@ -29,8 +29,9 @@ class LabFieldsManager {
             ['ldl', 'LDL', 'LDL (Colesterol LDL)'],
             ['b12', 'B12', 'B12 (Vitamina B12)'],
             ['tsh', 'TSH', 'TSH'],
+            ['t4l', 'T4L', 'T4L'],
             ['orina', 'ORINA', 'ORINA'],
-            ['urico', 'URICO', 'URICO (Ácido Úrico)'],
+            ['urico', 'URICO', 'URICO/URICEMIA'],
             ['psa', 'PSA', 'PSA (Antígeno Prostático Específico)'],
             ['hba1c', 'HBA1C', 'HBA1C (Hemoglobina Glicosilada)'],
             ['valoresNoIncluidos', 'ValoresNoIncluidos', 'Valores no incluidos']
@@ -131,6 +132,9 @@ class LabFieldsManager {
      * Renderiza valores de laboratorio
      */
     renderLaboratorioValues(consulta) {
+        console.log('🔍 Datos de consulta recibidos:', consulta);
+        console.log('🔍 T4L en consulta:', consulta.t4l, consulta.T4L);
+        
         const pick = (...keys) => {
             const foundKey = keys.find(k => consulta[k] !== null && consulta[k] !== undefined && consulta[k] !== '');
             return foundKey ? consulta[foundKey] : null;
@@ -163,8 +167,34 @@ class LabFieldsManager {
      */
     buildLabPayload(form, highlightedFromRoot) {
         const formData = new FormData(form);
+        
+        // Debug: Log all form data
+        console.log('🔍 FormData contents:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`  ${key}: ${value}`);
+        }
+        
+        const fechaValue = formData.get('fecha');
+        console.log('🔍 Fecha value from form:', fechaValue);
+        console.log('🔍 Form element:', form);
+        console.log('🔍 Fecha input element:', form.querySelector('input[name="fecha"]'));
+        console.log('🔍 Fecha input value:', form.querySelector('input[name="fecha"]')?.value);
+        
+        // Convertir fecha a formato ISO si existe, o usar el valor directo si es una fecha válida
+        let fechaISO = null;
+        if (fechaValue) {
+            // Si ya es una fecha en formato ISO, usarla directamente
+            if (fechaValue.includes('T') || fechaValue.includes('Z')) {
+                fechaISO = fechaValue;
+            } else {
+                // Si es una fecha en formato YYYY-MM-DD, convertirla a ISO
+                fechaISO = new Date(fechaValue + 'T00:00:00.000Z').toISOString();
+            }
+        }
+        console.log('🔍 Fecha ISO:', fechaISO);
+        
         const data = {
-            fecha: formData.get('fecha') || new Date().toISOString().split('T')[0],
+            fecha: fechaISO,
             fechaLaboratorio: this.tryISODate(formData.get('fechaLaboratorio')),
             motivo: formData.get('motivo'),
             recetar: formData.get('recetar') || null,
@@ -174,14 +204,23 @@ class LabFieldsManager {
             valoresNoIncluidos: formData.get('valoresNoIncluidos') || null,
             camposResaltados: this.getHighlightedFields(highlightedFromRoot)
         };
+        
+        console.log('🔍 Final payload data:', data);
+        console.log('🔍 Fecha en payload:', data.fecha);
+        console.log('🔍 T4L en payload:', data.t4l);
 
         // Agregar campos numéricos
-        const numericKeys = ['gr', 'hto', 'hb', 'gb', 'plaq', 'gluc', 'urea', 'cr', 'vfs', 
-                           'got', 'gpt', 'ct', 'tg', 'vitd', 'fal', 'hdl', 'b12', 'tsh', 
+        const numericKeys = ['gr', 'hto', 'hb', 'gb', 'plaq', 'gluc', 'urea', 'cr', 'vfg', 
+                           'got', 'gpt', 'ct', 'tg', 'vitd', 'fal', 'hdl', 'b12', 'tsh', 't4l', 
                            'urico', 'ldl', 'psa', 'hba1c'];
         
         numericKeys.forEach(key => {
-            data[key] = this.toFloatOrNull(formData.get(key));
+            const value = this.toFloatOrNull(formData.get(key));
+            data[key] = value;
+            if (key === 't4l') {
+                console.log('🔍 T4L value from form:', formData.get(key));
+                console.log('🔍 T4L converted value:', value);
+            }
         });
 
         return data;

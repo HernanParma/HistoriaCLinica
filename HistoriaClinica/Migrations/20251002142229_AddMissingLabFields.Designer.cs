@@ -4,6 +4,7 @@ using HistoriaClinica.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HistoriaClinica.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251002142229_AddMissingLabFields")]
+    partial class AddMissingLabFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,9 +120,6 @@ namespace HistoriaClinica.Migrations
 
                     b.Property<bool>("RecetarRevisado")
                         .HasColumnType("bit");
-
-                    b.Property<double?>("T4L")
-                        .HasColumnType("float");
 
                     b.Property<double?>("TG")
                         .HasColumnType("float");

@@ -21,7 +21,7 @@ namespace HistoriaClinica.Models
         public double? GLUC { get; set; }
         public double? UREA { get; set; }
         public double? CR { get; set; }
-        public double? VFS { get; set; }
+        public double? VFG { get; set; }
         public double? GOT { get; set; }
         public double? GPT { get; set; }
         public double? CT { get; set; }
@@ -31,8 +31,13 @@ namespace HistoriaClinica.Models
         public double? COL { get; set; }
         public double? B12 { get; set; }
         public double? TSH { get; set; }
+        public double? T4L { get; set; }
         public string? ORINA { get; set; }
         public double? URICO { get; set; }
+        public double? PSA { get; set; }
+        public double? HDL { get; set; }
+        public double? LDL { get; set; }
+        public double? HBA1C { get; set; }
         public string? ValoresNoIncluidos { get; set; }
         public string? Recetar { get; set; }
         public string? Ome { get; set; }

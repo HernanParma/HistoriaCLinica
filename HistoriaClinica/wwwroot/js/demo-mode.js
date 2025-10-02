@@ -555,7 +555,7 @@ function simulateApiCall(endpoint, method = 'GET', data = null) {
                         gluc: data.gluc || null,
                         urea: data.urea || null,
                         cr: data.cr || null,
-                        vfs: data.vfs || null,
+                        vfg: data.vfg || null,
                         got: data.got || null,
                         gpt: data.gpt || null,
                         ct: data.ct || null,

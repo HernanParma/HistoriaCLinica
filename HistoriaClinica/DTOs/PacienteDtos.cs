@@ -10,6 +10,7 @@ namespace HistoriaClinica.DTOs
         public string? DNI { get; set; }
         public string? NumeroAfiliado { get; set; }
         public DateTime? FechaNacimiento { get; set; }
+        public int? Edad { get; set; }
         public string? Telefono { get; set; }
         public string? ObraSocial { get; set; }
         public bool Particular { get; set; }
@@ -89,6 +90,7 @@ namespace HistoriaClinica.DTOs
         public string? DNI { get; set; }
         public string? NumeroAfiliado { get; set; }
         public DateTime? FechaNacimiento { get; set; }
+        public int? Edad { get; set; }
         public string? Telefono { get; set; }
         public string? ObraSocial { get; set; }
         public bool Particular { get; set; }
