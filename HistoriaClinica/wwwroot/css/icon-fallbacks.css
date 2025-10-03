@@ -1,0 +1,106 @@
+/* Fallbacks de iconos usando emojis */
+/* Este archivo SOLO se aplica cuando Font Awesome no se carga correctamente */
+/* Los selectores usan .no-fa para evitar duplicación cuando FA está disponible */
+
+/* Iconos de usuario */
+.no-fa .fa-user::before { content: "👤" !important; font-family: inherit !important; }
+.no-fa .fa-user-plus::before { content: "👤➕" !important; font-family: inherit !important; }
+.no-fa .fa-sign-in-alt::before { content: "🔑" !important; font-family: inherit !important; }
+.no-fa .fa-sign-out-alt::before { content: "🚪" !important; font-family: inherit !important; }
+
+/* Iconos de calendario y tiempo */
+.no-fa .fa-calendar-alt::before { content: "📅" !important; font-family: inherit !important; }
+.no-fa .fa-clock::before { content: "🕐" !important; font-family: inherit !important; }
+.no-fa .fa-calendar::before { content: "📅" !important; font-family: inherit !important; }
+
+/* Iconos de edición */
+.no-fa .fa-edit::before { content: "✏️" !important; font-family: inherit !important; }
+.no-fa .fa-pencil-alt::before { content: "✏️" !important; font-family: inherit !important; }
+.no-fa .fa-save::before { content: "💾" !important; font-family: inherit !important; }
+
+/* Iconos de eliminación */
+.no-fa .fa-trash::before { content: "🗑️" !important; font-family: inherit !important; }
+.no-fa .fa-trash-alt::before { content: "🗑️" !important; font-family: inherit !important; }
+.no-fa .fa-times::before { content: "❌" !important; font-family: inherit !important; }
+.no-fa .fa-times-circle::before { content: "❌" !important; font-family: inherit !important; }
+
+/* Iconos de agregar */
+.no-fa .fa-plus::before { content: "➕" !important; font-family: inherit !important; }
+.no-fa .fa-plus-circle::before { content: "➕" !important; font-family: inherit !important; }
+
+/* Iconos de visualización */
+.no-fa .fa-eye::before { content: "👁️" !important; font-family: inherit !important; }
+.no-fa .fa-eye-slash::before { content: "🙈" !important; font-family: inherit !important; }
+
+/* Iconos de archivos */
+.no-fa .fa-file-medical::before { content: "📄" !important; font-family: inherit !important; }
+.no-fa .fa-file::before { content: "📄" !important; font-family: inherit !important; }
+.no-fa .fa-file-alt::before { content: "📄" !important; font-family: inherit !important; }
+.no-fa .fa-upload::before { content: "📤" !important; font-family: inherit !important; }
+.no-fa .fa-download::before { content: "📥" !important; font-family: inherit !important; }
+
+/* Iconos de laboratorio */
+.no-fa .fa-flask::before { content: "🧪" !important; font-family: inherit !important; }
+.no-fa .fa-vial::before { content: "🧪" !important; font-family: inherit !important; }
+
+/* Iconos de historial */
+.no-fa .fa-history::before { content: "📋" !important; font-family: inherit !important; }
+.no-fa .fa-list::before { content: "📋" !important; font-family: inherit !important; }
+.no-fa .fa-list-alt::before { content: "📋" !important; font-family: inherit !important; }
+
+/* Iconos de navegación */
+.no-fa .fa-home::before { content: "🏠" !important; font-family: inherit !important; }
+.no-fa .fa-arrow-left::before { content: "⬅️" !important; font-family: inherit !important; }
+.no-fa .fa-arrow-right::before { content: "➡️" !important; font-family: inherit !important; }
+.no-fa .fa-arrow-up::before { content: "⬆️" !important; font-family: inherit !important; }
+.no-fa .fa-arrow-down::before { content: "⬇️" !important; font-family: inherit !important; }
+
+/* Iconos de búsqueda */
+.no-fa .fa-search::before { content: "🔍" !important; font-family: inherit !important; }
+.no-fa .fa-filter::before { content: "🔍" !important; font-family: inherit !important; }
+
+/* Iconos de configuración */
+.no-fa .fa-cog::before { content: "⚙️" !important; font-family: inherit !important; }
+.no-fa .fa-settings::before { content: "⚙️" !important; font-family: inherit !important; }
+
+/* Iconos de información */
+.no-fa .fa-info-circle::before { content: "ℹ️" !important; font-family: inherit !important; }
+.no-fa .fa-exclamation-triangle::before { content: "⚠️" !important; font-family: inherit !important; }
+.no-fa .fa-check::before { content: "✅" !important; font-family: inherit !important; }
+.no-fa .fa-check-circle::before { content: "✅" !important; font-family: inherit !important; }
+
+/* Iconos de gráficos */
+.no-fa .fa-chart-line::before { content: "📈" !important; font-family: inherit !important; }
+.no-fa .fa-chart-bar::before { content: "📊" !important; font-family: inherit !important; }
+
+/* Iconos de comunicación */
+.no-fa .fa-envelope::before { content: "✉️" !important; font-family: inherit !important; }
+.no-fa .fa-phone::before { content: "📞" !important; font-family: inherit !important; }
+
+/* Iconos de salud */
+.no-fa .fa-heart::before { content: "❤️" !important; font-family: inherit !important; }
+.no-fa .fa-heartbeat::before { content: "💓" !important; font-family: inherit !important; }
+.no-fa .fa-stethoscope::before { content: "🩺" !important; font-family: inherit !important; }
+
+/* Asegurar que los emojis se muestren correctamente SOLO cuando no hay FA */
+.no-fa .fas, .no-fa .far, .no-fa .fab {
+    font-family: Arial, sans-serif !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-variant: normal !important;
+    text-transform: none !important;
+    line-height: 1 !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Tamaños específicos para emojis SOLO cuando no hay FA */
+.no-fa .fa-xs { font-size: 0.75em !important; }
+.no-fa .fa-sm { font-size: 0.875em !important; }
+.no-fa .fa-lg { font-size: 1.33em !important; }
+.no-fa .fa-xl { font-size: 1.5em !important; }
+.no-fa .fa-2x { font-size: 2em !important; }
+.no-fa .fa-3x { font-size: 3em !important; }
+.no-fa .fa-4x { font-size: 4em !important; }
+.no-fa .fa-5x { font-size: 5em !important; }
+
