@@ -237,6 +237,8 @@ namespace HistoriaClinica.Services
             consulta.HDL = dto.HDL;
             consulta.LDL = dto.LDL;
             consulta.HBA1C = dto.HBA1C;
+            Console.WriteLine($"[MAPEO] HBA1C recibido: {dto.HBA1C}");
+            Console.WriteLine($"[MAPEO] HBA1C asignado a consulta: {consulta.HBA1C}");
             consulta.ValoresNoIncluidos = dto.ValoresNoIncluidos?.Trim();
             if (dto.CamposResaltados != null)
             {

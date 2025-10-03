@@ -574,12 +574,38 @@ async function loadPatientConsultations(patientId) {
 function renderLaboratorioValues(consulta) {
     
     // Función auxiliar para obtener el valor de laboratorio
+    function coalesce(obj, keys) {
+        for (const k of keys) {
+            const v = obj?.[k];
+            if (v !== undefined && v !== null && v !== '') return v;
+        }
+        return null;
+    }
+
     function getLabValue(consulta, ...keys) {
-        for (const key of keys) {
-            const value = consulta[key];
-            if (value !== null && value !== undefined && value !== '') {
-                return value;
+        const variants = new Set();
+
+        for (const k of keys) {
+            // variantes básicas
+            variants.add(k);
+            variants.add(k.toLowerCase());
+            variants.add(k.toUpperCase());
+
+            // casos especiales
+            if (k.toLowerCase() === 'hba1c') {
+                ['HbA1c','HbA1C','hbA1C'].forEach(v => variants.add(v));
             }
+            if (k.toLowerCase() === 't4l') {
+                ['T4L','t4L'].forEach(v => variants.add(v));
+            }
+            if (k.toLowerCase() === 'ct') { // colesterol total
+                ['col','Col','COL'].forEach(v => variants.add(v));
+            }
+        }
+
+        for (const v of variants) {
+            const val = consulta?.[v];
+            if (val !== undefined && val !== null && val !== '') return val;
         }
         return null;
     }
@@ -596,7 +622,7 @@ function renderLaboratorioValues(consulta) {
         { key: 'vfg', label: 'VFG (Velocidad de Filtración Glomerular)', value: getLabValue(consulta, 'vfg', 'VFG') },
         { key: 'got', label: 'GOT', value: getLabValue(consulta, 'got', 'GOT') },
         { key: 'gpt', label: 'GPT', value: getLabValue(consulta, 'gpt', 'GPT') },
-        { key: 'ct', label: 'CT (Colesterol Total)', value: getLabValue(consulta, 'ct', 'CT') },
+        { key: 'ct', label: 'CT (Colesterol Total)', value: getLabValue(consulta, 'ct', 'CT', 'col', 'Col', 'COL') },
         { key: 'tg', label: 'TG (Triglicéridos)', value: getLabValue(consulta, 'tg', 'TG') },
         { key: 'vitd', label: 'VITD (Vitamina D)', value: getLabValue(consulta, 'vitd', 'VITD') },
         { key: 'fal', label: 'FAL (Fosfatasa Alcalina)', value: getLabValue(consulta, 'fal', 'FAL') },
@@ -604,11 +630,11 @@ function renderLaboratorioValues(consulta) {
         { key: 'ldl', label: 'LDL (Colesterol LDL)', value: getLabValue(consulta, 'ldl', 'LDL') },
         { key: 'b12', label: 'B12 (Vitamina B12)', value: getLabValue(consulta, 'b12', 'B12') },
         { key: 'tsh', label: 'TSH', value: getLabValue(consulta, 'tsh', 'TSH') },
-        { key: 't4l', label: 'T4L', value: getLabValue(consulta, 't4l', 'T4L') },
+        { key: 't4l', label: 'T4L', value: getLabValue(consulta, 't4l', 'T4L', 't4L') },
         { key: 'orina', label: 'ORINA', value: getLabValue(consulta, 'orina', 'ORINA') },
         { key: 'urico', label: 'URICO (Ácido Úrico)', value: getLabValue(consulta, 'urico', 'URICO') },
         { key: 'psa', label: 'PSA (Antígeno Prostático Específico)', value: getLabValue(consulta, 'psa', 'PSA') },
-        { key: 'hba1c', label: 'HBA1C (Hemoglobina Glicosilada)', value: getLabValue(consulta, 'hba1c', 'HBA1C') },
+        { key: 'hba1c', label: 'HBA1C (Hemoglobina Glicosilada)', value: getLabValue(consulta, 'hba1c', 'HBA1C', 'HbA1c', 'HbA1C', 'hbA1C') },
         { key: 'valoresNoIncluidos', label: 'Valores no incluidos', value: getLabValue(consulta, 'valoresNoIncluidos', 'ValoresNoIncluidos') }
     ];
 
@@ -2151,6 +2177,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // Función para llenar el formulario con los datos de la consulta
     function llenarFormularioEdicion(consulta) {
+        // Función auxiliar para coalesce
+        function coalesce(obj, keys) {
+            for (const k of keys) {
+                const v = obj?.[k];
+                if (v !== undefined && v !== null && v !== '') return v;
+            }
+            return null;
+        }
+        
         // Campos básicos (la fecha se muestra pero no se puede modificar)
         document.getElementById('fechaEditarConsulta').value = consulta.fecha || consulta.Fecha || '';
         document.getElementById('fechaLaboratorioEditarConsulta').value = consulta.fechaLaboratorio || consulta.FechaLaboratorio || '';
@@ -2171,7 +2206,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('vfgEditarConsulta').value = consulta.vfg || consulta.VFG || '';
         document.getElementById('gotEditarConsulta').value = consulta.got || consulta.GOT || '';
         document.getElementById('gptEditarConsulta').value = consulta.gpt || consulta.GPT || '';
-        document.getElementById('ctEditarConsulta').value = consulta.ct || consulta.CT || '';
+        document.getElementById('ctEditarConsulta').value = coalesce(consulta, ['ct','CT','col','Col','COL']) || '';
         document.getElementById('tgEditarConsulta').value = consulta.tg || consulta.TG || '';
         document.getElementById('vitdEditarConsulta').value = consulta.vitd || consulta.VITD || '';
         document.getElementById('falEditarConsulta').value = consulta.fal || consulta.FAL || '';
@@ -2179,10 +2214,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('ldlEditarConsulta').value = consulta.ldl || consulta.LDL || '';
         document.getElementById('b12EditarConsulta').value = consulta.b12 || consulta.B12 || '';
         document.getElementById('tshEditarConsulta').value = consulta.tsh || consulta.TSH || '';
-        document.getElementById('t4lEditarConsulta').value = consulta.t4l || consulta.T4L || '';
+        document.getElementById('t4lEditarConsulta').value = coalesce(consulta, ['t4l','T4L','t4L']) || '';
         document.getElementById('uricoEditarConsulta').value = consulta.urico || consulta.URICO || '';
         document.getElementById('psaEditarConsulta').value = consulta.psa || consulta.PSA || '';
-        document.getElementById('hba1cEditarConsulta').value = consulta.hba1c || consulta.HBA1C || '';
+        document.getElementById('hba1cEditarConsulta').value = coalesce(consulta, ['hba1c','HBA1C','HbA1c','HbA1C','hbA1C']) || '';
         document.getElementById('orinaEditarConsulta').value = consulta.orina || consulta.ORINA || '';
         document.getElementById('valoresNoIncluidosEditarConsulta').value = consulta.valoresNoIncluidos || consulta.ValoresNoIncluidos || '';
         
@@ -2230,8 +2265,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
             
-            // Preparar datos para actualizar (no incluir fecha ya que está deshabilitada)
+            // Preparar datos para actualizar
             const consultaData = {
+                fecha: formData.get('fecha') ? new Date(formData.get('fecha')).toISOString() : null,
                 fechaLaboratorio: formData.get('fechaLaboratorio') ? new Date(formData.get('fechaLaboratorio')).toISOString() : null,
                 motivo: formData.get('motivo'),
                 recetar: formData.get('recetar') || null,
