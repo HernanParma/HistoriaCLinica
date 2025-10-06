@@ -563,7 +563,12 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
         existingInfo.remove();
       }
 
-      patients.forEach(patient => {
+      patients.forEach((patient, index) => {
+        // Calcular el número de fila considerando la paginación
+        const rowNumber = patientsPerPage === Infinity ? 
+          index + 1 : 
+          (currentPage - 1) * patientsPerPage + index + 1;
+        
         // Corregir el mapeo de datos si es necesario
         const correctedPatient = {
           ...patient,
@@ -629,6 +634,20 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
         }
         
         // Crear cada celda individualmente para asegurar el orden correcto
+        const numeroCell = document.createElement('td');
+        numeroCell.textContent = rowNumber;
+        numeroCell.setAttribute('data-column', 'numero');
+        numeroCell.style.textAlign = 'center';
+        numeroCell.style.fontWeight = '600';
+        numeroCell.style.color = '#667eea';
+        numeroCell.style.backgroundColor = '#f0f8ff'; // Fondo azul claro para debug
+        numeroCell.style.minWidth = '15px'; // Ancho mínimo muy angosto
+        // Forzar la visibilidad y el tamaño para depuración
+        numeroCell.style.setProperty('display', 'table-cell', 'important');
+        numeroCell.style.setProperty('width', '15px', 'important');
+        numeroCell.style.setProperty('padding', '2px', 'important');
+        numeroCell.style.setProperty('box-sizing', 'border-box', 'important');
+        
         const dniCell = document.createElement('td');
         dniCell.textContent = correctedPatient.dni || '';
         dniCell.setAttribute('data-column', 'dni');
@@ -724,16 +743,17 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
           </div>`;
         
         // Agregar las celdas en el orden correcto según los headers de la tabla
-        // 1. DNI, 2. N° Afiliado, 3. Apellido, 4. Nombre, 5. Particular, 6. Teléfono, 7. Obra Social, 8. Fecha Nac., 9. Acciones
-        row.appendChild(dniCell);           // Columna 1: DNI
-        row.appendChild(afiliadoCell);      // Columna 2: N° Afiliado
-        row.appendChild(apellidoCell);      // Columna 3: Apellido 
-        row.appendChild(nombreCell);        // Columna 4: Nombre 
-        row.appendChild(particularCell);    // Columna 5: Particular (checkbox)
-        row.appendChild(telefonoCell);      // Columna 6: Teléfono
-        row.appendChild(obraSocialCell);    // Columna 7: Obra Social
-        row.appendChild(fechaNacCell);      // Columna 8: Fecha Nac.
-        row.appendChild(accionesCell);      // Columna 9: Acciones
+        // 1. N°, 2. DNI, 3. N° Afiliado, 4. Apellido, 5. Nombre, 6. Particular, 7. Teléfono, 8. Obra Social, 9. Fecha Nac., 10. Acciones
+        row.appendChild(numeroCell);        // Columna 1: N°
+        row.appendChild(dniCell);           // Columna 2: DNI
+        row.appendChild(afiliadoCell);      // Columna 3: N° Afiliado
+        row.appendChild(apellidoCell);      // Columna 4: Apellido 
+        row.appendChild(nombreCell);        // Columna 5: Nombre 
+        row.appendChild(particularCell);    // Columna 6: Particular (checkbox)
+        row.appendChild(telefonoCell);      // Columna 7: Teléfono
+        row.appendChild(obraSocialCell);    // Columna 8: Obra Social
+        row.appendChild(fechaNacCell);      // Columna 9: Fecha Nac.
+        row.appendChild(accionesCell);      // Columna 10: Acciones
         
         // Verificar que las celdas contengan los datos correctos
         console.log(`🔍 Verificación de celdas para paciente ${correctedPatient.id}:`);
@@ -871,26 +891,32 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
 
       const headers = table.querySelectorAll('th');
       headers.forEach((header, index) => {
-        const columnMap = ['dni', 'numeroAfiliado', 'apellido', 'nombre', 'particular', 'telefono', 'obraSocial', 'fechaNacimiento'];
+        const columnMap = ['numero', 'dni', 'numeroAfiliado', 'apellido', 'nombre', 'particular', 'telefono', 'obraSocial', 'fechaNacimiento'];
         const column = columnMap[index];
         
         if (column) {
-          header.style.cursor = 'pointer';
-          header.addEventListener('click', () => {
-            if (sortColumn === column) {
-              sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-              sortColumn = column;
-              sortDirection = 'asc';
-            }
-            updatePatientsTable();
-          });
+          // La columna "numero" no debe ser ordenable
+          if (column !== 'numero') {
+            header.style.cursor = 'pointer';
+            header.addEventListener('click', () => {
+              if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+              } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+              }
+              updatePatientsTable();
+            });
 
-          // Agregar indicador de ordenamiento
-          const indicator = document.createElement('span');
-          indicator.className = 'sort-indicator';
-          indicator.innerHTML = ' <i class="fas fa-sort"></i>';
-          header.appendChild(indicator);
+            // Agregar indicador de ordenamiento
+            const indicator = document.createElement('span');
+            indicator.className = 'sort-indicator';
+            indicator.innerHTML = ' <i class="fas fa-sort"></i>';
+            header.appendChild(indicator);
+          } else {
+            // Para la columna de numeración, no agregar cursor pointer ni indicador
+            header.style.cursor = 'default';
+          }
         }
       });
     }
@@ -900,13 +926,13 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
       if (!table) return;
 
       const headers = table.querySelectorAll('th');
-      const columnMap = ['dni', 'numeroAfiliado', 'apellido', 'nombre', 'particular', 'telefono', 'obraSocial', 'fechaNacimiento'];
+      const columnMap = ['numero', 'dni', 'numeroAfiliado', 'apellido', 'nombre', 'particular', 'telefono', 'obraSocial', 'fechaNacimiento'];
       
       headers.forEach((header, index) => {
         const column = columnMap[index];
         const indicator = header.querySelector('.sort-indicator');
         
-        if (indicator && column) {
+        if (indicator && column && column !== 'numero') {
           if (sortColumn === column) {
             indicator.innerHTML = sortDirection === 'asc' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>';
           } else {
