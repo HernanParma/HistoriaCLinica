@@ -1456,35 +1456,74 @@ window.abrirModalMedicacion = function() {
     console.log('💊 Abriendo modal de medicación...');
     
     const modal = document.getElementById('modalMedicacion');
-    const medicacionTexto = document.getElementById('medicacionTexto');
     const medicacionField = document.getElementById('edit-medicacion');
+    const editarBtn = document.getElementById('editarModalMedicacion');
     
-    if (!modal || !medicacionTexto || !medicacionField) {
+    if (!modal || !medicacionField || !editarBtn) {
         console.error('❌ Elementos del modal de medicación no encontrados');
         return;
     }
     
-    // Obtener el texto de medicación
-    const medicacion = medicacionField.value.trim();
+    // Asegurar que el modal esté en estado inicial
+    restaurarEstadoModalMedicacion();
     
-    if (medicacion) {
-        medicacionTexto.textContent = medicacion;
-        medicacionTexto.style.color = '#374151';
-        medicacionTexto.style.fontStyle = 'normal';
-    } else {
-        medicacionTexto.textContent = 'No hay información de medicación registrada.';
-        medicacionTexto.style.color = '#9ca3af';
-        medicacionTexto.style.fontStyle = 'italic';
+    // Obtener el elemento de texto (puede ser párrafo o textarea)
+    let medicacionTexto = document.getElementById('medicacionTexto');
+    
+    // Si no existe el párrafo, crearlo
+    if (!medicacionTexto) {
+        const textarea = modal.querySelector('textarea');
+        if (textarea) {
+            // Crear nuevo párrafo
+            medicacionTexto = document.createElement('p');
+            medicacionTexto.id = 'medicacionTexto';
+            textarea.parentNode.replaceChild(medicacionTexto, textarea);
+        } else {
+            // Buscar el contenedor y crear el párrafo
+            const contenedor = modal.querySelector('.medicacion-info');
+            if (contenedor) {
+                medicacionTexto = document.createElement('p');
+                medicacionTexto.id = 'medicacionTexto';
+                contenedor.appendChild(medicacionTexto);
+            }
+        }
     }
+    
+    if (medicacionTexto) {
+        // Obtener el texto de medicación
+        const medicacion = medicacionField.value.trim();
+        
+        if (medicacion) {
+            medicacionTexto.textContent = medicacion;
+            medicacionTexto.style.color = '#374151';
+            medicacionTexto.style.fontStyle = 'normal';
+        } else {
+            medicacionTexto.textContent = 'No hay información de medicación registrada.';
+            medicacionTexto.style.color = '#9ca3af';
+            medicacionTexto.style.fontStyle = 'italic';
+        }
+    }
+    
+    // Asegurar que el botón esté en estado "Editar"
+    editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
+    editarBtn.disabled = false;
     
     // Mostrar modal
     modal.classList.remove('hidden');
     modal.classList.add('show');
+    
+    console.log('✅ Modal de medicación abierto correctamente');
 }
 
 // Función para editar medicación
-window.editarModalMedicacion = function() {
+window.editarModalMedicacion = function(event) {
     console.log('✏️ Editando medicación...');
+    
+    // Prevenir la propagación del evento para evitar que se cierre el modal
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
     
     const medicacionTexto = document.getElementById('medicacionTexto');
     const editarBtn = document.getElementById('editarModalMedicacion');
@@ -1517,15 +1556,22 @@ window.editarModalMedicacion = function() {
     
     // Cambiar botón a "Guardar"
     editarBtn.innerHTML = '<i class="fas fa-save"></i> Guardar';
-    editarBtn.onclick = guardarMedicacion;
     
     // Enfocar el textarea
     textarea.focus();
+    
+    console.log('✅ Modo de edición activado para medicación');
 }
 
 // Función para guardar medicación
-window.guardarMedicacion = async function() {
+window.guardarMedicacion = async function(event) {
     console.log('💾 Guardando medicación...');
+    
+    // Prevenir la propagación del evento para evitar que se cierre el modal
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
     
     const textarea = document.querySelector('#modalMedicacion textarea');
     const editarBtn = document.getElementById('editarModalMedicacion');
@@ -1577,7 +1623,6 @@ window.guardarMedicacion = async function() {
             
             // Restaurar botón
             editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
-            editarBtn.onclick = editarModalMedicacion;
             editarBtn.disabled = false;
             
             console.log('✅ Medicación guardada exitosamente');
@@ -1601,35 +1646,74 @@ window.abrirModalAntecedentes = function() {
     console.log('📋 Abriendo modal de antecedentes...');
     
     const modal = document.getElementById('modalAntecedentes');
-    const antecedentesTexto = document.getElementById('antecedentesTexto');
     const antecedentesField = document.getElementById('edit-antecedentes');
+    const editarBtn = document.getElementById('editarModalAntecedentes');
     
-    if (!modal || !antecedentesTexto || !antecedentesField) {
+    if (!modal || !antecedentesField || !editarBtn) {
         console.error('❌ Elementos del modal de antecedentes no encontrados');
         return;
     }
     
-    // Obtener el texto de antecedentes
-    const antecedentes = antecedentesField.value.trim();
+    // Asegurar que el modal esté en estado inicial
+    restaurarEstadoModalAntecedentes();
     
-    if (antecedentes) {
-        antecedentesTexto.textContent = antecedentes;
-        antecedentesTexto.style.color = '#374151';
-        antecedentesTexto.style.fontStyle = 'normal';
-    } else {
-        antecedentesTexto.textContent = 'No hay antecedentes médicos registrados.';
-        antecedentesTexto.style.color = '#9ca3af';
-        antecedentesTexto.style.fontStyle = 'italic';
+    // Obtener el elemento de texto (puede ser párrafo o textarea)
+    let antecedentesTexto = document.getElementById('antecedentesTexto');
+    
+    // Si no existe el párrafo, crearlo
+    if (!antecedentesTexto) {
+        const textarea = modal.querySelector('textarea');
+        if (textarea) {
+            // Crear nuevo párrafo
+            antecedentesTexto = document.createElement('p');
+            antecedentesTexto.id = 'antecedentesTexto';
+            textarea.parentNode.replaceChild(antecedentesTexto, textarea);
+        } else {
+            // Buscar el contenedor y crear el párrafo
+            const contenedor = modal.querySelector('.antecedentes-info');
+            if (contenedor) {
+                antecedentesTexto = document.createElement('p');
+                antecedentesTexto.id = 'antecedentesTexto';
+                contenedor.appendChild(antecedentesTexto);
+            }
+        }
     }
+    
+    if (antecedentesTexto) {
+        // Obtener el texto de antecedentes
+        const antecedentes = antecedentesField.value.trim();
+        
+        if (antecedentes) {
+            antecedentesTexto.textContent = antecedentes;
+            antecedentesTexto.style.color = '#374151';
+            antecedentesTexto.style.fontStyle = 'normal';
+        } else {
+            antecedentesTexto.textContent = 'No hay antecedentes médicos registrados.';
+            antecedentesTexto.style.color = '#9ca3af';
+            antecedentesTexto.style.fontStyle = 'italic';
+        }
+    }
+    
+    // Asegurar que el botón esté en estado "Editar"
+    editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
+    editarBtn.disabled = false;
     
     // Mostrar modal
     modal.classList.remove('hidden');
     modal.classList.add('show');
+    
+    console.log('✅ Modal de antecedentes abierto correctamente');
 }
 
 // Función para editar antecedentes
-window.editarModalAntecedentes = function() {
+window.editarModalAntecedentes = function(event) {
     console.log('✏️ Editando antecedentes...');
+    
+    // Prevenir la propagación del evento para evitar que se cierre el modal
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
     
     const antecedentesTexto = document.getElementById('antecedentesTexto');
     const editarBtn = document.getElementById('editarModalAntecedentes');
@@ -1662,15 +1746,22 @@ window.editarModalAntecedentes = function() {
     
     // Cambiar botón a "Guardar"
     editarBtn.innerHTML = '<i class="fas fa-save"></i> Guardar';
-    editarBtn.onclick = guardarAntecedentes;
     
     // Enfocar el textarea
     textarea.focus();
+    
+    console.log('✅ Modo de edición activado para antecedentes');
 }
 
 // Función para guardar antecedentes
-window.guardarAntecedentes = async function() {
+window.guardarAntecedentes = async function(event) {
     console.log('💾 Guardando antecedentes...');
+    
+    // Prevenir la propagación del evento para evitar que se cierre el modal
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
     
     const textarea = document.querySelector('#modalAntecedentes textarea');
     const editarBtn = document.getElementById('editarModalAntecedentes');
@@ -1747,7 +1838,55 @@ function cerrarModalMedicacion() {
     if (modal) {
         modal.classList.remove('show');
         modal.classList.add('hidden');
+        
+        // Restaurar el estado original del modal
+        restaurarEstadoModalMedicacion();
     }
+}
+
+// Función para restaurar el estado original del modal de medicación
+function restaurarEstadoModalMedicacion() {
+    console.log('🔄 Restaurando estado del modal de medicación...');
+    
+    const modal = document.getElementById('modalMedicacion');
+    const editarBtn = document.getElementById('editarModalMedicacion');
+    const medicacionField = document.getElementById('edit-medicacion');
+    
+    if (!modal || !editarBtn || !medicacionField) {
+        console.error('❌ Elementos para restaurar modal de medicación no encontrados');
+        return;
+    }
+    
+    // Verificar si hay un textarea (modo edición) y restaurarlo a párrafo
+    const textarea = modal.querySelector('textarea');
+    if (textarea) {
+        console.log('📝 Restaurando textarea a párrafo...');
+        
+        // Crear nuevo párrafo
+        const nuevoParrafo = document.createElement('p');
+        nuevoParrafo.id = 'medicacionTexto';
+        
+        const medicacion = textarea.value.trim();
+        if (medicacion) {
+            nuevoParrafo.textContent = medicacion;
+            nuevoParrafo.style.color = '#374151';
+            nuevoParrafo.style.fontStyle = 'normal';
+        } else {
+            nuevoParrafo.textContent = 'No hay información de medicación registrada.';
+            nuevoParrafo.style.color = '#9ca3af';
+            nuevoParrafo.style.fontStyle = 'italic';
+        }
+        
+        // Reemplazar textarea con párrafo
+        textarea.parentNode.replaceChild(nuevoParrafo, textarea);
+    }
+    
+    // Restaurar botón a estado "Editar"
+    editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
+    editarBtn.onclick = editarModalMedicacion;
+    editarBtn.disabled = false;
+    
+    console.log('✅ Estado del modal de medicación restaurado');
 }
 
 // Función para cerrar modal de antecedentes
@@ -1756,7 +1895,55 @@ function cerrarModalAntecedentes() {
     if (modal) {
         modal.classList.remove('show');
         modal.classList.add('hidden');
+        
+        // Restaurar el estado original del modal
+        restaurarEstadoModalAntecedentes();
     }
+}
+
+// Función para restaurar el estado original del modal de antecedentes
+function restaurarEstadoModalAntecedentes() {
+    console.log('🔄 Restaurando estado del modal de antecedentes...');
+    
+    const modal = document.getElementById('modalAntecedentes');
+    const editarBtn = document.getElementById('editarModalAntecedentes');
+    const antecedentesField = document.getElementById('edit-antecedentes');
+    
+    if (!modal || !editarBtn || !antecedentesField) {
+        console.error('❌ Elementos para restaurar modal de antecedentes no encontrados');
+        return;
+    }
+    
+    // Verificar si hay un textarea (modo edición) y restaurarlo a párrafo
+    const textarea = modal.querySelector('textarea');
+    if (textarea) {
+        console.log('📝 Restaurando textarea a párrafo...');
+        
+        // Crear nuevo párrafo
+        const nuevoParrafo = document.createElement('p');
+        nuevoParrafo.id = 'antecedentesTexto';
+        
+        const antecedentes = textarea.value.trim();
+        if (antecedentes) {
+            nuevoParrafo.textContent = antecedentes;
+            nuevoParrafo.style.color = '#374151';
+            nuevoParrafo.style.fontStyle = 'normal';
+        } else {
+            nuevoParrafo.textContent = 'No hay antecedentes médicos registrados.';
+            nuevoParrafo.style.color = '#9ca3af';
+            nuevoParrafo.style.fontStyle = 'italic';
+        }
+        
+        // Reemplazar textarea con párrafo
+        textarea.parentNode.replaceChild(nuevoParrafo, textarea);
+    }
+    
+    // Restaurar botón a estado "Editar"
+    editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
+    editarBtn.onclick = editarModalAntecedentes;
+    editarBtn.disabled = false;
+    
+    console.log('✅ Estado del modal de antecedentes restaurado');
 }
 
 // Configurar eventos de los modales
@@ -1785,7 +1972,14 @@ function initializeModalesMedicacionAntecedentes() {
     }
     
     if (editarModalMedicacionBtn) {
-        editarModalMedicacionBtn.addEventListener('click', editarModalMedicacion);
+        editarModalMedicacionBtn.addEventListener('click', function(event) {
+            // Verificar el estado del botón para determinar qué función ejecutar
+            if (editarModalMedicacionBtn.innerHTML.includes('Guardar')) {
+                guardarMedicacion(event);
+            } else {
+                editarModalMedicacion(event);
+            }
+        });
         console.log('✅ Event listener agregado para botón editar medicación');
     }
     
@@ -1807,7 +2001,14 @@ function initializeModalesMedicacionAntecedentes() {
     }
     
     if (editarModalAntecedentesBtn) {
-        editarModalAntecedentesBtn.addEventListener('click', editarModalAntecedentes);
+        editarModalAntecedentesBtn.addEventListener('click', function(event) {
+            // Verificar el estado del botón para determinar qué función ejecutar
+            if (editarModalAntecedentesBtn.innerHTML.includes('Guardar')) {
+                guardarAntecedentes(event);
+            } else {
+                editarModalAntecedentes(event);
+            }
+        });
         console.log('✅ Event listener agregado para botón editar antecedentes');
     }
     
