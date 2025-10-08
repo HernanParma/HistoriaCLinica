@@ -126,7 +126,7 @@
         border-radius: 16px !important;
         box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3) !important;
         width: 90% !important;
-        max-width: 480px !important;
+        max-width: 960px !important;
         max-height: 90vh !important;
         overflow-y: auto !important;
         position: relative !important;
@@ -136,6 +136,12 @@
 
     .modal.show .modal-content {
         transform: scale(1) !important;
+    }
+
+    /* Estilo específico para el modal de editar consulta - más ancho */
+    #modalEditarConsulta .modal-content {
+        max-width: 1200px !important;
+        width: 95% !important;
     }
 
     .modal-header {
@@ -233,8 +239,19 @@
 
     .lab-grid {
         display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+        grid-template-columns: repeat(6, 1fr) !important;
         gap: 15px !important;
+    }
+
+    /* Asegurar que el grid de laboratorio en el modal de editar consulta use 5 columnas */
+    #modalEditarConsulta .lab-grid {
+        grid-template-columns: repeat(6, 1fr) !important;
+    }
+
+    /* Asegurar que los elementos del grid se ajusten correctamente */
+    .lab-grid .form-group {
+        min-width: 0 !important;
+        max-width: none !important;
     }
 
     .lab-grid .form-group {
@@ -2394,27 +2411,27 @@
                         <label><i class="fas fa-flask"></i> Valores de Laboratorio <span class="date-inline">Fecha: <input type="date" id="fechaLaboratorioEditarConsulta" name="fechaLaboratorio"></span></label>
                         <div class="lab-grid" data-lab-scope>
                             <div class="form-group">
-                                <label for="grEditarConsulta">GR (Glóbulos Rojos):</label>
+                                <label for="grEditarConsulta">GR:</label>
                                 <input type="text" id="grEditarConsulta" name="gr" placeholder="Ej: 4,27">
                             </div>
                             <div class="form-group">
-                                <label for="htoEditarConsulta">HTO (Hematocrito):</label>
+                                <label for="htoEditarConsulta">HTO:</label>
                                 <input type="text" id="htoEditarConsulta" name="hto" placeholder="Ej: 38">
                             </div>
                             <div class="form-group">
-                                <label for="hbEditarConsulta">HB (Hemoglobina):</label>
+                                <label for="hbEditarConsulta">HB:</label>
                                 <input type="text" id="hbEditarConsulta" name="hb" placeholder="Ej: 12,6">
                             </div>
                             <div class="form-group">
-                                <label for="gbEditarConsulta">GB (Glóbulos Blancos):</label>
+                                <label for="gbEditarConsulta">GB:</label>
                                 <input type="text" id="gbEditarConsulta" name="gb" placeholder="Ej: 7220">
                             </div>
                             <div class="form-group">
-                                <label for="plaqEditarConsulta">PLAQ (Plaquetas):</label>
+                                <label for="plaqEditarConsulta">PLAQ:</label>
                                 <input type="text" id="plaqEditarConsulta" name="plaq" placeholder="Ej: 250000">
                             </div>
                             <div class="form-group">
-                                <label for="glucEditarConsulta">GLUC (Glucosa):</label>
+                                <label for="glucEditarConsulta">GLUC:</label>
                                 <input type="text" id="glucEditarConsulta" name="gluc" placeholder="Ej: 95">
                             </div>
                             <div class="form-group">
@@ -2422,11 +2439,11 @@
                                 <input type="text" id="ureaEditarConsulta" name="urea" placeholder="Ej: 27">
                             </div>
                             <div class="form-group">
-                                <label for="crEditarConsulta">CR (Creatinina):</label>
+                                <label for="crEditarConsulta">CR:</label>
                                 <input type="text" id="crEditarConsulta" name="cr" placeholder="Ej: 0,8">
                             </div>
                             <div class="form-group">
-                                <label for="vfgEditarConsulta">VFG (Velocidad de Filtración Glomerular):</label>
+                                <label for="vfgEditarConsulta">VFG:</label>
                                 <input type="text" id="vfgEditarConsulta" name="vfg" placeholder="Ej: 85">
                             </div>
                             <div class="form-group">
@@ -2438,31 +2455,31 @@
                                 <input type="text" id="gptEditarConsulta" name="gpt" placeholder="Ej: 18">
                             </div>
                             <div class="form-group">
-                                <label for="ctEditarConsulta">CT (Colesterol Total):</label>
+                                <label for="ctEditarConsulta">CT:</label>
                                 <input type="text" id="ctEditarConsulta" name="ct" placeholder="Ej: 186">
                             </div>
                             <div class="form-group">
-                                <label for="tgEditarConsulta">TG (Triglicéridos):</label>
+                                <label for="tgEditarConsulta">TG:</label>
                                 <input type="text" id="tgEditarConsulta" name="tg" placeholder="Ej: 179">
                             </div>
                             <div class="form-group">
-                                <label for="vitdEditarConsulta">VITD (Vitamina D):</label>
+                                <label for="vitdEditarConsulta">VITD:</label>
                                 <input type="text" id="vitdEditarConsulta" name="vitd" placeholder="Ej: 26">
                             </div>
                             <div class="form-group">
-                                <label for="falEditarConsulta">FAL (Fosfatasa Alcalina):</label>
+                                <label for="falEditarConsulta">FAL:</label>
                                 <input type="text" id="falEditarConsulta" name="fal" placeholder="Ej: 85">
                             </div>
                             <div class="form-group">
-                                <label for="hdlEditarConsulta">HDL (Colesterol HDL):</label>
+                                <label for="hdlEditarConsulta">HDL:</label>
                                 <input type="text" id="hdlEditarConsulta" name="hdl" placeholder="Ej: 45">
                             </div>
                             <div class="form-group">
-                                <label for="ldlEditarConsulta">LDL (Colesterol LDL):</label>
+                                <label for="ldlEditarConsulta">LDL:</label>
                                 <input type="text" id="ldlEditarConsulta" name="ldl" placeholder="Ej: 100">
                             </div>
                             <div class="form-group">
-                                <label for="b12EditarConsulta">B12 (Vitamina B12):</label>
+                                <label for="b12EditarConsulta">B12:</label>
                                 <input type="text" id="b12EditarConsulta" name="b12" placeholder="Ej: 400">
                             </div>
                             <div class="form-group">
@@ -2478,11 +2495,11 @@
                                 <input type="text" id="uricoEditarConsulta" name="urico" placeholder="Ej: 5,3">
                             </div>
                             <div class="form-group">
-                                <label for="psaEditarConsulta">PSA (Antígeno Prostático Específico):</label>
+                                <label for="psaEditarConsulta">PSA:</label>
                                 <input type="text" id="psaEditarConsulta" name="psa" placeholder="Ej: 2,5">
                             </div>
                             <div class="form-group">
-                                <label for="hba1cEditarConsulta">HBA1C (Hemoglobina Glicosilada):</label>
+                                <label for="hba1cEditarConsulta">HBA1C:</label>
                                 <input type="text" id="hba1cEditarConsulta" name="hba1c" placeholder="Ej: 5,8">
                             </div>
                             <div class="form-group full-width">
