@@ -1195,12 +1195,6 @@ function initializeModal() {
     function handleArchivosSeleccionados(event) {
         const files = Array.from(event.target.files);
         
-        // Validar número máximo de archivos
-        if (files.length > 5) {
-            alert('Máximo 5 archivos permitidos');
-            return;
-        }
-
         // Validar tamaño de archivos (10MB cada uno)
         const maxSize = 10 * 1024 * 1024; // 10MB en bytes
         const archivosValidos = files.filter(file => {
