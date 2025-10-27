@@ -240,6 +240,15 @@ namespace HistoriaClinica.Services
             Console.WriteLine($"[MAPEO] HBA1C recibido: {dto.HBA1C}");
             Console.WriteLine($"[MAPEO] HBA1C asignado a consulta: {consulta.HBA1C}");
             consulta.ValoresNoIncluidos = dto.ValoresNoIncluidos?.Trim();
+            
+            // Manejar archivos si se proporcionan
+            if (dto.Archivos != null && dto.Archivos.Any())
+            {
+                var archivosJson = JsonSerializer.Serialize(dto.Archivos);
+                consulta.ArchivosJson = archivosJson;
+                Console.WriteLine($"[MAPEO] Archivos actualizados: {archivosJson}");
+            }
+            
             if (dto.CamposResaltados != null)
             {
                 var camposJson = JsonSerializer.Serialize(dto.CamposResaltados);

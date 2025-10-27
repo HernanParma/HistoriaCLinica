@@ -2513,6 +2513,24 @@
                         </div>
                     </div>
                     
+                    <!-- Sección de Archivos -->
+                    <div class="form-section">
+                        <h4><i class="fas fa-paperclip"></i> Archivos Adjuntos</h4>
+                        <div class="file-upload-area">
+                            <div class="file-input-container">
+                                <input type="file" id="archivosEditarConsulta" name="archivos" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx" class="file-input">
+                                <label for="archivosEditarConsulta" class="file-input-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Seleccionar archivos (PDF, imágenes, documentos)</span>
+                                    <small>10MB cada uno</small>
+                                </label>
+                            </div>
+                            <div id="archivosSeleccionadosEditar" class="archivos-seleccionados">
+                                <!-- Los archivos seleccionados se mostrarán aquí -->
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="modal-actions">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Guardar Cambios

@@ -1288,6 +1288,82 @@ function initializeModal() {
         }
     };
 
+    // ===== FUNCIONALIDAD DE ARCHIVOS PARA MODAL DE EDITAR CONSULTA =====
+    
+    let archivosListEditar = [];
+
+    function handleArchivosSeleccionadosEditar(event) {
+        const files = Array.from(event.target.files);
+        
+        // Validar tamaño de archivos (10MB cada uno)
+        const maxSize = 10 * 1024 * 1024; // 10MB en bytes
+        const archivosValidos = files.filter(file => {
+            if (file.size > maxSize) {
+                alert(`El archivo ${file.name} excede el tamaño máximo de 10MB`);
+                return false;
+            }
+            return true;
+        });
+
+        // Agregar archivos válidos a la lista
+        archivosValidos.forEach(file => {
+            if (!archivosListEditar.find(f => f.name === file.name)) {
+                archivosListEditar.push(file);
+            }
+        });
+
+        // Actualizar la visualización
+        mostrarArchivosSeleccionadosEditar();
+    }
+
+    function mostrarArchivosSeleccionadosEditar() {
+        const archivosSeleccionadosEditar = document.getElementById('archivosSeleccionadosEditar');
+        if (!archivosSeleccionadosEditar) return;
+
+        if (archivosListEditar.length === 0) {
+            archivosSeleccionadosEditar.innerHTML = '';
+            return;
+        }
+
+        const archivosHTML = archivosListEditar.map((file, index) => {
+            const iconClass = getIconClass(file.name);
+            const fileSize = formatFileSize(file.size);
+            
+            return `
+                <div class="archivo-item">
+                    <div class="archivo-info">
+                        <div class="archivo-icono ${iconClass}">
+                            <i class="fas ${getIconName(file.name)}"></i>
+                        </div>
+                        <div>
+                            <div class="archivo-nombre">${file.name}</div>
+                            <div class="archivo-tamaño">${fileSize}</div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-eliminar-archivo" onclick="eliminarArchivoEditar(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        archivosSeleccionadosEditar.innerHTML = archivosHTML;
+    }
+
+    // Función global para eliminar archivos en modal de editar
+    window.eliminarArchivoEditar = function(index) {
+        archivosListEditar.splice(index, 1);
+        mostrarArchivosSeleccionadosEditar();
+        
+        // Actualizar el input de archivos
+        const archivosInputEditar = document.getElementById('archivosEditarConsulta');
+        if (archivosInputEditar) {
+            const dt = new DataTransfer();
+            archivosListEditar.forEach(file => dt.items.add(file));
+            archivosInputEditar.files = dt.files;
+        }
+    };
+
     console.log('✅ Funcionalidad del modal de nueva consulta inicializada');
     
     // ===== FUNCIONALIDAD PARA FORMATO DE DECIMALES =====
@@ -2438,6 +2514,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             consultaEditandoId = null;
             // Limpiar campos resaltados
             clearHighlightedFields();
+            // Limpiar archivos seleccionados
+            archivosListEditar = [];
+            mostrarArchivosSeleccionadosEditar();
+            // Limpiar input de archivos
+            const archivosInputEditar = document.getElementById('archivosEditarConsulta');
+            if (archivosInputEditar) {
+                archivosInputEditar.value = '';
+            }
         }
     }
     
@@ -2507,6 +2591,37 @@ document.addEventListener('DOMContentLoaded', async function() {
                 alert('El motivo de la consulta es requerido');
                 return;
             }
+
+            // Subir archivos si hay archivos seleccionados
+            let archivosSubidos = [];
+            if (archivosListEditar.length > 0) {
+                console.log('📎 Subiendo archivos para la consulta editada...');
+                try {
+                    for (const archivo of archivosListEditar) {
+                        const formDataArchivo = new FormData();
+                        formDataArchivo.append('archivo', archivo);
+                        
+                        const responseArchivo = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/archivos/subir`, {
+                            method: 'POST',
+                            headers: getAuthHeaders(),
+                            body: formDataArchivo
+                        });
+                        
+                        if (responseArchivo.ok) {
+                            const archivoDto = await responseArchivo.json();
+                            archivosSubidos.push(archivoDto);
+                            console.log('✅ Archivo subido:', archivoDto.nombreOriginal);
+                        } else {
+                            console.error('❌ Error al subir archivo:', archivo.name);
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Error al subir archivos:', error);
+                }
+            }
+
+            // Agregar archivos al payload
+            consultaData.archivos = archivosSubidos;
 
             console.log('📝 Actualizando consulta:', consultaData);
             console.log('🔍 Payload completo para actualizar:', JSON.stringify(consultaData, null, 2));
@@ -2642,6 +2757,16 @@ document.addEventListener('DOMContentLoaded', async function() {
                 });
             }
         });
+        
+        // Configurar event listener para archivos en modal de editar consulta
+        const archivosInputEditar = document.getElementById('archivosEditarConsulta');
+        const archivosSeleccionadosEditar = document.getElementById('archivosSeleccionadosEditar');
+
+        if (archivosInputEditar) {
+            archivosInputEditar.addEventListener('change', function(event) {
+                handleArchivosSeleccionadosEditar(event);
+            });
+        }
         
         console.log('✅ Modal de editar consulta inicializado');
     }

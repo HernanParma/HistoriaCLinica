@@ -5,7 +5,6 @@ class FileManager {
     constructor(apiClient) {
         this.apiClient = apiClient;
         this.maxFileSize = 10 * 1024 * 1024; // 10MB
-        this.maxFiles = 5;
         this.allowedExtensions = ['.pdf', '.jpg', '.jpeg', '.png', '.gif', '.doc', '.docx', '.txt'];
     }
 
@@ -70,12 +69,6 @@ class FileManager {
      */
     validateFiles(files) {
         const errors = [];
-
-        // Verificar cantidad máxima
-        if (files.length > this.maxFiles) {
-            errors.push(`Máximo ${this.maxFiles} archivos permitidos`);
-            return { isValid: false, errors };
-        }
 
         // Validar cada archivo
         for (const file of files) {
