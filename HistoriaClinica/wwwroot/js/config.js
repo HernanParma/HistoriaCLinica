@@ -8,22 +8,26 @@
     function detectApiBaseUrl() {
         const currentHost = window.location.hostname;
         const currentProtocol = window.location.protocol;
+        const currentPort = window.location.port;
         
         console.log('🌐 Detectando URL base de la API...');
         console.log('📍 Host actual:', currentHost);
         console.log('🔒 Protocolo actual:', currentProtocol);
+        console.log('🔢 Puerto actual:', currentPort || '(por defecto)');
         
-        // Si estamos en localhost o en desarrollo
+        // Si estamos en localhost o 127.0.0.1, usar el mismo origen (mismo protocolo y puerto)
+        // Esto evita problemas de CORS y de protocolo mixto (HTTP vs HTTPS)
         if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
-            const apiUrl = 'http://localhost:5000';
-            console.log('🏠 Entorno local detectado, usando:', apiUrl);
-            return apiUrl;
-        }
-        
-        // Si estamos en puerto 5000 (Live Server), usar puerto 5000 para la API
-        if (currentHost === 'localhost' && (currentProtocol === 'http:' || currentProtocol === 'https:')) {
-            const apiUrl = 'http://localhost:5000';
-            console.log('🏠 Live Server detectado, usando API en puerto 5000:', apiUrl);
+            // Si hay un puerto específico, usarlo; si no, usar el puerto por defecto del protocolo
+            let apiUrl;
+            if (currentPort) {
+                apiUrl = `${currentProtocol}//${currentHost}:${currentPort}`;
+            } else {
+                // Si no hay puerto explícito pero estamos en HTTPS, probablemente es 443
+                // Si estamos en HTTP, probablemente es 80, pero mejor usar el mismo origen
+                apiUrl = `${currentProtocol}//${currentHost}`;
+            }
+            console.log('🏠 Entorno local detectado, usando mismo origen:', apiUrl);
             return apiUrl;
         }
         
@@ -35,8 +39,10 @@
         }
         
         // Fallback: usar el mismo origen
-        const fallbackUrl = `${currentProtocol}//${currentHost}`;
-        console.log('⚠️ Usando fallback:', fallbackUrl);
+        const fallbackUrl = currentPort 
+            ? `${currentProtocol}//${currentHost}:${currentPort}`
+            : `${currentProtocol}//${currentHost}`;
+        console.log('⚠️ Usando fallback (mismo origen):', fallbackUrl);
         return fallbackUrl;
     }
     

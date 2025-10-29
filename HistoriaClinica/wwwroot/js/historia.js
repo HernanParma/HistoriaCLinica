@@ -570,6 +570,28 @@ async function loadPatientConsultations(patientId) {
     }
 }
 
+// Función para verificar si una consulta tiene valores de laboratorio
+function tieneValoresLaboratorio(consulta) {
+    const labKeys = [
+        'gr', 'GR', 'hto', 'HTO', 'hb', 'HB', 'gb', 'GB', 'plaq', 'PLAQ',
+        'gluc', 'GLUC', 'urea', 'UREA', 'cr', 'CR', 'vfg', 'VFG', 'got', 'GOT',
+        'gpt', 'GPT', 'ct', 'CT', 'tg', 'TG', 'vitd', 'VITD', 'fal', 'FAL',
+        'hdl', 'HDL', 'ldl', 'LDL', 'b12', 'B12', 'tsh', 'TSH', 't4l', 'T4L',
+        'orina', 'ORINA', 'urico', 'URICO', 'psa', 'PSA', 'hba1c', 'HBA1C',
+        'valoresNoIncluidos', 'ValoresNoIncluidos'
+    ];
+    
+    // Verificar si hay algún valor de laboratorio presente
+    for (const key of labKeys) {
+        const value = consulta[key];
+        if (value !== null && value !== undefined && value !== '') {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 // Función para renderizar valores de laboratorio
 function renderLaboratorioValues(consulta) {
     
@@ -833,8 +855,12 @@ function renderOmeConBoton(consulta) {
 
 // Renderizar consultas
 function renderConsultas(consultas) {
+    console.log('🎨 Renderizando consultas:', consultas);
     const hcBody = document.getElementById('hc-body');
-        if (!hcBody) return;
+    if (!hcBody) {
+        console.error('❌ No se encontró el elemento hc-body');
+        return;
+    }
         
     if (!consultas || !consultas.length) {
             hcBody.innerHTML = `
@@ -847,7 +873,15 @@ function renderConsultas(consultas) {
             return;
         }
         
-        const consultasHtml = consultas.map(consulta => `
+        // Ordenar consultas por fecha (más recientes primero)
+        const consultasOrdenadas = [...consultas].sort((a, b) => {
+            const fechaA = new Date(a.fecha || a.Fecha || 0);
+            const fechaB = new Date(b.fecha || b.Fecha || 0);
+            return fechaB - fechaA; // Orden descendente (más reciente primero)
+        });
+        
+        console.log('📋 Consultas ordenadas:', consultasOrdenadas);
+        const consultasHtml = consultasOrdenadas.map(consulta => `
             <div class="consulta-item">
                 <div class="consulta-header" onclick="toggleConsultaDetalle(this)">
                     <div class="consulta-fecha">
@@ -875,7 +909,8 @@ function renderConsultas(consultas) {
                     ${renderArchivosAdjuntos(consulta.archivos || consulta.Archivos)}
                     </div>
                 
-                <!-- Botón para ver valores de laboratorio -->
+                ${tieneValoresLaboratorio(consulta) ? `
+                <!-- Botón para ver valores de laboratorio (solo si hay valores) -->
                 <div class="consulta-actions-bottom">
                     <button class="btn-ver-laboratorio" onclick="toggleLaboratorio(${consulta.id || consulta.Id})" title="Ver valores de laboratorio">
                         <i class="fas fa-flask"></i> Ver Laboratorio
@@ -888,11 +923,13 @@ function renderConsultas(consultas) {
                         ${renderLaboratorioValues(consulta)}
                     </div>
                 </div>
+                ` : ''}
                 </div>
             </div>
         `).join('');
         
         hcBody.innerHTML = consultasHtml;
+        console.log('✅ Consultas renderizadas exitosamente. HTML generado:', consultasHtml.length, 'caracteres');
     }
 
     // Función para alternar detalles de consulta
@@ -943,6 +980,84 @@ function renderConsultas(consultas) {
 
 // Variables globales para archivos
 let archivosList = [];
+let archivosListEditar = [];
+
+// Funciones globales para manejo de archivos en modal de editar
+function getIconClass(filename) {
+    const ext = filename.toLowerCase().split('.').pop();
+    if (['pdf'].includes(ext)) return 'pdf';
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(ext)) return 'image';
+    if (['doc', 'docx', 'txt'].includes(ext)) return 'document';
+    if (['xls', 'xlsx', 'csv'].includes(ext)) return 'spreadsheet';
+    return 'document';
+}
+
+function getIconName(filename) {
+    const ext = filename.toLowerCase().split('.').pop();
+    if (['pdf'].includes(ext)) return 'fa-file-pdf';
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(ext)) return 'fa-file-image';
+    if (['doc', 'docx', 'txt'].includes(ext)) return 'fa-file-word';
+    if (['xls', 'xlsx', 'csv'].includes(ext)) return 'fa-file-excel';
+    return 'fa-file';
+}
+
+function mostrarArchivosSeleccionadosEditar() {
+    const archivosSeleccionadosEditar = document.getElementById('archivosSeleccionadosEditar');
+    if (!archivosSeleccionadosEditar) return;
+
+    if (archivosListEditar.length === 0) {
+        archivosSeleccionadosEditar.innerHTML = '';
+        return;
+    }
+
+    const archivosHTML = archivosListEditar.map((file, index) => {
+        const iconClass = getIconClass(file.name);
+        const fileSize = formatFileSize(file.size);
+        
+        return `
+            <div class="archivo-item">
+                <div class="archivo-info">
+                    <div class="archivo-icono ${iconClass}">
+                        <i class="fas ${getIconName(file.name)}"></i>
+                    </div>
+                    <div>
+                        <div class="archivo-nombre">${file.name}</div>
+                        <div class="archivo-tamaño">${fileSize}</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-eliminar-archivo" onclick="eliminarArchivoEditar(${index})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+    }).join('');
+
+    archivosSeleccionadosEditar.innerHTML = archivosHTML;
+}
+
+function handleArchivosSeleccionadosEditar(event) {
+    const files = Array.from(event.target.files);
+    
+    // Validar tamaño de archivos (10MB cada uno)
+    const maxSize = 10 * 1024 * 1024; // 10MB en bytes
+    const archivosValidos = files.filter(file => {
+        if (file.size > maxSize) {
+            alert(`El archivo ${file.name} excede el tamaño máximo de 10MB`);
+            return false;
+        }
+        return true;
+    });
+
+    // Agregar archivos válidos a la lista
+    archivosValidos.forEach(file => {
+        if (!archivosListEditar.find(f => f.name === file.name)) {
+            archivosListEditar.push(file);
+        }
+    });
+
+    // Actualizar la visualización
+    mostrarArchivosSeleccionadosEditar();
+}
 
 // Inicializar funcionalidad del modal
 function initializeModal() {
@@ -1249,31 +1364,8 @@ function initializeModal() {
         archivosSeleccionados.innerHTML = archivosHTML;
     }
 
-    function getIconClass(filename) {
-        const ext = filename.toLowerCase().split('.').pop();
-        if (['pdf'].includes(ext)) return 'pdf';
-        if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(ext)) return 'image';
-        if (['doc', 'docx', 'txt'].includes(ext)) return 'document';
-        if (['xls', 'xlsx', 'csv'].includes(ext)) return 'spreadsheet';
-        return 'document';
-    }
-
-    function getIconName(filename) {
-        const ext = filename.toLowerCase().split('.').pop();
-        if (['pdf'].includes(ext)) return 'fa-file-pdf';
-        if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(ext)) return 'fa-file-image';
-        if (['doc', 'docx', 'txt'].includes(ext)) return 'fa-file-word';
-        if (['xls', 'xlsx', 'csv'].includes(ext)) return 'fa-file-excel';
-        return 'fa-file';
-    }
-
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
+    // Las funciones getIconClass, getIconName y formatFileSize
+    // están declaradas globalmente arriba, fuera de esta función
 
     // Función global para eliminar archivos
     window.eliminarArchivo = function(index) {
@@ -1289,67 +1381,9 @@ function initializeModal() {
     };
 
     // ===== FUNCIONALIDAD DE ARCHIVOS PARA MODAL DE EDITAR CONSULTA =====
+    // Las funciones handleArchivosSeleccionadosEditar y mostrarArchivosSeleccionadosEditar
+    // están declaradas globalmente arriba, fuera de esta función
     
-    let archivosListEditar = [];
-
-    function handleArchivosSeleccionadosEditar(event) {
-        const files = Array.from(event.target.files);
-        
-        // Validar tamaño de archivos (10MB cada uno)
-        const maxSize = 10 * 1024 * 1024; // 10MB en bytes
-        const archivosValidos = files.filter(file => {
-            if (file.size > maxSize) {
-                alert(`El archivo ${file.name} excede el tamaño máximo de 10MB`);
-                return false;
-            }
-            return true;
-        });
-
-        // Agregar archivos válidos a la lista
-        archivosValidos.forEach(file => {
-            if (!archivosListEditar.find(f => f.name === file.name)) {
-                archivosListEditar.push(file);
-            }
-        });
-
-        // Actualizar la visualización
-        mostrarArchivosSeleccionadosEditar();
-    }
-
-    function mostrarArchivosSeleccionadosEditar() {
-        const archivosSeleccionadosEditar = document.getElementById('archivosSeleccionadosEditar');
-        if (!archivosSeleccionadosEditar) return;
-
-        if (archivosListEditar.length === 0) {
-            archivosSeleccionadosEditar.innerHTML = '';
-            return;
-        }
-
-        const archivosHTML = archivosListEditar.map((file, index) => {
-            const iconClass = getIconClass(file.name);
-            const fileSize = formatFileSize(file.size);
-            
-            return `
-                <div class="archivo-item">
-                    <div class="archivo-info">
-                        <div class="archivo-icono ${iconClass}">
-                            <i class="fas ${getIconName(file.name)}"></i>
-                        </div>
-                        <div>
-                            <div class="archivo-nombre">${file.name}</div>
-                            <div class="archivo-tamaño">${fileSize}</div>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-eliminar-archivo" onclick="eliminarArchivoEditar(${index})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-        }).join('');
-
-        archivosSeleccionadosEditar.innerHTML = archivosHTML;
-    }
-
     // Función global para eliminar archivos en modal de editar
     window.eliminarArchivoEditar = function(index) {
         archivosListEditar.splice(index, 1);
@@ -2516,7 +2550,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             clearHighlightedFields();
             // Limpiar archivos seleccionados
             archivosListEditar = [];
-            mostrarArchivosSeleccionadosEditar();
+            // Llamar a la función solo si existe
+            if (typeof mostrarArchivosSeleccionadosEditar === 'function') {
+                mostrarArchivosSeleccionadosEditar();
+            }
             // Limpiar input de archivos
             const archivosInputEditar = document.getElementById('archivosEditarConsulta');
             if (archivosInputEditar) {
@@ -2589,6 +2626,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Validar motivo (requerido)
             if (!consultaData.motivo || consultaData.motivo.trim() === '') {
                 alert('El motivo de la consulta es requerido');
+                // Restaurar botón antes de salir
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
                 return;
             }
 
@@ -2641,24 +2681,62 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (response.ok) {
                 console.log('✅ Consulta actualizada exitosamente');
                 
-                // Mostrar mensaje de éxito
-                alert('Consulta actualizada exitosamente');
-                
-                // Cerrar modal
-                cerrarModalEditarConsulta();
-                
-                // Recargar consultas para mostrar los cambios
-                await loadPatientConsultations(patientId);
+                // Recargar consultas para mostrar los cambios ANTES de cerrar el modal
+                console.log('🔄 Recargando listado de consultas...');
+                try {
+                    await loadPatientConsultations(patientId);
+                    console.log('✅ Listado de consultas recargado exitosamente');
+                    
+                    // Cerrar modal después de recargar exitosamente
+                    cerrarModalEditarConsulta();
+                    
+                    // Mostrar mensaje de éxito
+                    alert('Consulta actualizada exitosamente');
+                } catch (reloadError) {
+                    console.error('❌ Error al recargar consultas:', reloadError);
+                    
+                    // Cerrar modal aunque haya error en la recarga
+                    cerrarModalEditarConsulta();
+                    
+                    // Mostrar mensaje de éxito pero avisar que puede necesitar recargar manualmente
+                    alert('Consulta actualizada exitosamente. Si no ves los cambios, recarga la página.');
+                }
                 
             } else {
-                const errorText = await response.text();
+                let errorText;
+                try {
+                    errorText = await response.text();
+                } catch (parseError) {
+                    errorText = `Error HTTP ${response.status}`;
+                }
                 console.error('❌ Error al actualizar consulta:', response.status, errorText);
-                alert(`Error al actualizar consulta: ${errorText}`);
+                
+                // Intentar parsear como JSON para obtener un mensaje más amigable
+                let errorMessage = `Error al actualizar consulta: ${errorText}`;
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    if (errorJson.mensaje) {
+                        errorMessage = errorJson.mensaje;
+                    } else if (errorJson.error) {
+                        errorMessage = errorJson.error;
+                    }
+                } catch (e) {
+                    // Si no es JSON, usar el mensaje de texto plano
+                }
+                
+                alert(errorMessage);
             }
             
         } catch (error) {
             console.error('❌ Error de conexión:', error);
-            alert('Error de conexión al actualizar la consulta');
+            
+            // Mostrar mensaje de error más específico
+            let errorMessage = 'Error de conexión al actualizar la consulta';
+            if (error.message) {
+                errorMessage += `: ${error.message}`;
+            }
+            
+            alert(errorMessage);
         } finally {
             // Restaurar botón
             submitBtn.disabled = false;
