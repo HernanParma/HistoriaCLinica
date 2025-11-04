@@ -34,6 +34,7 @@ namespace HistoriaClinica.Services
                 Email = paciente.Email ?? "",
                 Antecedentes = paciente.Antecedentes ?? "",
                 Medicacion = paciente.Medicacion ?? "",
+                DoctorCabecera = paciente.DoctorCabecera ?? "",
                 Consultas = paciente.Consultas?.Select(MapearConsultaADto).ToList() ?? new List<ConsultaDto>()
             };
         }
@@ -103,7 +104,8 @@ namespace HistoriaClinica.Services
                 Altura = dto.Altura,
                 Email = dto.Email?.Trim(),
                 Antecedentes = dto.Antecedentes?.Trim(),
-                Medicacion = dto.Medicacion?.Trim()
+                Medicacion = dto.Medicacion?.Trim(),
+                DoctorCabecera = dto.DoctorCabecera?.Trim()
             };
         }
 
@@ -185,6 +187,8 @@ namespace HistoriaClinica.Services
                 paciente.Antecedentes = dto.Antecedentes.Trim();
             if (!string.IsNullOrWhiteSpace(dto.Medicacion))
                 paciente.Medicacion = dto.Medicacion.Trim();
+            if (!string.IsNullOrWhiteSpace(dto.DoctorCabecera))
+                paciente.DoctorCabecera = dto.DoctorCabecera.Trim();
             if (dto.FechaNacimiento.HasValue)
                 paciente.FechaNacimiento = dto.FechaNacimiento.Value;
             if (dto.Peso.HasValue)

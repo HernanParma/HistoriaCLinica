@@ -733,6 +733,10 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
         fechaNacCell.textContent = correctedPatient.fechaNacimiento ? new Date(correctedPatient.fechaNacimiento).toLocaleDateString() : '';
         fechaNacCell.setAttribute('data-column', 'fechaNacimiento');
         
+        const doctorCabeceraCell = document.createElement('td');
+        doctorCabeceraCell.textContent = correctedPatient.doctorCabecera || '';
+        doctorCabeceraCell.setAttribute('data-column', 'doctorCabecera');
+        
         const accionesCell = document.createElement('td');
         accionesCell.className = 'actions';
         accionesCell.setAttribute('data-column', 'acciones');
@@ -743,7 +747,7 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
           </div>`;
         
         // Agregar las celdas en el orden correcto según los headers de la tabla
-        // 1. N°, 2. DNI, 3. N° Afiliado, 4. Apellido, 5. Nombre, 6. Particular, 7. Teléfono, 8. Obra Social, 9. Fecha Nac., 10. Acciones
+        // 1. N°, 2. DNI, 3. N° Afiliado, 4. Apellido, 5. Nombre, 6. Particular, 7. Teléfono, 8. Obra Social, 9. Fecha Nac., 10. Doctor Cabecera, 11. Acciones
         row.appendChild(numeroCell);        // Columna 1: N°
         row.appendChild(dniCell);           // Columna 2: DNI
         row.appendChild(afiliadoCell);      // Columna 3: N° Afiliado
@@ -753,7 +757,8 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
         row.appendChild(telefonoCell);      // Columna 7: Teléfono
         row.appendChild(obraSocialCell);    // Columna 8: Obra Social
         row.appendChild(fechaNacCell);      // Columna 9: Fecha Nac.
-        row.appendChild(accionesCell);      // Columna 10: Acciones
+        row.appendChild(doctorCabeceraCell); // Columna 10: Doctor Cabecera
+        row.appendChild(accionesCell);      // Columna 11: Acciones
         
         // Verificar que las celdas contengan los datos correctos
         console.log(`🔍 Verificación de celdas para paciente ${correctedPatient.id}:`);

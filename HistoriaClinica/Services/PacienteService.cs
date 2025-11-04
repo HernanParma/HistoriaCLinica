@@ -45,6 +45,7 @@ namespace HistoriaClinica.Services
                     Email = p.Email ?? "",
                     Antecedentes = p.Antecedentes ?? "",
                     Medicacion = p.Medicacion ?? "",
+                    DoctorCabecera = p.DoctorCabecera ?? "",
                     TieneNotificaciones = p.Consultas.Any(c => 
                         (c.Recetar != null && c.Recetar.Trim() != "" && !c.RecetarRevisado) ||
                         (c.Ome != null && c.Ome.Trim() != "" && !c.OmeRevisado)

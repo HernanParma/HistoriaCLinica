@@ -57,6 +57,14 @@ namespace HistoriaClinica.Models
         [Column(TypeName = "nvarchar(MAX)")]
         public string? Medicacion { get; set; }
 
+        // Doctor de Cabecera
+        public string? DoctorCabecera { get; set; }
+
+        // Relación con Usuario
+        [Required]
+        public int UsuarioId { get; set; }
+        public Usuario? Usuario { get; set; }
+
         public List<Consulta> Consultas { get; set; } = new List<Consulta>();
     }
 }

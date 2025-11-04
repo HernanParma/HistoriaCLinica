@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carnet - Historia Clínica</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Font Awesome local -->
+    <link rel="stylesheet" href="lib/fontawesome/css/all.min.css">
+    <style>
+        .carnet-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .carnet-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .carnet-header h1 {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .carnet-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .carnet-left {
+            border-right: 2px solid #e1e5e9;
+            padding-right: 30px;
+        }
+
+        .carnet-right {
+            padding-left: 30px;
+        }
+
+        .carnet-section {
+            margin-bottom: 25px;
+        }
+
+        .carnet-section h2 {
+            font-size: 1.3rem;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e1e5e9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .carnet-field {
+            margin-bottom: 20px;
+        }
+
+        .carnet-field label {
+            display: block;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .carnet-field .value {
+            font-size: 1.1rem;
+            color: #333;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e1e5e9;
+            min-height: 20px;
+        }
+
+        .medicamentos-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .medicamentos-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .medicamentos-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: 0.9rem;
+        }
+
+        .medicamentos-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e1e5e9;
+            color: #333;
+        }
+
+        .medicamentos-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .medicamentos-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .no-medicamentos {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .search-patient {
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .search-patient input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-patient input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .carnet-loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .carnet-error {
+            text-align: center;
+            padding: 40px;
+            color: #dc3545;
+            background: #f8d7da;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .carnet-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .carnet-left {
+                border-right: none;
+                border-bottom: 2px solid #e1e5e9;
+                padding-right: 0;
+                padding-bottom: 20px;
+            }
+
+            .carnet-right {
+                padding-left: 0;
+                padding-top: 20px;
+            }
+
+            .medicamentos-table {
+                font-size: 0.85rem;
+            }
+
+            .medicamentos-table th,
+            .medicamentos-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <h1>Historia Clínica</h1>
+            </div>
+        </header>
+        <main class="main-content">
+            <div class="carnet-container">
+                <a href="login.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Volver al Login
+                </a>
+
+                <div class="carnet-header">
+                    <h1><i class="fas fa-id-card"></i> CARNET</h1>
+                </div>
+
+                <div class="search-patient">
+                    <input type="text" id="searchDni" placeholder="Buscar paciente por DNI..." autocomplete="off">
+                </div>
+
+                <div id="carnetContent" class="carnet-content hidden">
+                    <div class="carnet-left">
+                        <div class="carnet-section">
+                            <h2><i class="fas fa-user"></i> Datos del Paciente</h2>
+                            <div class="carnet-field">
+                                <label>Nombre</label>
+                                <div class="value" id="pacienteNombre">-</div>
+                            </div>
+                            <div class="carnet-field">
+                                <label>DNI</label>
+                                <div class="value" id="pacienteDni">-</div>
+                            </div>
+                            <div class="carnet-field">
+                                <label>N° de Afiliado</label>
+                                <div class="value" id="pacienteAfiliado">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="carnet-right">
+                        <div class="carnet-section">
+                            <h2><i class="fas fa-pills"></i> Medicamentos</h2>
+                            <table class="medicamentos-table">
+                                <thead>
+                                    <tr>
+                                        <th>DROGA</th>
+                                        <th>MG</th>
+                                        <th>CANTIDAD</th>
+                                        <th>MARCA</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="medicamentosBody">
+                                    <tr>
+                                        <td colspan="4" class="no-medicamentos">
+                                            <i class="fas fa-spinner fa-spin"></i> Cargando...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="carnetLoading" class="carnet-loading hidden">
+                    <i class="fas fa-spinner fa-spin fa-3x"></i>
+                    <p style="margin-top: 20px;">Buscando paciente...</p>
+                </div>
+
+                <div id="carnetError" class="carnet-error hidden">
+                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    <p id="errorMessage" style="margin-top: 10px;"></p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/environment-config.js"></script>
+    <script>
+        // Esperar a que se cargue la configuración
+        document.addEventListener('DOMContentLoaded', function() {
+            // Esperar un momento para que se cargue CONFIG
+            setTimeout(() => {
+                initializeCarnet();
+            }, 500);
+        });
+
+        function initializeCarnet() {
+            const searchDni = document.getElementById('searchDni');
+            const carnetContent = document.getElementById('carnetContent');
+            const carnetLoading = document.getElementById('carnetLoading');
+            const carnetError = document.getElementById('carnetError');
+
+            searchDni.addEventListener('keypress', async function(e) {
+                if (e.key === 'Enter') {
+                    const dni = searchDni.value.trim();
+                    if (!dni) {
+                        showError('Por favor ingrese un DNI');
+                        return;
+                    }
+
+                    await buscarPaciente(dni);
+                }
+            });
+
+            async function buscarPaciente(dni) {
+                try {
+                    carnetContent.classList.add('hidden');
+                    carnetError.classList.add('hidden');
+                    carnetLoading.classList.remove('hidden');
+
+                    const API_BASE_URL = window.CONFIG?.API_BASE_URL || 'http://localhost:5000';
+                    const response = await fetch(`${API_BASE_URL}/api/pacientes`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Error al buscar pacientes');
+                    }
+
+                    const pacientes = await response.json();
+                    const paciente = pacientes.find(p => p.dni === dni);
+
+                    if (!paciente) {
+                        showError('No se encontró ningún paciente con ese DNI');
+                        return;
+                    }
+
+                    mostrarCarnet(paciente);
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    showError('Error al buscar el paciente. Intente nuevamente.');
+                } finally {
+                    carnetLoading.classList.add('hidden');
+                }
+            }
+
+            function mostrarCarnet(paciente) {
+                // Llenar datos del paciente
+                document.getElementById('pacienteNombre').textContent = 
+                    `${paciente.nombre || ''} ${paciente.apellido || ''}`.trim() || '-';
+                document.getElementById('pacienteDni').textContent = paciente.dni || '-';
+                document.getElementById('pacienteAfiliado').textContent = paciente.numeroAfiliado || '-';
+
+                // Procesar medicamentos
+                const medicamentos = parsearMedicacion(paciente.medicacion || '');
+                mostrarMedicamentos(medicamentos);
+
+                carnetContent.classList.remove('hidden');
+            }
+
+            function parsearMedicacion(medicacionTexto) {
+                if (!medicacionTexto || medicacionTexto.trim() === '') {
+                    return [];
+                }
+
+                // Intentar parsear diferentes formatos de medicación
+                const lineas = medicacionTexto.split('\n').filter(line => line.trim());
+                const medicamentos = [];
+
+                lineas.forEach(linea => {
+                    // Formato esperado: "Droga - MG - Cantidad - Marca"
+                    // O variaciones: "Droga MG Cantidad Marca", etc.
+                    const partes = linea.split(/[-–—]/).map(p => p.trim()).filter(p => p);
+                    
+                    if (partes.length >= 2) {
+                        const medicamento = {
+                            droga: partes[0] || '',
+                            mg: partes[1] || '',
+                            cantidad: partes[2] || '',
+                            marca: partes[3] || ''
+                        };
+                        medicamentos.push(medicamento);
+                    } else {
+                        // Si no hay separadores, intentar separar por espacios
+                        const palabras = linea.split(/\s+/);
+                        if (palabras.length >= 2) {
+                            medicamentos.push({
+                                droga: palabras[0] || '',
+                                mg: palabras[1] || '',
+                                cantidad: palabras[2] || '',
+                                marca: palabras.slice(3).join(' ') || ''
+                            });
+                        } else if (palabras.length === 1) {
+                            // Solo droga
+                            medicamentos.push({
+                                droga: palabras[0] || '',
+                                mg: '',
+                                cantidad: '',
+                                marca: ''
+                            });
+                        }
+                    }
+                });
+
+                return medicamentos;
+            }
+
+            function mostrarMedicamentos(medicamentos) {
+                const tbody = document.getElementById('medicamentosBody');
+                
+                if (medicamentos.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="no-medicamentos">
+                                <i class="fas fa-pills"></i> No hay medicamentos registrados
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = medicamentos.map(med => `
+                    <tr>
+                        <td>${med.droga || '-'}</td>
+                        <td>${med.mg || '-'}</td>
+                        <td>${med.cantidad || '-'}</td>
+                        <td>${med.marca || '-'}</td>
+                    </tr>
+                `).join('');
+            }
+
+            function showError(mensaje) {
+                document.getElementById('errorMessage').textContent = mensaje;
+                carnetError.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
+

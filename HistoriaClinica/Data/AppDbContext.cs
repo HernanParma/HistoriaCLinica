@@ -22,6 +22,13 @@ namespace HistoriaClinica.Data
             modelBuilder.Entity<Paciente>()
                 .Property(p => p.Peso)
                 .HasPrecision(5, 2); // 
+
+            // Configurar relación entre Paciente y Usuario
+            modelBuilder.Entity<Paciente>()
+                .HasOne(p => p.Usuario)
+                .WithMany()
+                .HasForeignKey(p => p.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

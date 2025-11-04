@@ -19,6 +19,7 @@ namespace HistoriaClinica.DTOs
         public string? Email { get; set; }
         public string? Antecedentes { get; set; }
         public string? Medicacion { get; set; }
+        public string? DoctorCabecera { get; set; }
         public List<ConsultaDto>? Consultas { get; set; }
     }
 
@@ -50,6 +51,8 @@ namespace HistoriaClinica.DTOs
         public string? Antecedentes { get; set; }
         [JsonPropertyName("medicacion")]
         public string? Medicacion { get; set; }
+        [JsonPropertyName("doctorCabecera")]
+        public string? DoctorCabecera { get; set; }
     }
 
     public class ActualizarPacienteDto
@@ -80,6 +83,8 @@ namespace HistoriaClinica.DTOs
         public string? Antecedentes { get; set; }
         [JsonPropertyName("medicacion")]
         public string? Medicacion { get; set; }
+        [JsonPropertyName("doctorCabecera")]
+        public string? DoctorCabecera { get; set; }
     }
 
     public class PacienteConNotificacionesDto
@@ -99,6 +104,7 @@ namespace HistoriaClinica.DTOs
         public string? Email { get; set; }
         public string? Antecedentes { get; set; }
         public string? Medicacion { get; set; }
+        public string? DoctorCabecera { get; set; }
         public bool TieneNotificaciones { get; set; }
         public bool TieneRecetarPendiente { get; set; }
         public bool TieneOmePendiente { get; set; }
