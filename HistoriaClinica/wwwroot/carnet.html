@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="css/styles.css">
     <!-- Font Awesome local -->
     <link rel="stylesheet" href="lib/fontawesome/css/all.min.css">
+    <!-- jsPDF para generar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         .carnet-container {
             max-width: 1200px;
@@ -35,6 +37,7 @@
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
 
         .carnet-left {
@@ -74,14 +77,22 @@
             letter-spacing: 0.5px;
         }
 
-        .carnet-field .value {
+        .carnet-field input {
+            width: 100%;
             font-size: 1.1rem;
             color: #333;
-            padding: 10px 15px;
-            background: #f8f9fa;
+            padding: 12px 15px;
+            background: #ffffff;
             border-radius: 8px;
-            border: 1px solid #e1e5e9;
-            min-height: 20px;
+            border: 2px solid #e1e5e9;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .carnet-field input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .medicamentos-table {
@@ -105,47 +116,88 @@
         }
 
         .medicamentos-table td {
-            padding: 12px 15px;
+            padding: 10px 15px;
             border-bottom: 1px solid #e1e5e9;
-            color: #333;
+        }
+
+        .medicamentos-table input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .medicamentos-table input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
         }
 
         .medicamentos-table tbody tr:hover {
             background: #f8f9fa;
         }
 
-        .medicamentos-table tbody tr:last-child td {
-            border-bottom: none;
+        .btn-add-medicamento {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .no-medicamentos {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-            font-style: italic;
+        .btn-add-medicamento:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
-        .search-patient {
-            margin-bottom: 30px;
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .search-patient input {
-            width: 100%;
-            padding: 12px 20px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 1rem;
+        .btn-remove-medicamento {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 0.85rem;
             transition: all 0.3s ease;
         }
 
-        .search-patient input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        .btn-remove-medicamento:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+
+        .btn-download-pdf {
+            width: 100%;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            margin-top: 30px;
+        }
+
+        .btn-download-pdf:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
         }
 
         .back-btn {
@@ -166,19 +218,9 @@
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .carnet-loading {
+        .actions-column {
+            width: 80px;
             text-align: center;
-            padding: 40px;
-            color: #667eea;
-        }
-
-        .carnet-error {
-            text-align: center;
-            padding: 40px;
-            color: #dc3545;
-            background: #f8d7da;
-            border-radius: 10px;
-            margin: 20px 0;
         }
 
         @media (max-width: 768px) {
@@ -225,28 +267,24 @@
                 </a>
 
                 <div class="carnet-header">
-                    <h1><i class="fas fa-id-card"></i> CARNET</h1>
+                    <h1><i class="fas fa-id-card"></i> CREDENCIAL</h1>
                 </div>
 
-                <div class="search-patient">
-                    <input type="text" id="searchDni" placeholder="Buscar paciente por DNI..." autocomplete="off">
-                </div>
-
-                <div id="carnetContent" class="carnet-content hidden">
+                <div class="carnet-content">
                     <div class="carnet-left">
                         <div class="carnet-section">
                             <h2><i class="fas fa-user"></i> Datos del Paciente</h2>
                             <div class="carnet-field">
                                 <label>Nombre</label>
-                                <div class="value" id="pacienteNombre">-</div>
+                                <input type="text" id="pacienteNombre" placeholder="Ingrese el nombre">
                             </div>
                             <div class="carnet-field">
                                 <label>DNI</label>
-                                <div class="value" id="pacienteDni">-</div>
+                                <input type="text" id="pacienteDni" placeholder="Ingrese el DNI">
                             </div>
                             <div class="carnet-field">
                                 <label>N° de Afiliado</label>
-                                <div class="value" id="pacienteAfiliado">-</div>
+                                <input type="text" id="pacienteAfiliado" placeholder="Ingrese el N° de Afiliado">
                             </div>
                         </div>
                     </div>
@@ -261,188 +299,275 @@
                                         <th>MG</th>
                                         <th>CANTIDAD</th>
                                         <th>MARCA</th>
+                                        <th>CAJAS</th>
+                                        <th class="actions-column">ACCIÓN</th>
                                     </tr>
                                 </thead>
                                 <tbody id="medicamentosBody">
-                                    <tr>
-                                        <td colspan="4" class="no-medicamentos">
-                                            <i class="fas fa-spinner fa-spin"></i> Cargando...
-                                        </td>
-                                    </tr>
+                                    <!-- Las filas de medicamentos se agregarán aquí dinámicamente -->
                                 </tbody>
                             </table>
+                            <button type="button" class="btn-add-medicamento" id="btnAddMedicamento">
+                                <i class="fas fa-plus"></i> Agregar Medicamento
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div id="carnetLoading" class="carnet-loading hidden">
-                    <i class="fas fa-spinner fa-spin fa-3x"></i>
-                    <p style="margin-top: 20px;">Buscando paciente...</p>
-                </div>
-
-                <div id="carnetError" class="carnet-error hidden">
-                    <i class="fas fa-exclamation-triangle fa-2x"></i>
-                    <p id="errorMessage" style="margin-top: 10px;"></p>
-                </div>
+                <button type="button" class="btn-download-pdf" id="btnDownloadPdf">
+                    <i class="fas fa-file-pdf"></i> Descargar PDF
+                </button>
             </div>
         </main>
     </div>
 
-    <script src="js/environment-config.js"></script>
     <script>
-        // Esperar a que se cargue la configuración
+        // Inicializar cuando se carga la página
         document.addEventListener('DOMContentLoaded', function() {
-            // Esperar un momento para que se cargue CONFIG
-            setTimeout(() => {
-                initializeCarnet();
-            }, 500);
+            initializeCarnet();
         });
 
+        let medicamentos = [];
+
         function initializeCarnet() {
-            const searchDni = document.getElementById('searchDni');
-            const carnetContent = document.getElementById('carnetContent');
-            const carnetLoading = document.getElementById('carnetLoading');
-            const carnetError = document.getElementById('carnetError');
+            // Agregar primera fila de medicamento vacía
+            agregarFilaMedicamento();
 
-            searchDni.addEventListener('keypress', async function(e) {
-                if (e.key === 'Enter') {
-                    const dni = searchDni.value.trim();
-                    if (!dni) {
-                        showError('Por favor ingrese un DNI');
-                        return;
+            // Event listener para agregar medicamento
+            document.getElementById('btnAddMedicamento').addEventListener('click', function() {
+                agregarFilaMedicamento();
+            });
+
+            // Event listener para descargar PDF
+            document.getElementById('btnDownloadPdf').addEventListener('click', function() {
+                generarPDF();
+            });
+        }
+
+        function agregarFilaMedicamento() {
+            const tbody = document.getElementById('medicamentosBody');
+            const index = medicamentos.length;
+            
+            const row = document.createElement('tr');
+            row.dataset.index = index;
+            
+            row.innerHTML = `
+                <td>
+                    <input type="text" class="medicamento-droga" placeholder="Nombre de la droga">
+                </td>
+                <td>
+                    <input type="text" class="medicamento-mg" placeholder="MG">
+                </td>
+                <td>
+                    <input type="text" class="medicamento-cantidad" placeholder="Cantidad">
+                </td>
+                <td>
+                    <input type="text" class="medicamento-marca" placeholder="Marca">
+                </td>
+                <td>
+                    <input type="text" class="medicamento-cajas" placeholder="Cajas">
+                </td>
+                <td class="actions-column">
+                    <button type="button" class="btn-remove-medicamento" onclick="eliminarFilaMedicamento(${index})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            
+            tbody.appendChild(row);
+            medicamentos.push({
+                droga: '',
+                mg: '',
+                cantidad: '',
+                marca: '',
+                cajas: ''
+            });
+        }
+
+        function eliminarFilaMedicamento(index) {
+            const tbody = document.getElementById('medicamentosBody');
+            const row = tbody.querySelector(`tr[data-index="${index}"]`);
+            if (row) {
+                row.remove();
+                medicamentos.splice(index, 1);
+                // Re-indexar las filas restantes
+                const filas = tbody.querySelectorAll('tr');
+                filas.forEach((fila, i) => {
+                    fila.dataset.index = i;
+                    const btn = fila.querySelector('.btn-remove-medicamento');
+                    if (btn) {
+                        btn.setAttribute('onclick', `eliminarFilaMedicamento(${i})`);
                     }
+                });
+            }
+        }
 
-                    await buscarPaciente(dni);
+        function obtenerDatosCarnet() {
+            const nombre = document.getElementById('pacienteNombre').value.trim();
+            const dni = document.getElementById('pacienteDni').value.trim();
+            const afiliado = document.getElementById('pacienteAfiliado').value.trim();
+
+            // Obtener medicamentos de las filas
+            const medicamentosData = [];
+            const filas = document.querySelectorAll('#medicamentosBody tr');
+            filas.forEach(fila => {
+                const droga = fila.querySelector('.medicamento-droga')?.value.trim() || '';
+                const mg = fila.querySelector('.medicamento-mg')?.value.trim() || '';
+                const cantidad = fila.querySelector('.medicamento-cantidad')?.value.trim() || '';
+                const marca = fila.querySelector('.medicamento-marca')?.value.trim() || '';
+                const cajas = fila.querySelector('.medicamento-cajas')?.value.trim() || '';
+                
+                if (droga || mg || cantidad || marca || cajas) {
+                    medicamentosData.push({ droga, mg, cantidad, marca, cajas });
                 }
             });
 
-            async function buscarPaciente(dni) {
-                try {
-                    carnetContent.classList.add('hidden');
-                    carnetError.classList.add('hidden');
-                    carnetLoading.classList.remove('hidden');
+            return {
+                nombre,
+                dni,
+                afiliado,
+                medicamentos: medicamentosData
+            };
+        }
 
-                    const API_BASE_URL = window.CONFIG?.API_BASE_URL || 'http://localhost:5000';
-                    const response = await fetch(`${API_BASE_URL}/api/pacientes`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Error al buscar pacientes');
-                    }
-
-                    const pacientes = await response.json();
-                    const paciente = pacientes.find(p => p.dni === dni);
-
-                    if (!paciente) {
-                        showError('No se encontró ningún paciente con ese DNI');
-                        return;
-                    }
-
-                    mostrarCarnet(paciente);
-
-                } catch (error) {
-                    console.error('Error:', error);
-                    showError('Error al buscar el paciente. Intente nuevamente.');
-                } finally {
-                    carnetLoading.classList.add('hidden');
-                }
+        function generarPDF() {
+            const datos = obtenerDatosCarnet();
+            
+            // Verificar que al menos el nombre esté completo
+            if (!datos.nombre || !datos.dni) {
+                alert('Por favor complete al menos el Nombre y DNI del paciente');
+                return;
             }
 
-            function mostrarCarnet(paciente) {
-                // Llenar datos del paciente
-                document.getElementById('pacienteNombre').textContent = 
-                    `${paciente.nombre || ''} ${paciente.apellido || ''}`.trim() || '-';
-                document.getElementById('pacienteDni').textContent = paciente.dni || '-';
-                document.getElementById('pacienteAfiliado').textContent = paciente.numeroAfiliado || '-';
-
-                // Procesar medicamentos
-                const medicamentos = parsearMedicacion(paciente.medicacion || '');
-                mostrarMedicamentos(medicamentos);
-
-                carnetContent.classList.remove('hidden');
-            }
-
-            function parsearMedicacion(medicacionTexto) {
-                if (!medicacionTexto || medicacionTexto.trim() === '') {
-                    return [];
-                }
-
-                // Intentar parsear diferentes formatos de medicación
-                const lineas = medicacionTexto.split('\n').filter(line => line.trim());
-                const medicamentos = [];
-
-                lineas.forEach(linea => {
-                    // Formato esperado: "Droga - MG - Cantidad - Marca"
-                    // O variaciones: "Droga MG Cantidad Marca", etc.
-                    const partes = linea.split(/[-–—]/).map(p => p.trim()).filter(p => p);
-                    
-                    if (partes.length >= 2) {
-                        const medicamento = {
-                            droga: partes[0] || '',
-                            mg: partes[1] || '',
-                            cantidad: partes[2] || '',
-                            marca: partes[3] || ''
-                        };
-                        medicamentos.push(medicamento);
-                    } else {
-                        // Si no hay separadores, intentar separar por espacios
-                        const palabras = linea.split(/\s+/);
-                        if (palabras.length >= 2) {
-                            medicamentos.push({
-                                droga: palabras[0] || '',
-                                mg: palabras[1] || '',
-                                cantidad: palabras[2] || '',
-                                marca: palabras.slice(3).join(' ') || ''
-                            });
-                        } else if (palabras.length === 1) {
-                            // Solo droga
-                            medicamentos.push({
-                                droga: palabras[0] || '',
-                                mg: '',
-                                cantidad: '',
-                                marca: ''
-                            });
-                        }
-                    }
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
                 });
 
-                return medicamentos;
-            }
+                // Configuración de colores
+                const primaryColor = [102, 126, 234];
+                const secondaryColor = [118, 74, 162];
 
-            function mostrarMedicamentos(medicamentos) {
-                const tbody = document.getElementById('medicamentosBody');
+                // Título
+                doc.setFillColor(...primaryColor);
+                doc.rect(10, 10, 190, 25, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(24);
+                doc.setFont('helvetica', 'bold');
+                doc.text('CREDENCIAL MÉDICA', 105, 25, { align: 'center' });
+
+                let yPos = 45;
+
+                // Datos del Paciente
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.text('DATOS DEL PACIENTE', 15, yPos);
                 
-                if (medicamentos.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="4" class="no-medicamentos">
-                                <i class="fas fa-pills"></i> No hay medicamentos registrados
-                            </td>
-                        </tr>
-                    `;
-                    return;
+                yPos += 10;
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'normal');
+                
+                doc.setFont('helvetica', 'bold');
+                doc.text('Nombre:', 15, yPos);
+                doc.setFont('helvetica', 'normal');
+                doc.text(datos.nombre || '-', 50, yPos);
+                
+                yPos += 8;
+                doc.setFont('helvetica', 'bold');
+                doc.text('DNI:', 15, yPos);
+                doc.setFont('helvetica', 'normal');
+                doc.text(datos.dni || '-', 50, yPos);
+                
+                yPos += 8;
+                doc.setFont('helvetica', 'bold');
+                doc.text('N° de Afiliado:', 15, yPos);
+                doc.setFont('helvetica', 'normal');
+                doc.text(datos.afiliado || '-', 50, yPos);
+
+                yPos += 15;
+
+                // Medicamentos
+                if (datos.medicamentos.length > 0) {
+                    doc.setFontSize(16);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('MEDICAMENTOS', 15, yPos);
+                    
+                    yPos += 10;
+
+                    // Encabezados de la tabla
+                    doc.setFillColor(...primaryColor);
+                    doc.rect(15, yPos - 5, 180, 8, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('DROGA', 18, yPos);
+                    doc.text('MG', 55, yPos);
+                    doc.text('CANTIDAD', 75, yPos);
+                    doc.text('MARCA', 115, yPos);
+                    doc.text('CAJAS', 155, yPos);
+                    
+                    yPos += 5;
+
+                    // Filas de medicamentos
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFont('helvetica', 'normal');
+                    datos.medicamentos.forEach((med, index) => {
+                        if (yPos > 270) {
+                            doc.addPage();
+                            yPos = 20;
+                        }
+                        
+                        // Dibujar línea separadora
+                        doc.setDrawColor(200, 200, 200);
+                        doc.line(15, yPos - 2, 195, yPos - 2);
+                        
+                        doc.setFontSize(9);
+                        doc.text(med.droga || '-', 18, yPos);
+                        doc.text(med.mg || '-', 55, yPos);
+                        doc.text(med.cantidad || '-', 75, yPos);
+                        doc.text(med.marca || '-', 115, yPos);
+                        doc.text(med.cajas || '-', 155, yPos);
+                        
+                        yPos += 8;
+                    });
+                } else {
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'italic');
+                    doc.setTextColor(150, 150, 150);
+                    doc.text('No hay medicamentos registrados', 15, yPos);
                 }
 
-                tbody.innerHTML = medicamentos.map(med => `
-                    <tr>
-                        <td>${med.droga || '-'}</td>
-                        <td>${med.mg || '-'}</td>
-                        <td>${med.cantidad || '-'}</td>
-                        <td>${med.marca || '-'}</td>
-                    </tr>
-                `).join('');
-            }
+                // Pie de página
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(150, 150, 150);
+                    doc.setFont('helvetica', 'italic');
+                    doc.text(
+                        `Página ${i} de ${pageCount} - Generado el ${new Date().toLocaleDateString('es-AR')}`,
+                        105,
+                        285,
+                        { align: 'center' }
+                    );
+                }
 
-            function showError(mensaje) {
-                document.getElementById('errorMessage').textContent = mensaje;
-                carnetError.classList.remove('hidden');
+                // Descargar PDF
+                const nombreArchivo = `Credencial_${datos.nombre.replace(/\s+/g, '_')}_${datos.dni}.pdf`;
+                doc.save(nombreArchivo);
+
+            } catch (error) {
+                console.error('Error al generar PDF:', error);
+                alert('Error al generar el PDF. Por favor, intente nuevamente.');
             }
         }
+
+        // Hacer la función disponible globalmente
+        window.eliminarFilaMedicamento = eliminarFilaMedicamento;
     </script>
 </body>
 </html>
-

@@ -20,8 +20,7 @@ namespace HistoriaClinica.Migrations
                 name: "UsuarioId",
                 table: "Pacientes",
                 type: "int",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pacientes_UsuarioId",

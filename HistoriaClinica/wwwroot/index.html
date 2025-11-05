@@ -41,6 +41,10 @@
                         <i class="fas fa-user-plus"></i>
                         Registrar Nuevo Paciente
                     </button>
+                    <a href="carnet.html" class="nav-btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-id-card"></i>
+                        CREDENCIAL
+                    </a>
                 </div>
             </nav>
         </header>
@@ -91,12 +95,11 @@
             <!-- Listado de Pacientes (solo visible después del login) -->
             <div id="patientsList" class="form-container full-width hidden">
                 <div class="form-card">
-                    <div class="form-header">
-                        <h2><i class="fas fa-users"></i> Listado de Pacientes</h2>
-                    </div>
-                    
                     <div class="patients-container">
                         <div class="patients-controls-row">
+                            <div class="patients-title-section">
+                                <h2><i class="fas fa-users"></i> Listado de Pacientes</h2>
+                            </div>
                             <div class="search-section">
                                 <div class="search-box">
                                     <input type="text" id="searchPatient" placeholder="Buscar pacientes por nombre, apellido o DNI...">

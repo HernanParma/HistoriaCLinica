@@ -896,12 +896,12 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
 
       const headers = table.querySelectorAll('th');
       headers.forEach((header, index) => {
-        const columnMap = ['numero', 'dni', 'numeroAfiliado', 'apellido', 'nombre', 'particular', 'telefono', 'obraSocial', 'fechaNacimiento'];
+        const columnMap = ['numero', 'dni', 'numeroAfiliado', 'apellido', 'nombre', 'particular', 'telefono', 'obraSocial', 'fechaNacimiento', 'doctorCabecera', 'acciones'];
         const column = columnMap[index];
         
         if (column) {
-          // La columna "numero" no debe ser ordenable
-          if (column !== 'numero') {
+          // Las columnas "numero" y "acciones" no deben ser ordenables
+          if (column !== 'numero' && column !== 'acciones') {
             header.style.cursor = 'pointer';
             header.addEventListener('click', () => {
               if (sortColumn === column) {
@@ -919,7 +919,7 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
             indicator.innerHTML = ' <i class="fas fa-sort"></i>';
             header.appendChild(indicator);
           } else {
-            // Para la columna de numeración, no agregar cursor pointer ni indicador
+            // Para las columnas de numeración y acciones, no agregar cursor pointer ni indicador
             header.style.cursor = 'default';
           }
         }
@@ -931,13 +931,13 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
       if (!table) return;
 
       const headers = table.querySelectorAll('th');
-      const columnMap = ['numero', 'dni', 'numeroAfiliado', 'apellido', 'nombre', 'particular', 'telefono', 'obraSocial', 'fechaNacimiento'];
+      const columnMap = ['numero', 'dni', 'numeroAfiliado', 'apellido', 'nombre', 'particular', 'telefono', 'obraSocial', 'fechaNacimiento', 'doctorCabecera', 'acciones'];
       
       headers.forEach((header, index) => {
         const column = columnMap[index];
         const indicator = header.querySelector('.sort-indicator');
         
-        if (indicator && column && column !== 'numero') {
+        if (indicator && column && column !== 'numero' && column !== 'acciones') {
           if (sortColumn === column) {
             indicator.innerHTML = sortDirection === 'asc' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>';
           } else {

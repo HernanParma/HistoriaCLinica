@@ -61,8 +61,7 @@ namespace HistoriaClinica.Models
         public string? DoctorCabecera { get; set; }
 
         // Relación con Usuario
-        [Required]
-        public int UsuarioId { get; set; }
+        public int? UsuarioId { get; set; }
         public Usuario? Usuario { get; set; }
 
         public List<Consulta> Consultas { get; set; } = new List<Consulta>();
