@@ -1029,24 +1029,25 @@ body {
 }
 
 .patients-table th {
-    padding: 15px 12px;
+    padding: 8px 10px;
     text-align: left;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     border: none;
 }
 
 .patients-table td {
-    padding: 12px 15px;
+    padding: 6px 10px;
     border-bottom: 1px solid #e9ecef;
     vertical-align: middle;
+    font-size: 0.9rem;
 }
 
 .patients-table .actions {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 6px;
+    gap: 4px;
+    padding: 4px;
     white-space: nowrap;
 }
 
@@ -1145,18 +1146,22 @@ body {
 }
 
 .btn-action {
-    padding: 6px 12px;
+    padding: 4px 10px;
     border: none;
-    border-radius: 6px;
-    font-size: 0.8rem;
+    border-radius: 5px;
+    font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
     text-decoration: none;
     color: white;
+}
+
+.btn-action i {
+    font-size: 0.7rem;
 }
 
 .btn-view {
@@ -2872,10 +2877,10 @@ body {
 /* Elementos de consulta individuales */
 .consulta-item {
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
-    border-radius: 20px !important;
+    border-radius: 16px !important;
     border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06) !important;
-    margin-bottom: 25px !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06) !important;
+    margin-bottom: 20px !important;
     overflow: hidden !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     position: relative !important;
@@ -2886,7 +2891,7 @@ body {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
-    width: 5px !important;
+    width: 4px !important;
     height: 100% !important;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     transform: scaleY(0) !important;
@@ -2894,8 +2899,8 @@ body {
 }
 
 .consulta-item:hover {
-    transform: translateY(-5px) !important;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12) !important;
     border-color: #667eea !important;
 }
 
@@ -2906,24 +2911,24 @@ body {
 /* Header de consulta */
 .consulta-header {
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
-    padding: 20px 25px !important;
+    padding: 16px 20px !important;
     border-bottom: 1px solid #e2e8f0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     flex-wrap: wrap !important;
-    gap: 15px !important;
+    gap: 12px !important;
     margin: 0 !important;
 }
 
 .consulta-header > h5 {
     margin: 0 !important;
-    font-size: 1.3em !important;
+    font-size: 1.04em !important;
     font-weight: 700 !important;
     color: #1e293b !important;
     display: flex !important;
     align-items: center !important;
-    gap: 12px !important;
+    gap: 10px !important;
     padding: 0 !important;
 }
 
@@ -2936,12 +2941,12 @@ body {
 span.consulta-motivo {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     color: white !important;
-    padding: 8px 16px !important;
-    border-radius: 20px !important;
-    font-size: 0.95em !important;
+    padding: 6px 13px !important;
+    border-radius: 16px !important;
+    font-size: 0.76em !important;
     font-weight: 600 !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3) !important;
     backdrop-filter: blur(10px) !important;
     display: inline-block !important;
 }
@@ -3618,12 +3623,12 @@ div.consulta-header > h5 > i {
 span.consulta-motivo {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     color: white !important;
-    padding: 8px 16px !important;
-    border-radius: 20px !important;
-    font-size: 0.95em !important;
+    padding: 6px 13px !important;
+    border-radius: 16px !important;
+    font-size: 0.76em !important;
     font-weight: 600 !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3) !important;
     backdrop-filter: blur(10px) !important;
     display: inline-block !important;
 }
@@ -4208,9 +4213,9 @@ button.submit-btn > i {
 /* Secciones de datos del paciente */
 .patient-data-section {
     background: white;
-    border-radius: 16px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border-radius: 13px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
     overflow: hidden;
     border: 1px solid #e2e8f0;
 }
@@ -4219,22 +4224,22 @@ button.submit-btn > i {
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     color: #1e293b;
     margin: 0;
-    padding: 18px 20px;
-    font-size: 1.2em;
+    padding: 14px 16px;
+    font-size: 0.96em;
     font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     border-bottom: 1px solid #e2e8f0;
 }
 
 .patient-data-section h4 i {
     color: #667eea;
-    font-size: 1.1em;
+    font-size: 0.88em;
 }
 
 .patient-data-section-content {
-    padding: 20px;
+    padding: 16px;
 }
 
 /* Campos de datos individuales */
@@ -4242,7 +4247,7 @@ button.submit-btn > i {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 10px 0;
     border-bottom: 1px solid #f1f5f9;
     transition: all 0.3s ease;
 }
@@ -4253,18 +4258,18 @@ button.submit-btn > i {
 
 .patient-data-field:hover {
     background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-    border-radius: 8px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-left: -10px;
-    margin-right: -10px;
+    border-radius: 6px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-left: -8px;
+    margin-right: -8px;
 }
 
 .patient-data-label {
     font-weight: 600;
     color: #475569;
-    font-size: 0.95em;
-    min-width: 120px;
+    font-size: 0.76em;
+    min-width: 96px;
 }
 
 .patient-data-value {
@@ -4272,7 +4277,7 @@ button.submit-btn > i {
     font-weight: 500;
     text-align: right;
     flex: 1;
-    margin-left: 15px;
+    margin-left: 12px;
 }
 
 .patient-data-value.empty {
@@ -4285,17 +4290,17 @@ button.submit-btn > i {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     color: white;
-    width: 32px;
-    height: 32px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    font-size: 0.9em;
-    margin-left: 10px;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    font-size: 0.72em;
+    margin-left: 8px;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
 }
 
 .edit-field-btn:hover {
@@ -4843,26 +4848,26 @@ button.submit-btn > i {
 /* Reemplaza el layout de .hc-layout-container por grid */
 .hc-layout-container {
     display: grid;
-    grid-template-columns: 340px minmax(0, 1fr); /* izquierda fija, derecha todo lo demás */
-    gap: 12px;
+    grid-template-columns: 272px minmax(0, 1fr); /* izquierda fija, derecha todo lo demás */
+    gap: 10px;
     width: 100%;
     max-width: 100vw;
-    padding: 0 10px;
+    padding: 0 8px;
 }
 
 /* Sidebar fijo para datos del paciente */
 .patient-sidebar-fixed {
-    width: 340px;
-    min-width: 340px;
+    width: 272px;
+    min-width: 272px;
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-radius: 13px;
+    box-shadow: 0 6px 26px rgba(0, 0, 0, 0.1);
     border: 1px solid #e2e8f0;
     overflow: hidden;
     position: sticky;
-    top: 20px;
+    top: 16px;
     height: fit-content;
-    max-height: calc(100vh - 40px);
+    max-height: calc(100vh - 32px);
     overflow-y: auto;
     z-index: 1;
 }
@@ -4870,7 +4875,7 @@ button.submit-btn > i {
 .patient-sidebar-fixed .sidebar-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 20px 25px;
+    padding: 16px 20px;
     margin: 0;
     border-radius: 0;
     position: relative;
@@ -4885,16 +4890,16 @@ button.submit-btn > i {
 
 .patient-sidebar-fixed .sidebar-header h3 {
     margin: 0;
-    font-size: 1.3em;
+    font-size: 1.04em;
     font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .patient-sidebar-fixed .sidebar-content {
-    padding: 25px;
+    padding: 20px;
     position: relative;
     z-index: 1;
 }
@@ -5879,17 +5884,17 @@ body.historia .row.hc-layout > :nth-child(2),
     background: #dc3545;
     color: white;
     border: none;
-    border-radius: 8px;
-    width: 40px;
-    height: 40px;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-right: 10px;
-    font-size: 16px;
-    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+    margin-right: 8px;
+    font-size: 13px;
+    box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3);
     position: relative;
     border: 2px solid #dc3545;
 }
@@ -5908,7 +5913,7 @@ body.historia .row.hc-layout > :nth-child(2),
 
 .btn-eliminar-consulta i {
     color: white;
-    font-size: 18px;
+    font-size: 14px;
     font-weight: bold;
 }
 

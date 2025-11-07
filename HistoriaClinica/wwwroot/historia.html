@@ -11,15 +11,29 @@
     <style>
     /* ESTILOS INLINE PARA CONSULTAS Y FORMULARIO DE ARCHIVOS */
     
+    /* Reducción global del 20% en toda la página de historia clínica */
+    body.historia,
+    body.historia * {
+        font-size: 0.8em !important;
+    }
+    
+    body.historia .hc-layout-container,
+    body.historia .patient-sidebar-fixed,
+    body.historia .hc-section,
+    body.historia .consulta-item,
+    body.historia .patient-data-section {
+        font-size: 1em !important; /* Mantener tamaño base pero reducir padding/margins */
+    }
+    
     /* Contenedor principal */
     .hc-section {
         background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
-        border-radius: 24px !important;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08) !important;
+        border-radius: 19px !important;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08) !important;
         padding: 0 !important;
         overflow: hidden !important;
         border: 1px solid #e2e8f0 !important;
-        margin: 20px 0 !important;
+        margin: 16px 0 !important;
         position: relative !important;
     }
     
@@ -29,7 +43,7 @@
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        height: 4px !important;
+        height: 3px !important;
         background: linear-gradient(90deg, #667eea 0%, #764ba2 0%, #f093fb 100%) !important;
         z-index: 10 !important;
     }
@@ -39,12 +53,12 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
         color: white !important;
         margin: 0 !important;
-        padding: 20px 24px !important;
-        font-size: 1.3em !important;
+        padding: 16px 19px !important;
+        font-size: 1.04em !important;
         font-weight: 700 !important;
         display: flex !important;
         align-items: center !important;
-        gap: 12px !important;
+        gap: 10px !important;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
         position: relative !important;
         border: none !important;
@@ -54,12 +68,12 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
         color: white !important;
         margin: 0 !important;
-        padding: 16px 24px !important;
-        font-size: 1.1em !important;
+        padding: 13px 19px !important;
+        font-size: 0.88em !important;
         font-weight: 700 !important;
         display: flex !important;
         align-items: center !important;
-        gap: 10px !important;
+        gap: 8px !important;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
         position: relative !important;
         border: none !important;
@@ -70,17 +84,17 @@
         background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
         border: 2px solid #cbd5e1 !important;
         color: #475569 !important;
-        padding: 12px 20px !important;
-        border-radius: 13px !important;
+        padding: 10px 16px !important;
+        border-radius: 10px !important;
         font-weight: 600 !important;
-        font-size: 0.9em !important;
+        font-size: 0.72em !important;
         cursor: pointer !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         display: flex !important;
         align-items: center !important;
-        gap: 8px !important;
-        margin: 16px 24px !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+        gap: 6px !important;
+        margin: 13px 19px !important;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05) !important;
         position: relative !important;
         overflow: hidden !important;
         text-decoration: none !important;
@@ -92,7 +106,7 @@
         color: white !important;
         border-color: #667eea !important;
         transform: translateY(-2px) !important;
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
     }
     
     /* Modal para Nueva Consulta */
@@ -147,8 +161,8 @@
     .modal-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
         color: white !important;
-        padding: 16px 20px !important;
-        border-radius: 16px 16px 0 0 !important;
+        padding: 13px 16px !important;
+        border-radius: 13px 13px 0 0 !important;
         display: flex !important;
         justify-content: space-between !important;
         align-items: center !important;
@@ -156,20 +170,20 @@
 
     .modal-header h3 {
         margin: 0 !important;
-        font-size: 1.1em !important;
+        font-size: 0.88em !important;
         font-weight: 600 !important;
         display: flex !important;
         align-items: center !important;
-        gap: 8px !important;
+        gap: 6px !important;
     }
 
     .close-btn {
         background: none !important;
         border: none !important;
         color: white !important;
-        font-size: 1.5em !important;
+        font-size: 1.2em !important;
         cursor: pointer !important;
-        padding: 5px !important;
+        padding: 4px !important;
         border-radius: 50% !important;
         transition: background 0.3s ease !important;
     }
@@ -179,28 +193,28 @@
     }
 
     .modal-body {
-        padding: 20px !important;
+        padding: 16px !important;
     }
 
     .form-group {
-        margin-bottom: 16px !important;
+        margin-bottom: 13px !important;
     }
 
     .form-group label {
         display: block !important;
-        margin-bottom: 6px !important;
+        margin-bottom: 5px !important;
         font-weight: 600 !important;
         color: #374151 !important;
-        font-size: 0.85em !important;
+        font-size: 0.68em !important;
     }
 
     .form-group input,
     .form-group textarea {
         width: 100% !important;
-        padding: 10px 12px !important;
+        padding: 8px 10px !important;
         border: 2px solid #e5e7eb !important;
-        border-radius: 10px !important;
-        font-size: 13px !important;
+        border-radius: 8px !important;
+        font-size: 10px !important;
         transition: border-color 0.3s ease !important;
         font-family: inherit !important;
         box-sizing: border-box !important;
