@@ -165,10 +165,10 @@ class ModalManager {
             }
         });
 
-        // Cerrar al hacer clic fuera del modal
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) this.closeEditarConsultaModal();
-        });
+        // Cerrar al hacer clic fuera del modal - DESHABILITADO
+        // modal.addEventListener('click', (e) => {
+        //     if (e.target === modal) this.closeEditarConsultaModal();
+        // });
 
         // Máscara decimal para campos de laboratorio
         this.labFieldsManager.attachDecimalMask([
@@ -247,16 +247,18 @@ class ModalManager {
         // Event listeners para medicación
         closeMed?.addEventListener('click', () => closeModal(modalMed));
         btnCloseMed?.addEventListener('click', () => closeModal(modalMed));
-        modalMed?.addEventListener('click', (e) => {
-            if (e.target === modalMed) closeModal(modalMed);
-        });
+        // Cerrar modal al hacer clic fuera - DESHABILITADO
+        // modalMed?.addEventListener('click', (e) => {
+        //     if (e.target === modalMed) closeModal(modalMed);
+        // });
 
         // Event listeners para antecedentes
         closeAnte?.addEventListener('click', () => closeModal(modalAnte));
         btnCloseAnte?.addEventListener('click', () => closeModal(modalAnte));
-        modalAnte?.addEventListener('click', (e) => {
-            if (e.target === modalAnte) closeModal(modalAnte);
-        });
+        // Cerrar modal al hacer clic fuera - DESHABILITADO
+        // modalAnte?.addEventListener('click', (e) => {
+        //     if (e.target === modalAnte) closeModal(modalAnte);
+        // });
 
         // Cerrar con Escape
         document.addEventListener('keydown', (e) => {

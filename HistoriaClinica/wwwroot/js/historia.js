@@ -2087,13 +2087,14 @@ function initializeModalesMedicacionAntecedentes() {
         console.log('✅ Event listener agregado para botón editar medicación');
     }
     
-    if (modalMedicacion) {
-        modalMedicacion.addEventListener('click', (e) => {
-            if (e.target === modalMedicacion) {
-                cerrarModalMedicacion();
-            }
-        });
-    }
+    // Cerrar modal al hacer clic fuera - DESHABILITADO
+    // if (modalMedicacion) {
+    //     modalMedicacion.addEventListener('click', (e) => {
+    //         if (e.target === modalMedicacion) {
+    //             cerrarModalMedicacion();
+    //         }
+    //     });
+    // }
     
     // Event listeners para modal de antecedentes
     if (closeModalAntecedentes) {
@@ -2116,13 +2117,14 @@ function initializeModalesMedicacionAntecedentes() {
         console.log('✅ Event listener agregado para botón editar antecedentes');
     }
     
-    if (modalAntecedentes) {
-        modalAntecedentes.addEventListener('click', (e) => {
-            if (e.target === modalAntecedentes) {
-                cerrarModalAntecedentes();
-            }
-        });
-    }
+    // Cerrar modal al hacer clic fuera - DESHABILITADO
+    // if (modalAntecedentes) {
+    //     modalAntecedentes.addEventListener('click', (e) => {
+    //         if (e.target === modalAntecedentes) {
+    //             cerrarModalAntecedentes();
+    //         }
+    //     });
+    // }
     
     // Cerrar modales con Escape
     document.addEventListener('keydown', (e) => {
@@ -2767,14 +2769,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             cancelBtn.addEventListener('click', cerrarModalEditarConsulta);
         }
         
-        // Cerrar modal al hacer clic fuera
-        if (modal) {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    cerrarModalEditarConsulta();
-                }
-            });
-        }
+        // Cerrar modal al hacer clic fuera - DESHABILITADO
+        // if (modal) {
+        //     modal.addEventListener('click', (e) => {
+        //         if (e.target === modal) {
+        //             cerrarModalEditarConsulta();
+        //         }
+        //     });
+        // }
         
         // Cerrar modal con Escape
         document.addEventListener('keydown', (e) => {
