@@ -2564,6 +2564,127 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
     
+    // Función para mostrar el modal de error con formato amigable
+    function showErrorModal(errorData) {
+        const modal = document.getElementById('modalError');
+        const errorMainMessage = document.getElementById('errorMainMessage');
+        const errorDetails = document.getElementById('errorDetails');
+        const closeBtn = document.getElementById('closeModalError');
+        const acceptBtn = document.getElementById('acceptErrorBtn');
+
+        if (!modal || !errorMainMessage || !errorDetails) {
+            console.error('❌ Elementos del modal de error no encontrados');
+            // Fallback a alert si el modal no existe
+            alert(typeof errorData === 'string' ? errorData : JSON.stringify(errorData));
+            return;
+        }
+
+        // Formatear el mensaje principal
+        let mainMessage = 'Se encontraron errores de validación';
+        let detailsHtml = '';
+
+        // Si es un string, mostrar directamente
+        if (typeof errorData === 'string') {
+            mainMessage = errorData;
+        } 
+        // Si es un objeto JSON con errores de validación
+        else if (errorData && typeof errorData === 'object') {
+            // Intentar obtener el mensaje principal
+            if (errorData.title) {
+                mainMessage = errorData.title;
+            } else if (errorData.mensaje) {
+                mainMessage = errorData.mensaje;
+            } else if (errorData.error) {
+                mainMessage = errorData.error;
+            }
+
+            // Formatear los errores de validación
+            if (errorData.errors) {
+                const errors = errorData.errors;
+                const errorList = [];
+
+                // Procesar cada campo con errores
+                Object.keys(errors).forEach(field => {
+                    const fieldErrors = Array.isArray(errors[field]) ? errors[field] : [errors[field]];
+                    
+                    fieldErrors.forEach(errorMsg => {
+                        // Traducir nombres de campos técnicos a nombres amigables
+                        let friendlyFieldName = field;
+                        if (field === 'actualizarConsultaDto') {
+                            friendlyFieldName = 'Datos de la consulta';
+                        } else if (field === 'fechaLaboratorio') {
+                            friendlyFieldName = 'Fecha de Laboratorio';
+                        } else if (field.startsWith('$.')) {
+                            friendlyFieldName = field.replace('$.', '').replace(/([A-Z])/g, ' $1').trim();
+                        }
+
+                        // Formatear el mensaje de error
+                        let formattedError = errorMsg;
+                        if (errorMsg.includes('could not be converted')) {
+                            formattedError = 'El formato de la fecha no es válido. Por favor, ingrese una fecha válida (ej: YYYY-MM-DD)';
+                        } else if (errorMsg.includes('is required')) {
+                            formattedError = 'Este campo es obligatorio';
+                        }
+
+                        errorList.push({
+                            field: friendlyFieldName,
+                            message: formattedError
+                        });
+                    });
+                });
+
+                // Generar HTML de los detalles
+                if (errorList.length > 0) {
+                    detailsHtml = '<ul>';
+                    errorList.forEach(error => {
+                        detailsHtml += `<li><span class="error-field">${error.field}:</span> ${error.message}</li>`;
+                    });
+                    detailsHtml += '</ul>';
+                }
+            }
+        }
+
+        // Actualizar el contenido del modal
+        errorMainMessage.textContent = mainMessage;
+        errorDetails.innerHTML = detailsHtml || '';
+
+        // Mostrar el modal
+        modal.classList.remove('hidden');
+        modal.classList.add('show');
+
+        // Función para cerrar el modal
+        const closeModal = () => {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        };
+
+        // Event listeners
+        if (closeBtn) {
+            closeBtn.onclick = closeModal;
+        }
+        if (acceptBtn) {
+            acceptBtn.onclick = closeModal;
+        }
+
+        // Cerrar al hacer clic fuera del modal
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Cerrar con la tecla Escape
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('show')) {
+                closeModal();
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+    }
+
     // Función para guardar los cambios de la consulta
     async function guardarCambiosConsulta(event) {
         event.preventDefault();
@@ -2714,19 +2835,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                 console.error('❌ Error al actualizar consulta:', response.status, errorText);
                 
                 // Intentar parsear como JSON para obtener un mensaje más amigable
-                let errorMessage = `Error al actualizar consulta: ${errorText}`;
+                let errorData = `Error al actualizar consulta: ${errorText}`;
                 try {
                     const errorJson = JSON.parse(errorText);
-                    if (errorJson.mensaje) {
-                        errorMessage = errorJson.mensaje;
-                    } else if (errorJson.error) {
-                        errorMessage = errorJson.error;
-                    }
+                    errorData = errorJson; // Usar el objeto JSON completo para mejor formateo
                 } catch (e) {
                     // Si no es JSON, usar el mensaje de texto plano
                 }
                 
-                alert(errorMessage);
+                showErrorModal(errorData);
             }
             
         } catch (error) {
@@ -2738,7 +2855,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 errorMessage += `: ${error.message}`;
             }
             
-            alert(errorMessage);
+            showErrorModal(errorMessage);
         } finally {
             // Restaurar botón
             submitBtn.disabled = false;
