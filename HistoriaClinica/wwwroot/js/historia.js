@@ -245,6 +245,10 @@ function renderPatientSidebar(p) {
                         <span style="color: #6b7280; font-size: 0.9em;">Marcar si es paciente particular</span>
                     </div>
                 </div>
+                <div class="editable-field">
+                    <label>Médico de Cabecera:</label>
+                    <input type="text" id="edit-doctorCabecera" value="${p.doctorCabecera || p.DoctorCabecera || ''}" placeholder="Nombre del médico de cabecera" disabled>
+                </div>
                 <div class="section-actions hidden">
                     <button class="btn-save-section" onclick="saveSection('personal')">
                         <i class="fas fa-save"></i> Guardar
@@ -419,6 +423,7 @@ async function saveSection(section) {
             sectionData.peso = document.getElementById('edit-peso')?.value ? parseFloat(document.getElementById('edit-peso').value) : null;
             sectionData.altura = document.getElementById('edit-altura')?.value ? parseInt(document.getElementById('edit-altura').value) : null;
             sectionData.particular = document.getElementById('edit-particular')?.checked || false;
+            sectionData.doctorCabecera = document.getElementById('edit-doctorCabecera')?.value?.trim() || null;
             break;
         case 'medicacion':
             sectionData.medicacion = document.getElementById('edit-medicacion')?.value || '';

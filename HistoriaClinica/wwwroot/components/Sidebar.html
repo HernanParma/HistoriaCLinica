@@ -211,6 +211,7 @@ class SidebarComponent {
                     ${this.renderEditableField('Peso (kg)', 'edit-peso', patient.peso || patient.Peso, 'number')}
                     ${this.renderEditableField('Altura (cm)', 'edit-altura', patient.altura || patient.Altura, 'number')}
                     ${this.renderCheckboxField('Particular', 'edit-particular', patient.particular || patient.Particular)}
+                    ${this.renderEditableField('Médico de Cabecera', 'edit-doctorCabecera', patient.doctorCabecera || patient.DoctorCabecera)}
                     <div class="section-actions hidden">
                         <button class="btn-save-section" onclick="sidebarComponent.saveSection('personal')">
                             <i class="fas fa-save"></i> Guardar
@@ -390,7 +391,8 @@ class SidebarComponent {
                     fechaNacimiento: getValue('edit-fechaNacimiento') || null,
                     peso: getFloatValue('edit-peso'),
                     altura: getIntValue('edit-altura'),
-                    particular: getCheckboxValue('edit-particular')
+                    particular: getCheckboxValue('edit-particular'),
+                    doctorCabecera: getValue('edit-doctorCabecera') || null
                 };
             case 'medicacion':
                 return {
