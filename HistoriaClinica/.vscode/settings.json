@@ -1,0 +1,18 @@
+{
+    "liveServer.settings.port": 5500,
+    "liveServer.settings.root": "/wwwroot",
+    "liveServer.settings.CustomBrowser": "default",
+    "liveServer.settings.donotShowInfoMsg": true,
+    "liveServer.settings.donotVerifyTags": true,
+    "liveServer.settings.ignoreFiles": [
+        ".vscode/**",
+        "**/*.scss",
+        "**/*.sass",
+        "**/*.ts"
+    ],
+    "liveServer.settings.file": "index.html",
+    "files.associations": {
+        "*.html": "html"
+    }
+}
+

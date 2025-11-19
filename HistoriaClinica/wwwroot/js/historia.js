@@ -247,7 +247,11 @@ function renderPatientSidebar(p) {
                 </div>
                 <div class="editable-field">
                     <label>Médico de Cabecera:</label>
-                    <input type="text" id="edit-doctorCabecera" value="${p.doctorCabecera || p.DoctorCabecera || ''}" placeholder="Nombre del médico de cabecera" disabled>
+                    <select id="edit-doctorCabecera" disabled style="width: 100%; padding: 10px 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; background-color: #f9fafb; color: #6b7280;">
+                        <option value="">Seleccione un doctor</option>
+                        <option value="Florencia San Juan" ${(p.doctorCabecera || p.DoctorCabecera) === 'Florencia San Juan' ? 'selected' : ''}>Florencia San Juan</option>
+                        <option value="Iñaki Gonzalez" ${(p.doctorCabecera || p.DoctorCabecera) === 'Iñaki Gonzalez' ? 'selected' : ''}>Iñaki Gonzalez</option>
+                    </select>
                 </div>
                 <div class="section-actions hidden">
                     <button class="btn-save-section" onclick="saveSection('personal')">
@@ -368,7 +372,8 @@ function getSectionFields(section) {
                 document.getElementById('edit-fechaNacimiento'),
                 document.getElementById('edit-peso'),
                 document.getElementById('edit-altura'),
-                document.getElementById('edit-particular')
+                document.getElementById('edit-particular'),
+                document.getElementById('edit-doctorCabecera')
             ];
             break;
         case 'medicacion':

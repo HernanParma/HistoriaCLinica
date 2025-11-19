@@ -48,7 +48,7 @@ class PatientManager {
                     ${this.renderEditableField('Peso (kg)', 'edit-peso', patient.peso || patient.Peso, 'number')}
                     ${this.renderEditableField('Altura (cm)', 'edit-altura', patient.altura || patient.Altura, 'number')}
                     ${this.renderCheckboxField('Particular', 'edit-particular', patient.particular || patient.Particular)}
-                    ${this.renderEditableField('Médico de Cabecera', 'edit-doctorCabecera', patient.doctorCabecera || patient.DoctorCabecera)}
+                    ${this.renderDoctorField('Médico de Cabecera', 'edit-doctorCabecera', patient.doctorCabecera || patient.DoctorCabecera)}
                     <div class="section-actions hidden">
                         <button class="btn-save-section" onclick="patientManager.saveSection('personal')">
                             <i class="fas fa-save"></i> Guardar
@@ -95,6 +95,23 @@ class PatientManager {
             <div class="editable-field">
                 <label>${label}:</label>
                 <input type="text" id="${id}" value="${value || ''}" readonly style="background:#f3f4f6;color:#6b7280;">
+            </div>
+        `;
+    }
+
+    /**
+     * Renderiza un campo de médico de cabecera (select)
+     */
+    renderDoctorField(label, id, value = '') {
+        const currentValue = value || '';
+        return `
+            <div class="editable-field">
+                <label>${label}:</label>
+                <select id="${id}" disabled style="width: 100%; padding: 10px 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; background-color: #f9fafb; color: #6b7280;">
+                    <option value="">Seleccione un doctor</option>
+                    <option value="Florencia San Juan" ${currentValue === 'Florencia San Juan' ? 'selected' : ''}>Florencia San Juan</option>
+                    <option value="Iñaki Gonzalez" ${currentValue === 'Iñaki Gonzalez' ? 'selected' : ''}>Iñaki Gonzalez</option>
+                </select>
             </div>
         `;
     }
@@ -180,7 +197,7 @@ class PatientManager {
             personal: [
                 'edit-nombre', 'edit-apellido', 'edit-dni', 'edit-numeroAfiliado', 
                 'edit-obraSocial', 'edit-telefono', 'edit-email', 'edit-fechaNacimiento', 
-                'edit-peso', 'edit-altura', 'edit-particular'
+                'edit-peso', 'edit-altura', 'edit-particular', 'edit-doctorCabecera'
             ],
             medicacion: ['edit-medicacion'],
             antecedentes: ['edit-antecedentes']

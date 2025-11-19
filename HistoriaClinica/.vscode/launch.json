@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Live Server: index.html",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/live-server/live-server.js",
+            "args": [
+                "${workspaceFolder}/wwwroot",
+                "--port=5500",
+                "--open=/index.html",
+                "--entry-file=index.html"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        }
+    ]
+}
+
