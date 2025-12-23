@@ -175,6 +175,34 @@
         </div>
     </div>
 
+    <script>
+    // Verificar si se está abriendo desde file:// (directamente desde el explorador)
+    if (window.location.protocol === 'file:') {
+        document.body.innerHTML = `
+            <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                <div style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-width: 600px; text-align: center;">
+                    <h1 style="color: #667eea; margin-bottom: 20px;">
+                        <i class="fas fa-exclamation-triangle"></i> Error de Apertura
+                    </h1>
+                    <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+                        Este archivo debe abrirse desde un servidor web, no directamente desde el explorador de archivos.
+                    </p>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: left;">
+                        <h3 style="color: #667eea; margin-top: 0;">Opciones para abrir correctamente:</h3>
+                        <ol style="color: #555; line-height: 2;">
+                            <li><strong>Desde VS Code:</strong> Click derecho en index.html → "Open with Live Server"</li>
+                            <li><strong>Desde terminal:</strong> Ejecuta <code style="background: #e9ecef; padding: 2px 6px; border-radius: 3px;">dotnet run</code> y abre <code style="background: #e9ecef; padding: 2px 6px; border-radius: 3px;">https://localhost:7229</code></li>
+                            <li><strong>Desde PowerShell:</strong> Ejecuta <code style="background: #e9ecef; padding: 2px 6px; border-radius: 3px;">python serve-html.py</code></li>
+                        </ol>
+                    </div>
+                    <p style="color: #666; font-size: 14px;">
+                        Consulta el archivo <strong>INSTRUCCIONES_LIVE_SERVER.md</strong> para más detalles.
+                    </p>
+                </div>
+            </div>
+        `;
+    }
+    </script>
     <script src="js/environment-config.js"></script>
     <script src="js/app.js?v=8"></script>
     <script>

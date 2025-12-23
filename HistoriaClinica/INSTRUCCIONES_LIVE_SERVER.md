@@ -120,3 +120,5 @@ Si `index.html` hace llamadas a la API, necesitarás:
 Para desarrollo rápido de HTML/CSS/JS: **Opción 1 (Live Server)**
 Para desarrollo completo con API: **Opción 4 (dotnet run)**
 
+
+

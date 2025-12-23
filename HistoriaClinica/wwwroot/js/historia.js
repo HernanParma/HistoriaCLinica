@@ -48,6 +48,18 @@ function applyHighlightedFields(highlightedFields, root = document) {
   });
 }
 
+// Función helper para preservar saltos de línea en HTML
+// Escapa HTML para seguridad y convierte \n a <br>
+function formatTextWithLineBreaks(text) {
+    if (!text) return '';
+    // Primero escapar HTML para evitar XSS
+    const div = document.createElement('div');
+    div.textContent = text;
+    const escaped = div.innerHTML;
+    // Convertir saltos de línea a <br>
+    return escaped.replace(/\n/g, '<br>');
+}
+
 function clearHighlightedFields(root = document) {
   root.querySelectorAll('.lab-grid .form-group label.highlighted')
     .forEach(l => l.classList.remove('highlighted'));
@@ -799,7 +811,7 @@ function renderRecetarConBoton(consulta) {
     // Contenido principal con mejor estructura
     html += `<div style="display: flex; align-items: flex-start; gap: 12px;">
         <div style="min-width: 80px; font-weight: 700; color: #92400e; font-size: 0.95em;">Recetar:</div>
-        <div style="flex: 1; color: #451a03; line-height: 1.5; font-size: 0.95em;">${recetar}</div>
+        <div style="flex: 1; color: #451a03; line-height: 1.5; font-size: 0.95em; white-space: pre-wrap;">${formatTextWithLineBreaks(recetar)}</div>
     </div>`;
     
     // Controles de revisión con mejor alineación
@@ -838,7 +850,7 @@ function renderOmeConBoton(consulta) {
     // Contenido principal con mejor estructura
     html += `<div style="display: flex; align-items: flex-start; gap: 12px;">
         <div style="min-width: 80px; font-weight: 700; color: #dc2626; font-size: 0.95em;">OME:</div>
-        <div style="flex: 1; color: #7f1d1d; line-height: 1.5; font-size: 0.95em;">${ome}</div>
+        <div style="flex: 1; color: #7f1d1d; line-height: 1.5; font-size: 0.95em; white-space: pre-wrap;">${formatTextWithLineBreaks(ome)}</div>
     </div>`;
     
     // Controles de revisión con mejor alineación
@@ -910,10 +922,10 @@ function renderConsultas(consultas) {
                 </div>
                 <div class="consulta-content collapsed">
                     <div class="consulta-details">
-                    ${consulta.motivo || consulta.Motivo ? `<div class="detail-item"><strong>Motivo:</strong> ${consulta.motivo || consulta.Motivo}</div>` : ''}
+                    ${consulta.motivo || consulta.Motivo ? `<div class="detail-item"><strong>Motivo:</strong> <span style="white-space: pre-wrap;">${formatTextWithLineBreaks(consulta.motivo || consulta.Motivo)}</span></div>` : ''}
                     ${renderRecetarConBoton(consulta)}
                     ${renderOmeConBoton(consulta)}
-                    ${consulta.notas || consulta.Notas ? `<div class="detail-item"><strong>Notas:</strong> ${consulta.notas || consulta.Notas}</div>` : ''}
+                    ${consulta.notas || consulta.Notas ? `<div class="detail-item"><strong>Notas:</strong> <span style="white-space: pre-wrap;">${formatTextWithLineBreaks(consulta.notas || consulta.Notas)}</span></div>` : ''}
                     
                     <!-- Archivos adjuntos -->
                     ${renderArchivosAdjuntos(consulta.archivos || consulta.Archivos)}
@@ -990,7 +1002,8 @@ function renderConsultas(consultas) {
 
 // Variables globales para archivos
 let archivosList = [];
-let archivosListEditar = [];
+let archivosListEditar = []; // Archivos nuevos seleccionados para subir
+let archivosExistentesEditar = []; // Archivos que ya están en el servidor
 
 // Funciones globales para manejo de archivos en modal de editar
 function getIconClass(filename) {
@@ -1015,27 +1028,62 @@ function mostrarArchivosSeleccionadosEditar() {
     const archivosSeleccionadosEditar = document.getElementById('archivosSeleccionadosEditar');
     if (!archivosSeleccionadosEditar) return;
 
-    if (archivosListEditar.length === 0) {
+    // Combinar archivos existentes y nuevos
+    const todosLosArchivos = [];
+    
+    // Agregar archivos existentes (ya en el servidor)
+    archivosExistentesEditar.forEach((archivo, index) => {
+        todosLosArchivos.push({
+            ...archivo,
+            esExistente: true,
+            indice: index
+        });
+    });
+    
+    // Agregar archivos nuevos (seleccionados para subir)
+    archivosListEditar.forEach((file, index) => {
+        todosLosArchivos.push({
+            name: file.name,
+            size: file.size,
+            esExistente: false,
+            indice: index,
+            file: file // Mantener referencia al File object
+        });
+    });
+
+    if (todosLosArchivos.length === 0) {
         archivosSeleccionadosEditar.innerHTML = '';
         return;
     }
 
-    const archivosHTML = archivosListEditar.map((file, index) => {
-        const iconClass = getIconClass(file.name);
-        const fileSize = formatFileSize(file.size);
+    const archivosHTML = todosLosArchivos.map((item, index) => {
+        const iconClass = item.esExistente 
+            ? getIconClass(item.nombreOriginal || item.NombreOriginal || item.name)
+            : getIconClass(item.name);
+        const fileSize = item.esExistente
+            ? formatFileSize(item.tamañoBytes || item.TamañoBytes || 0)
+            : formatFileSize(item.size);
+        const fileName = item.esExistente
+            ? (item.nombreOriginal || item.NombreOriginal || item.name)
+            : item.name;
+        const badge = item.esExistente 
+            ? '<span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.75em; margin-left: 8px;">Existente</span>'
+            : '<span style="background: #3b82f6; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.75em; margin-left: 8px;">Nuevo</span>';
         
         return `
             <div class="archivo-item">
                 <div class="archivo-info">
                     <div class="archivo-icono ${iconClass}">
-                        <i class="fas ${getIconName(file.name)}"></i>
+                        <i class="fas ${item.esExistente 
+                            ? getIconName(item.nombreOriginal || item.NombreOriginal || item.name)
+                            : getIconName(item.name)}"></i>
                     </div>
                     <div>
-                        <div class="archivo-nombre">${file.name}</div>
+                        <div class="archivo-nombre">${fileName} ${badge}</div>
                         <div class="archivo-tamaño">${fileSize}</div>
                     </div>
                 </div>
-                <button type="button" class="btn-eliminar-archivo" onclick="eliminarArchivoEditar(${index})">
+                <button type="button" class="btn-eliminar-archivo" onclick="eliminarArchivoEditar(${index}, ${item.esExistente ? 'true' : 'false'})">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -1395,17 +1443,31 @@ function initializeModal() {
     // están declaradas globalmente arriba, fuera de esta función
     
     // Función global para eliminar archivos en modal de editar
-    window.eliminarArchivoEditar = function(index) {
-        archivosListEditar.splice(index, 1);
-        mostrarArchivosSeleccionadosEditar();
-        
-        // Actualizar el input de archivos
-        const archivosInputEditar = document.getElementById('archivosEditarConsulta');
-        if (archivosInputEditar) {
-            const dt = new DataTransfer();
-            archivosListEditar.forEach(file => dt.items.add(file));
-            archivosInputEditar.files = dt.files;
+    window.eliminarArchivoEditar = function(index, esExistente) {
+        if (esExistente) {
+            // Eliminar de archivos existentes
+            // El índice corresponde directamente al array de existentes
+            archivosExistentesEditar.splice(index, 1);
+            console.log('🗑️ Archivo existente eliminado. Restantes:', archivosExistentesEditar.length);
+        } else {
+            // Eliminar de archivos nuevos
+            // El índice en el array combinado es: cantidad de existentes + índice en nuevos
+            // Entonces el índice en el array de nuevos es: index - cantidad de existentes
+            const indiceNuevo = index - archivosExistentesEditar.length;
+            if (indiceNuevo >= 0 && indiceNuevo < archivosListEditar.length) {
+                archivosListEditar.splice(indiceNuevo, 1);
+                console.log('🗑️ Archivo nuevo eliminado. Restantes:', archivosListEditar.length);
+            }
+            
+            // Actualizar el input de archivos
+            const archivosInputEditar = document.getElementById('archivosEditarConsulta');
+            if (archivosInputEditar) {
+                const dt = new DataTransfer();
+                archivosListEditar.forEach(file => dt.items.add(file));
+                archivosInputEditar.files = dt.files;
+            }
         }
+        mostrarArchivosSeleccionadosEditar();
     };
 
     console.log('✅ Funcionalidad del modal de nueva consulta inicializada');
@@ -2547,6 +2609,28 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Aplicar los campos resaltados en el contexto del modal de edición
             if (window.applyHighlightedFields) window.applyHighlightedFields(camposResaltados, modal);
         }
+        
+        // Cargar archivos existentes de la consulta
+        archivosExistentesEditar = [];
+        archivosListEditar = [];
+        const archivos = consulta.archivos || consulta.Archivos || [];
+        if (archivos && archivos.length > 0) {
+            // Si archivos es un string JSON, parsearlo
+            if (typeof archivos === 'string') {
+                try {
+                    archivosExistentesEditar = JSON.parse(archivos);
+                } catch (e) {
+                    console.error('Error al parsear archivos JSON:', e);
+                    archivosExistentesEditar = [];
+                }
+            } else if (Array.isArray(archivos)) {
+                archivosExistentesEditar = archivos;
+            }
+            console.log('📎 Archivos existentes cargados:', archivosExistentesEditar);
+        }
+        
+        // Mostrar archivos en el modal
+        mostrarArchivosSeleccionadosEditar();
     }
     
     // Función para cerrar el modal de edición
@@ -2560,8 +2644,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             consultaEditandoId = null;
             // Limpiar campos resaltados
             clearHighlightedFields();
-            // Limpiar archivos seleccionados
+            // Limpiar archivos seleccionados y existentes
             archivosListEditar = [];
+            archivosExistentesEditar = [];
             // Llamar a la función solo si existe
             if (typeof mostrarArchivosSeleccionadosEditar === 'function') {
                 mostrarArchivosSeleccionadosEditar();
@@ -2765,10 +2850,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 return;
             }
 
-            // Subir archivos si hay archivos seleccionados
+            // Subir archivos nuevos si hay archivos seleccionados
             let archivosSubidos = [];
             if (archivosListEditar.length > 0) {
-                console.log('📎 Subiendo archivos para la consulta editada...');
+                console.log('📎 Subiendo archivos nuevos para la consulta editada...');
                 try {
                     for (const archivo of archivosListEditar) {
                         const formDataArchivo = new FormData();
@@ -2783,7 +2868,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         if (responseArchivo.ok) {
                             const archivoDto = await responseArchivo.json();
                             archivosSubidos.push(archivoDto);
-                            console.log('✅ Archivo subido:', archivoDto.nombreOriginal);
+                            console.log('✅ Archivo nuevo subido:', archivoDto.nombreOriginal);
                         } else {
                             console.error('❌ Error al subir archivo:', archivo.name);
                         }
@@ -2793,8 +2878,14 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             }
 
+            // Combinar archivos existentes (que no se eliminaron) con los nuevos
+            const todosLosArchivos = [...archivosExistentesEditar, ...archivosSubidos];
+            console.log('📎 Archivos totales para guardar:', todosLosArchivos.length);
+            console.log('   - Existentes:', archivosExistentesEditar.length);
+            console.log('   - Nuevos:', archivosSubidos.length);
+
             // Agregar archivos al payload
-            consultaData.archivos = archivosSubidos;
+            consultaData.archivos = todosLosArchivos;
 
             console.log('📝 Actualizando consulta:', consultaData);
             console.log('🔍 Payload completo para actualizar:', JSON.stringify(consultaData, null, 2));

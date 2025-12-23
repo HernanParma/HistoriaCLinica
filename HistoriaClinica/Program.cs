@@ -30,10 +30,9 @@ builder.Services.AddCors(options =>
     {
         if (builder.Environment.IsDevelopment())
         {
-            policy.WithOrigins(
-                    "http://127.0.0.1:5500",
-                    "http://localhost:5500"
-                )
+            // En desarrollo permitimos cualquier origen para evitar fricción con Live Server o puertos distintos
+            policy
+                .AllowAnyOrigin()
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         }
