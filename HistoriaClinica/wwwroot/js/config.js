@@ -15,19 +15,28 @@
         console.log('🔒 Protocolo actual:', currentProtocol);
         console.log('🔢 Puerto actual:', currentPort || '(por defecto)');
         
-        // Si estamos en localhost o 127.0.0.1, usar el mismo origen (mismo protocolo y puerto)
-        // Esto evita problemas de CORS y de protocolo mixto (HTTP vs HTTPS)
+        // Si estamos en localhost o 127.0.0.1
         if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
-            // Si hay un puerto específico, usarlo; si no, usar el puerto por defecto del protocolo
-            let apiUrl;
-            if (currentPort) {
-                apiUrl = `${currentProtocol}//${currentHost}:${currentPort}`;
-            } else {
-                // Si no hay puerto explícito pero estamos en HTTPS, probablemente es 443
-                // Si estamos en HTTP, probablemente es 80, pero mejor usar el mismo origen
-                apiUrl = `${currentProtocol}//${currentHost}`;
+            // Si estamos en Live Server (puerto 5500), el backend está en otro puerto
+            // Intentar detectar si el backend está corriendo en 5000 o 7229
+            if (currentPort === '5500' || currentPort === '5501') {
+                // Live Server detectado, usar el puerto del backend
+                // Primero intentar HTTP en 5000, luego HTTPS en 7229
+                const apiUrl = 'http://localhost:5000';
+                console.log('🏠 Live Server detectado (puerto ' + currentPort + '), usando backend en:', apiUrl);
+                return apiUrl;
             }
-            console.log('🏠 Entorno local detectado, usando mismo origen:', apiUrl);
+            
+            // Si hay un puerto específico y no es Live Server, usarlo
+            if (currentPort && currentPort !== '5500' && currentPort !== '5501') {
+                const apiUrl = `${currentProtocol}//${currentHost}:${currentPort}`;
+                console.log('🏠 Entorno local detectado, usando mismo origen:', apiUrl);
+                return apiUrl;
+            }
+            
+            // Si no hay puerto o es el puerto por defecto, usar el backend en 5000
+            const apiUrl = 'http://localhost:5000';
+            console.log('🏠 Entorno local detectado, usando backend en:', apiUrl);
             return apiUrl;
         }
         

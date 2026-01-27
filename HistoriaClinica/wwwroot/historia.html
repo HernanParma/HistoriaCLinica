@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://historia.runasp.net https://localhost:5156;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' http://localhost:5000 https://localhost:7229 https://historia.runasp.net https://localhost:5156;">
     <title>Historia Clínica del Paciente</title>
     <link rel="stylesheet" href="css/styles.css">
     <!-- Font Awesome local -->
@@ -305,6 +305,86 @@
         transform: translateY(0) !important;
     }
 
+    /* Estilos para el Modal de Planillas */
+    .planillas-options {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .planilla-option-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .planilla-option-btn {
+        background: #f3f4f6;
+        border: 2px solid #e5e7eb;
+        color: #374151;
+        padding: 12px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.95em;
+        font-weight: 500;
+        text-align: left;
+    }
+
+    .planilla-option-btn:hover {
+        background: #e5e7eb;
+        border-color: #667eea;
+        color: #667eea;
+        transform: translateX(5px);
+    }
+
+    .planilla-option-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: #667eea;
+        color: white;
+        font-weight: 600;
+    }
+
+    .planilla-option-btn i {
+        font-size: 1.1em;
+    }
+
+    .planilla-content {
+        padding: 10px;
+    }
+
+    .planilla-detail {
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .planilla-text p {
+        margin: 8px 0;
+        padding: 8px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .planilla-text p:last-child {
+        border-bottom: none;
+    }
+
+    .planilla-text p strong {
+        color: #1f2937;
+        font-weight: 600;
+    }
+
     .form-group {
         margin-bottom: 16px !important;
     }
@@ -518,6 +598,91 @@
     .archivos-seleccionados {
         margin-top: 20px !important;
         text-align: left !important;
+    }
+
+    /* Estilos específicos para QR */
+    .qr-upload-area {
+        padding: 20px !important;
+        border: 2px dashed #667eea !important;
+        border-radius: 12px !important;
+        background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%) !important;
+        text-align: center !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .qr-upload-area:hover {
+        border-color: #764ba2 !important;
+        background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 100%) !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2) !important;
+    }
+
+    .qr-label {
+        background: transparent !important;
+    }
+
+    .qr-label i {
+        font-size: 3em !important;
+        color: #667eea !important;
+        margin-bottom: 10px !important;
+    }
+
+    .qr-label span {
+        color: #667eea !important;
+        font-weight: 700 !important;
+    }
+
+    .qr-preview-container {
+        margin-top: 20px !important;
+        padding: 15px !important;
+        background: white !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .qr-preview-wrapper {
+        position: relative !important;
+        display: inline-block !important;
+        max-width: 300px !important;
+        margin: 0 auto !important;
+    }
+
+    .qr-preview-image {
+        max-width: 100% !important;
+        max-height: 300px !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        display: block !important;
+    }
+
+    .btn-eliminar-qr {
+        position: absolute !important;
+        top: -10px !important;
+        right: -10px !important;
+        background: #ef4444 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 50% !important;
+        width: 32px !important;
+        height: 32px !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4) !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .btn-eliminar-qr:hover {
+        background: #dc2626 !important;
+        transform: scale(1.1) !important;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.6) !important;
+    }
+
+    .qr-preview-text {
+        margin-top: 10px !important;
+        color: #6b7280 !important;
+        font-size: 0.9em !important;
+        font-style: italic !important;
     }
 
     .archivo-item {
@@ -1232,6 +1397,35 @@
     .btn-secondary:hover {
         transform: translateY(-2px) !important;
         box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3) !important;
+    }
+
+    /* Estilos para el botón QR del paciente */
+    .btn-qr {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border: none !important;
+        padding: 10px 16px !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        text-decoration: none !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2) !important;
+    }
+
+    .btn-qr:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+    }
+
+    .qr-patient-container {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
     }
 
     /* Estilos para el botón Nueva Consulta */
@@ -2216,6 +2410,16 @@
                         <div class="form-header">
                             <h2><i class="fas fa-stethoscope"></i> Consultas</h2>
                             <div class="header-buttons">
+                                <!-- Área de QR del paciente -->
+                                <div class="qr-patient-container" style="display: flex; align-items: center; gap: 10px; margin-right: 10px;">
+                                    <div id="qrDisplayContainer" style="display: none;">
+                                        <img id="qrDisplayImage" src="" alt="QR del Paciente" style="max-width: 50px; max-height: 50px; border-radius: 8px; cursor: pointer; border: 2px solid #667eea; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);" onclick="abrirModalQr()">
+                                    </div>
+                                    <button type="button" id="btnQrPaciente" class="btn btn-qr" onclick="abrirModalQr()" title="Gestionar QR del paciente">
+                                        <i class="fas fa-qrcode"></i> QR
+                                    </button>
+                                </div>
+
                                 <button id="btnNuevaConsulta" class="btn btn-primary">
                                     <i class="fas fa-plus"></i> Nueva Consulta
                                 </button>
@@ -2290,6 +2494,30 @@
                     <div class="form-group">
                         <label for="notasConsulta">Notas Adicionales:</label>
                         <textarea id="notasConsulta" name="notas" rows="3" placeholder="Observaciones, recomendaciones..."></textarea>
+                    </div>
+                    
+                    <!-- Sección de Imagen QR -->
+                    <div class="form-section">
+                        <h4><i class="fas fa-qrcode"></i> Imagen QR</h4>
+                        <div class="qr-upload-area">
+                            <div class="file-input-container">
+                                <input type="file" id="imagenQrConsulta" name="imagenQr" accept="image/*" class="file-input">
+                                <label for="imagenQrConsulta" class="file-input-label qr-label">
+                                    <i class="fas fa-qrcode"></i>
+                                    <span>Seleccionar imagen QR desde galería</span>
+                                    <small>Formatos: JPG, PNG, GIF (máx. 10MB)</small>
+                                </label>
+                            </div>
+                            <div id="qrPreviewContainer" class="qr-preview-container" style="display: none;">
+                                <div class="qr-preview-wrapper">
+                                    <img id="qrPreview" src="" alt="Vista previa QR" class="qr-preview-image">
+                                    <button type="button" id="eliminarQr" class="btn-eliminar-qr" title="Eliminar imagen QR">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="qr-preview-text">Vista previa de la imagen QR seleccionada</p>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Campos de Laboratorio -->
@@ -2636,6 +2864,30 @@
                         </div>
                     </div>
                     
+                    <!-- Sección de Imagen QR -->
+                    <div class="form-section">
+                        <h4><i class="fas fa-qrcode"></i> Imagen QR</h4>
+                        <div class="qr-upload-area">
+                            <div class="file-input-container">
+                                <input type="file" id="imagenQrEditarConsulta" name="imagenQr" accept="image/*" class="file-input">
+                                <label for="imagenQrEditarConsulta" class="file-input-label qr-label">
+                                    <i class="fas fa-qrcode"></i>
+                                    <span>Seleccionar imagen QR desde galería</span>
+                                    <small>Formatos: JPG, PNG, GIF (máx. 10MB)</small>
+                                </label>
+                            </div>
+                            <div id="qrPreviewContainerEditar" class="qr-preview-container" style="display: none;">
+                                <div class="qr-preview-wrapper">
+                                    <img id="qrPreviewEditar" src="" alt="Vista previa QR" class="qr-preview-image">
+                                    <button type="button" id="eliminarQrEditar" class="btn-eliminar-qr" title="Eliminar imagen QR">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="qr-preview-text">Vista previa de la imagen QR seleccionada</p>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Sección de Archivos -->
                     <div class="form-section">
                         <h4><i class="fas fa-paperclip"></i> Archivos Adjuntos</h4>
@@ -2663,6 +2915,151 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para QR del Paciente -->
+    <div id="modalQrPaciente" class="modal hidden">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-qrcode"></i> QR del Paciente</h3>
+                <button id="closeModalQr" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- QR existente si hay -->
+                <div id="qrExistenteContainer" style="display: none; margin-bottom: 20px; text-align: center;">
+                    <h4 style="color: #667eea; margin-bottom: 15px;">QR Actual</h4>
+                    <div style="display: inline-block; position: relative;">
+                        <img id="qrExistenteImage" src="" alt="QR del Paciente" style="max-width: 300px; max-height: 300px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 3px solid #667eea;">
+                        <button type="button" id="eliminarQrPaciente" class="btn-eliminar-qr" style="position: absolute; top: -10px; right: -10px;" title="Eliminar QR">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <p style="margin-top: 10px; color: #6b7280; font-size: 0.9em;">Click en la imagen para ver en tamaño completo</p>
+                </div>
+
+                <!-- Área para subir nuevo QR -->
+                <div class="qr-upload-area" style="margin-top: 20px;">
+                    <div class="file-input-container">
+                        <input type="file" id="imagenQrPaciente" name="imagenQrPaciente" accept="image/*" class="file-input">
+                        <label for="imagenQrPaciente" class="file-input-label qr-label">
+                            <i class="fas fa-qrcode"></i>
+                            <span id="qrUploadText">Seleccionar imagen QR desde galería</span>
+                            <small>Formatos: JPG, PNG, GIF (máx. 10MB)</small>
+                        </label>
+                    </div>
+                    <div id="qrPreviewContainerPaciente" class="qr-preview-container" style="display: none; margin-top: 15px;">
+                        <div class="qr-preview-wrapper">
+                            <img id="qrPreviewPaciente" src="" alt="Vista previa QR" class="qr-preview-image">
+                            <button type="button" id="eliminarQrPreviewPaciente" class="btn-eliminar-qr" title="Eliminar imagen QR">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <p class="qr-preview-text">Vista previa de la nueva imagen QR</p>
+                    </div>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" id="guardarQrPaciente" class="btn btn-success">
+                        <i class="fas fa-save"></i> Guardar QR
+                    </button>
+                    <button type="button" id="cancelarQrPaciente" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Planillas -->
+    <div id="modalPlanillas" class="modal hidden">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-clipboard-list"></i> Planillas</h3>
+                <button id="closeModalPlanillas" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="display: flex; gap: 20px; min-height: 500px;">
+                <!-- Panel lateral con opciones -->
+                <div class="planillas-options" style="width: 250px; border-right: 2px solid #e5e7eb; padding-right: 20px;">
+                    <h4 style="margin-bottom: 15px; color: #667eea;">Seleccionar Planilla:</h4>
+                    <div class="planilla-option-list">
+                        <button class="planilla-option-btn" data-planilla="parkinson">
+                            <i class="fas fa-brain"></i>
+                            Planilla Parkinson
+                        </button>
+                        <!-- Aquí se pueden agregar más opciones en el futuro -->
+                    </div>
+                </div>
+                <!-- Contenido de la planilla seleccionada -->
+                <div class="planilla-content" style="flex: 1; padding-left: 20px; max-height: 600px; overflow-y: auto;">
+                    <div id="planillaParkinsonContent" class="planilla-detail" style="display: none;">
+                        <h4 style="color: #667eea; margin-bottom: 20px;">Planilla Parkinson - UPDRS</h4>
+                        <div class="planilla-text" style="line-height: 1.8; color: #374151;">
+                            <p><strong>3.1 Lenguaje</strong></p>
+                            <p><strong>3.2 Expresión facial</strong></p>
+                            <p><strong>3.3b Rigidez – MSD</strong></p>
+                            <p><strong>3.3c Rigidez – MSI</strong></p>
+                            <p><strong>3.3d Rigidez – MID</strong></p>
+                            <p><strong>3.3e Rigidez – MII</strong></p>
+                            <p><strong>3.4a Golpeteo de dedos (tapping)– Mano dcha.</strong></p>
+                            <p><strong>3.4b Golpeteo de dedos (tapping)– Mano izda.</strong></p>
+                            <p><strong>3.5a Movimientos de las manos – Mano dcha.</strong></p>
+                            <p><strong>3.5b Movimientos de las manos – Mano izda.</strong></p>
+                            <p><strong>3.6a Pronación-supinación – Mano dcha.</strong></p>
+                            <p><strong>3.6b Pronación-supinación – Mano izda.</strong></p>
+                            <p><strong>3.7a Golpeteo con los dedos de los pies – Pie derecho</strong></p>
+                            <p><strong>3.7b Golpeteo con los dedos de los pies – Pie izquierdo</strong></p>
+                            <p><strong>3.8a Agilidad con las piernas – Pierna derecha</strong></p>
+                            <p><strong>3.8b Agilidad con las piernas – Pierna izquierda</strong></p>
+                            <p><strong>3.9 Levantarse de la silla</strong></p>
+                            <p><strong>3.10 Marcha</strong></p>
+                            <p><strong>3.11 Congelación de la marcha</strong></p>
+                            <p><strong>3.12 Estabilidad postural</strong></p>
+                            <p><strong>3.13 Postura</strong></p>
+                            <p><strong>3.14 Espontaneidad global de movimientos</strong></p>
+                            <p><strong>3.15a Temblor postural – Mano derecha</strong></p>
+                            <p><strong>3.15b Temblor postural – Mano izquierda</strong></p>
+                            <p><strong>3.16a Temblor de acción – Mano derecha</strong></p>
+                            <p><strong>3.16b Temblor de acción – Mano izquierda</strong></p>
+                            <p><strong>3.17a Amplitud del temblor de reposo – MSD</strong></p>
+                            <p><strong>3.17b Amplitud del temblor de reposo – MSI</strong></p>
+                            <p><strong>3.17c Amplitud del temblor de reposo – MID</strong></p>
+                            <p><strong>3.17d Amplitud del temblor de reposo – MII</strong></p>
+                            <p><strong>3.17e Amplitud del temblor de reposo – Labio/mandíbula</strong></p>
+                            <p><strong>3.18 Persistencia del temblor de reposo</strong></p>
+                            <p style="margin-top: 20px;"><strong>¿Discinesias presentes?</strong> No Si</p>
+                            <p><strong>¿Estos movimientos interfirieron con la exploración?</strong> No Sí</p>
+                            <p style="margin-top: 20px;"><strong>Estadios de Hoehn y Yahr</strong></p>
+                            <p><strong>3a ¿El paciente toma medicación?</strong> No Sí</p>
+                            <p><strong>3b Estado clínico del paciente</strong> Off On</p>
+                            <p><strong>3c ¿El paciente toma levodopa?</strong> No Sí</p>
+                            <p><strong>3.c1 Tiempo desde la última dosis:</strong></p>
+                            <p style="margin-top: 20px;"><strong>Parte IV</strong></p>
+                            <p><strong>4.1 Tiempo con discinesias</strong></p>
+                            <p><strong>4.2 Impacto funcional de las discinesias</strong></p>
+                            <p style="margin-top: 20px;"><strong>Parte III</strong></p>
+                            <p><strong>4.3 Tiempo en OFF</strong></p>
+                            <p><strong>4.4 Impacto funcional de las fluctuaciones</strong></p>
+                            <p><strong>4.5 Complejidad de las fluctuaciones motoras</strong></p>
+                            <p><strong>3.3a Rigidez - Cuello</strong></p>
+                            <p><strong>4.6 Distonías dolorosas en estado OFF</strong></p>
+                        </div>
+                    </div>
+                    <div id="planillaDefaultContent" class="planilla-detail" style="text-align: center; padding: 40px; color: #9ca3af;">
+                        <i class="fas fa-clipboard-list" style="font-size: 3em; margin-bottom: 20px; opacity: 0.5;"></i>
+                        <p>Seleccione una planilla del menú lateral</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions" style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" id="cerrarPlanillas" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cerrar
+                </button>
             </div>
         </div>
     </div>
@@ -2695,7 +3092,7 @@
 
     <script src="js/config.js"></script>
     <script src="js/user-functionality.js"></script>
-    <script src="js/historia.js?v=9"></script>
+    <script src="js/historia.js?v=10"></script>
     <script>
     // ===== FUNCIONALIDAD DE BÚSQUEDA DE PACIENTES =====
     

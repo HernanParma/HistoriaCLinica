@@ -60,6 +60,9 @@ namespace HistoriaClinica.Models
         // Doctor de Cabecera
         public string? DoctorCabecera { get; set; }
 
+        // Imagen QR del paciente
+        public string? ImagenQr { get; set; } // Ruta o nombre del archivo QR
+
         // Relación con Usuario
         public int? UsuarioId { get; set; }
         public Usuario? Usuario { get; set; }

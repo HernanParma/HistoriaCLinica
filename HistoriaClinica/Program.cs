@@ -99,11 +99,22 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
-// DB ensure + seed (para desarrollo; en prod preferí Migraciones)
+// DB migrations + seed
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await context.Database.EnsureCreatedAsync();
+    try
+    {
+        // Aplicar migraciones pendientes
+        await context.Database.MigrateAsync();
+    }
+    catch (Exception ex)
+    {
+        // Si falla la migración, intentar EnsureCreated como fallback
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogWarning(ex, "Error al aplicar migraciones, usando EnsureCreated como fallback");
+        await context.Database.EnsureCreatedAsync();
+    }
     await SeedData.Initialize(scope.ServiceProvider);
 }
 

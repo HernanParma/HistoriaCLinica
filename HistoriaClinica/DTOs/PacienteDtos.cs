@@ -20,6 +20,7 @@ namespace HistoriaClinica.DTOs
         public string? Antecedentes { get; set; }
         public string? Medicacion { get; set; }
         public string? DoctorCabecera { get; set; }
+        public string? ImagenQr { get; set; }
         public List<ConsultaDto>? Consultas { get; set; }
     }
 
@@ -85,6 +86,8 @@ namespace HistoriaClinica.DTOs
         public string? Medicacion { get; set; }
         [JsonPropertyName("doctorCabecera")]
         public string? DoctorCabecera { get; set; }
+        [JsonPropertyName("imagenQr")]
+        public string? ImagenQr { get; set; }
     }
 
     public class PacienteConNotificacionesDto

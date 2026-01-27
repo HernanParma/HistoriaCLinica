@@ -1,8 +1,34 @@
 // Configuración global - Actualizado: 2025-09-22 23:40
 if (typeof window.CONFIG === 'undefined') {
-window.CONFIG = {
-        API_BASE_URL: window.location.origin
+    // Detectar si estamos en Live Server (puerto 5500) y usar backend en 5000
+    const currentPort = window.location.port;
+    let apiBaseUrl;
+    
+    if (currentPort === '5500' || currentPort === '5501') {
+        // Live Server detectado, usar backend en localhost:5000
+        apiBaseUrl = 'http://localhost:5000';
+        console.log('🔧 Live Server detectado, usando backend en:', apiBaseUrl);
+    } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // Localhost pero no Live Server, usar el mismo origen
+        apiBaseUrl = window.location.origin;
+        console.log('🔧 Localhost detectado, usando mismo origen:', apiBaseUrl);
+    } else {
+        // Producción u otro entorno
+        apiBaseUrl = window.location.origin;
+        console.log('🔧 Otro entorno, usando:', apiBaseUrl);
+    }
+    
+    window.CONFIG = {
+        API_BASE_URL: apiBaseUrl
     };
+} else {
+    // Si CONFIG ya existe pero está usando el puerto incorrecto, corregirlo
+    const currentPort = window.location.port;
+    if ((currentPort === '5500' || currentPort === '5501') && 
+        window.CONFIG.API_BASE_URL.includes(':5500')) {
+        window.CONFIG.API_BASE_URL = 'http://localhost:5000';
+        console.log('🔧 Corregida URL del backend a:', window.CONFIG.API_BASE_URL);
+    }
 }
 
 // ===== FUNCIONES GLOBALES PARA CAMPOS RESALTADOS (LAB) =====
@@ -77,7 +103,22 @@ window.applyHighlightedFields = applyHighlightedFields;
 window.clearHighlightedFields = clearHighlightedFields;
 window.setupLabLabelClickHandlers = setupLabLabelClickHandlers;
 
+// Asegurar que la URL del backend sea correcta después de cargar config.js
+(function() {
+    const currentPort = window.location.port;
+    if ((currentPort === '5500' || currentPort === '5501') && 
+        window.CONFIG && window.CONFIG.API_BASE_URL) {
+        // Si estamos en Live Server y la URL no es la del backend, corregirla
+        if (!window.CONFIG.API_BASE_URL.includes('localhost:5000') && 
+            !window.CONFIG.API_BASE_URL.includes('127.0.0.1:5000')) {
+            window.CONFIG.API_BASE_URL = 'http://localhost:5000';
+            console.log('🔧 URL del backend corregida a:', window.CONFIG.API_BASE_URL);
+        }
+    }
+})();
+
 console.log('🔧 Configuración de API:', window.CONFIG);
+console.log('🔧 URL base del backend:', window.CONFIG?.API_BASE_URL);
 
 // Headers de autorización
 function getAuthHeaders() {
@@ -537,17 +578,93 @@ async function loadPatientData(patientId) {
     try {
         const paciente = await apiGet(`/api/pacientes/${patientId}`);
         renderPatientSidebar(paciente);
+        
+        // Mostrar QR del paciente si existe
+        mostrarQrPaciente(paciente);
                 
-                // Mostrar la tarjeta de consultas
+        // Mostrar la tarjeta de consultas
         const hcCard = document.getElementById('hc-card');
-                if (hcCard) {
-                    hcCard.classList.remove('hidden');
-                }
+        if (hcCard) {
+            hcCard.classList.remove('hidden');
+        }
                 
-                await loadPatientConsultations(patientId);
+        await loadPatientConsultations(patientId);
     } catch (err) {
         console.error('❌ Error al cargar datos del paciente:', err);
         showSidebarError(`Error al cargar datos del paciente: ${String(err.message)}`);
+    }
+}
+
+// Mostrar QR del paciente en la barra superior
+function mostrarQrPaciente(paciente) {
+    const qrDisplayContainer = document.getElementById('qrDisplayContainer');
+    const qrDisplayImage = document.getElementById('qrDisplayImage');
+    const btnQrPaciente = document.getElementById('btnQrPaciente');
+    
+    if (!qrDisplayContainer || !qrDisplayImage) return;
+    
+    const imagenQr = paciente.imagenQr || paciente.ImagenQr;
+    if (imagenQr) {
+        // Construir URL del QR
+        const qrUrl = imagenQr.startsWith('http') 
+            ? imagenQr 
+            : `${window.CONFIG?.API_BASE_URL || window.location.origin}/api/pacientes/archivos/${imagenQr}`;
+        
+        qrDisplayImage.src = qrUrl;
+        qrDisplayContainer.style.display = 'block';
+        if (btnQrPaciente) {
+            btnQrPaciente.innerHTML = '<i class="fas fa-edit"></i> Editar QR';
+        }
+        console.log('📷 QR del paciente cargado:', imagenQr);
+    } else {
+        qrDisplayContainer.style.display = 'none';
+        if (btnQrPaciente) {
+            btnQrPaciente.innerHTML = '<i class="fas fa-qrcode"></i> QR';
+        }
+    }
+}
+
+// Función global para abrir modal QR
+window.abrirModalQr = function() {
+    const modal = document.getElementById('modalQrPaciente');
+    if (!modal) {
+        console.error('❌ Modal QR no encontrado');
+        return;
+    }
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('show');
+    
+    // Cargar QR existente si hay
+    const patientId = getPatientIdFromUrl();
+    if (patientId) {
+        cargarQrExistente(patientId);
+    }
+};
+
+// Cargar QR existente del paciente
+async function cargarQrExistente(patientId) {
+    try {
+        const paciente = await apiGet(`/api/pacientes/${patientId}`);
+        const imagenQr = paciente.imagenQr || paciente.ImagenQr;
+        const qrExistenteContainer = document.getElementById('qrExistenteContainer');
+        const qrExistenteImage = document.getElementById('qrExistenteImage');
+        
+        if (imagenQr && qrExistenteContainer && qrExistenteImage) {
+            const qrUrl = imagenQr.startsWith('http') 
+                ? imagenQr 
+                : `${window.CONFIG?.API_BASE_URL || window.location.origin}/api/pacientes/archivos/${imagenQr}`;
+            
+            qrExistenteImage.src = qrUrl;
+            qrExistenteImage.onclick = () => window.open(qrUrl, '_blank');
+            qrExistenteContainer.style.display = 'block';
+            document.getElementById('qrUploadText').textContent = 'Reemplazar imagen QR';
+        } else {
+            if (qrExistenteContainer) qrExistenteContainer.style.display = 'none';
+            document.getElementById('qrUploadText').textContent = 'Seleccionar imagen QR desde galería';
+        }
+    } catch (error) {
+        console.error('Error al cargar QR existente:', error);
     }
 }
 
@@ -744,36 +861,82 @@ function renderArchivosAdjuntos(archivos) {
         return '';
     }
     
-    const archivosHtml = archivos.map(archivo => {
-        const iconClass = getFileIcon(archivo.extension || archivo.Extension);
-        const fileSize = formatFileSize(archivo.tamañoBytes || archivo.TamañoBytes);
-        const fileName = archivo.nombreOriginal || archivo.NombreOriginal;
-        const downloadUrl = archivo.urlDescarga || archivo.UrlDescarga || `/api/pacientes/archivos/${archivo.nombreArchivo || archivo.NombreArchivo}`;
-        
-        return `
-            <div class="archivo-adjunto">
-                <div class="archivo-info">
-                    <i class="fas ${iconClass}"></i>
-                    <div class="archivo-details">
-                        <a href="${downloadUrl}" target="_blank" class="archivo-link">${fileName}</a>
-                        <small class="archivo-size">${fileSize}</small>
-                    </div>
-                    </div>
-                    </div>
-        `;
-    }).join('');
+    // Separar archivos QR de otros archivos
+    const archivosQr = archivos.filter(a => a.esQr || (a.extension && ['.jpg', '.jpeg', '.png', '.gif'].includes(a.extension.toLowerCase()) && (a.nombreOriginal || a.NombreOriginal || '').toLowerCase().includes('qr')));
+    const otrosArchivos = archivos.filter(a => !archivosQr.includes(a));
     
-    return `
-        <div class="archivos-section">
-            <div class="detail-item">
-                <strong><i class="fas fa-paperclip"></i> Archivos Adjuntos (${archivos.length}):</strong>
-                <div class="archivos-lista">
-                    ${archivosHtml}
+    let html = '';
+    
+    // Mostrar imagen QR primero si existe
+    if (archivosQr.length > 0) {
+        const qrHtml = archivosQr.map(archivo => {
+            const fileSize = formatFileSize(archivo.tamañoBytes || archivo.TamañoBytes);
+            const fileName = archivo.nombreOriginal || archivo.NombreOriginal;
+            const downloadUrl = archivo.urlDescarga || archivo.UrlDescarga || `/api/pacientes/archivos/${archivo.nombreArchivo || archivo.NombreArchivo}`;
+            const imageUrl = `${window.CONFIG?.API_BASE_URL || window.location.origin}${downloadUrl}`;
+            
+            return `
+                <div class="archivo-qr-item" style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%); border-radius: 12px; border: 2px solid #667eea;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                        <i class="fas fa-qrcode" style="font-size: 1.5em; color: #667eea;"></i>
+                        <div style="flex: 1;">
+                            <strong style="color: #667eea; display: block;">Imagen QR</strong>
+                            <small style="color: #6b7280;">${fileName} (${fileSize})</small>
+                        </div>
+                        <a href="${downloadUrl}" target="_blank" class="btn btn-primary btn-sm" style="text-decoration: none;">
+                            <i class="fas fa-download"></i> Ver/Descargar
+                        </a>
                     </div>
+                    <div style="text-align: center; margin-top: 10px;">
+                        <img src="${imageUrl}" alt="QR Code" style="max-width: 200px; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer;" onclick="window.open('${downloadUrl}', '_blank')">
                     </div>
                 </div>
             `;
-        }
+        }).join('');
+        
+        html += `
+            <div class="qr-section" style="margin-bottom: 20px;">
+                <strong><i class="fas fa-qrcode"></i> Imagen QR:</strong>
+                ${qrHtml}
+            </div>
+        `;
+    }
+    
+    // Mostrar otros archivos
+    if (otrosArchivos.length > 0) {
+        const archivosHtml = otrosArchivos.map(archivo => {
+            const iconClass = getFileIcon(archivo.extension || archivo.Extension);
+            const fileSize = formatFileSize(archivo.tamañoBytes || archivo.TamañoBytes);
+            const fileName = archivo.nombreOriginal || archivo.NombreOriginal;
+            const downloadUrl = archivo.urlDescarga || archivo.UrlDescarga || `/api/pacientes/archivos/${archivo.nombreArchivo || archivo.NombreArchivo}`;
+            
+            return `
+                <div class="archivo-adjunto">
+                    <div class="archivo-info">
+                        <i class="fas ${iconClass}"></i>
+                        <div class="archivo-details">
+                            <a href="${downloadUrl}" target="_blank" class="archivo-link">${fileName}</a>
+                            <small class="archivo-size">${fileSize}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        html += `
+            <div class="archivos-section">
+                <div class="detail-item">
+                    <strong><i class="fas fa-paperclip"></i> Archivos Adjuntos (${otrosArchivos.length}):</strong>
+                    <div class="archivos-lista">
+                        ${archivosHtml}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    return html;
+}
         
 // Obtener icono según extensión del archivo
 function getFileIcon(extension) {
@@ -1146,6 +1309,59 @@ function initializeModal() {
         console.log('📅 Fecha configurada:', today);
     }
 
+    // Configurar manejo de imagen QR
+    const imagenQrInput = document.getElementById('imagenQrConsulta');
+    const qrPreviewContainer = document.getElementById('qrPreviewContainer');
+    const qrPreview = document.getElementById('qrPreview');
+    const eliminarQrBtn = document.getElementById('eliminarQr');
+
+    if (imagenQrInput) {
+        imagenQrInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Validar que sea una imagen
+                if (!file.type.startsWith('image/')) {
+                    alert('Por favor, selecciona un archivo de imagen válido');
+                    e.target.value = '';
+                    return;
+                }
+
+                // Validar tamaño (10MB)
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                if (file.size > maxSize) {
+                    alert('La imagen es demasiado grande. El tamaño máximo es 10MB');
+                    e.target.value = '';
+                    return;
+                }
+
+                // Mostrar vista previa
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    qrPreview.src = e.target.result;
+                    qrPreviewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+                console.log('📷 Imagen QR seleccionada:', file.name);
+            }
+        });
+    }
+
+    // Botón para eliminar imagen QR
+    if (eliminarQrBtn) {
+        eliminarQrBtn.addEventListener('click', function() {
+            if (imagenQrInput) {
+                imagenQrInput.value = '';
+            }
+            if (qrPreview) {
+                qrPreview.src = '';
+            }
+            if (qrPreviewContainer) {
+                qrPreviewContainer.style.display = 'none';
+            }
+            console.log('🗑️ Imagen QR eliminada');
+        });
+    }
+
     // Abrir modal
     if (btnNuevaConsulta) {
         console.log('🔘 Botón Nueva Consulta encontrado, agregando event listener...');
@@ -1189,6 +1405,13 @@ function initializeModal() {
             // Limpiar archivos
             archivosList = [];
             mostrarArchivosSeleccionados();
+            // Limpiar imagen QR
+            const imagenQrInput = document.getElementById('imagenQrConsulta');
+            const qrPreviewContainer = document.getElementById('qrPreviewContainer');
+            const qrPreview = document.getElementById('qrPreview');
+            if (imagenQrInput) imagenQrInput.value = '';
+            if (qrPreview) qrPreview.src = '';
+            if (qrPreviewContainer) qrPreviewContainer.style.display = 'none';
             // Limpiar campos resaltados
             clearHighlightedFields();
         }
@@ -1271,6 +1494,41 @@ function initializeModal() {
                             alert(`Error de conexión al subir archivo ${archivo.name}`);
                             return;
                         }
+                    }
+                }
+
+                // Procesar imagen QR si existe
+                const imagenQrInput = document.getElementById('imagenQrConsulta');
+                if (imagenQrInput && imagenQrInput.files && imagenQrInput.files.length > 0) {
+                    const imagenQr = imagenQrInput.files[0];
+                    console.log(`📷 Subiendo imagen QR: ${imagenQr.name}`);
+                    
+                    const qrFormData = new FormData();
+                    qrFormData.append('archivo', imagenQr);
+                    
+                    try {
+                        const uploadQrResponse = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/archivos/subir`, {
+                            method: 'POST',
+                            headers: getAuthHeaders(),
+                            body: qrFormData
+                        });
+                        
+                        if (uploadQrResponse.ok) {
+                            const qrSubido = await uploadQrResponse.json();
+                            // Marcar como QR para identificarlo
+                            qrSubido.esQr = true;
+                            archivosSubidos.push(qrSubido);
+                            console.log(`✅ Imagen QR subida: ${qrSubido.nombreOriginal}`);
+                        } else {
+                            const errorText = await uploadQrResponse.text();
+                            console.error(`❌ Error al subir imagen QR:`, errorText);
+                            alert(`Error al subir imagen QR: ${errorText}`);
+                            return;
+                        }
+                    } catch (error) {
+                        console.error(`❌ Error de conexión al subir imagen QR:`, error);
+                        alert(`Error de conexión al subir imagen QR`);
+                        return;
                     }
                 }
                 
@@ -2213,6 +2471,227 @@ function initializeModalesMedicacionAntecedentes() {
     console.log('✅ Modales de medicación y antecedentes inicializados');
 }
 
+// Inicializar modal QR del paciente
+function initializeModalQr() {
+    console.log('🔧 Inicializando modal QR del paciente...');
+    
+    const modal = document.getElementById('modalQrPaciente');
+    const closeModalQr = document.getElementById('closeModalQr');
+    const cancelarQrPaciente = document.getElementById('cancelarQrPaciente');
+    const guardarQrPaciente = document.getElementById('guardarQrPaciente');
+    const imagenQrPaciente = document.getElementById('imagenQrPaciente');
+    const qrPreviewContainerPaciente = document.getElementById('qrPreviewContainerPaciente');
+    const qrPreviewPaciente = document.getElementById('qrPreviewPaciente');
+    const eliminarQrPreviewPaciente = document.getElementById('eliminarQrPreviewPaciente');
+    const eliminarQrPaciente = document.getElementById('eliminarQrPaciente');
+    
+    // Cerrar modal
+    function cerrarModalQr() {
+        if (modal) {
+            modal.classList.remove('show');
+            modal.classList.add('hidden');
+            // Limpiar preview si hay
+            if (imagenQrPaciente) imagenQrPaciente.value = '';
+            if (qrPreviewPaciente) qrPreviewPaciente.src = '';
+            if (qrPreviewContainerPaciente) qrPreviewContainerPaciente.style.display = 'none';
+        }
+    }
+    
+    if (closeModalQr) {
+        closeModalQr.addEventListener('click', cerrarModalQr);
+    }
+    
+    if (cancelarQrPaciente) {
+        cancelarQrPaciente.addEventListener('click', cerrarModalQr);
+    }
+    
+    // Manejar selección de imagen QR
+    if (imagenQrPaciente) {
+        imagenQrPaciente.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Validar que sea una imagen
+                if (!file.type.startsWith('image/')) {
+                    alert('Por favor, selecciona un archivo de imagen válido');
+                    e.target.value = '';
+                    return;
+                }
+
+                // Validar tamaño (10MB)
+                const maxSize = 10 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    alert('La imagen es demasiado grande. El tamaño máximo es 10MB');
+                    e.target.value = '';
+                    return;
+                }
+
+                // Mostrar vista previa
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (qrPreviewPaciente) qrPreviewPaciente.src = e.target.result;
+                    if (qrPreviewContainerPaciente) qrPreviewContainerPaciente.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+                console.log('📷 Nueva imagen QR seleccionada para paciente:', file.name);
+            }
+        });
+    }
+    
+    // Eliminar preview de nueva imagen
+    if (eliminarQrPreviewPaciente) {
+        eliminarQrPreviewPaciente.addEventListener('click', function() {
+            if (imagenQrPaciente) imagenQrPaciente.value = '';
+            if (qrPreviewPaciente) qrPreviewPaciente.src = '';
+            if (qrPreviewContainerPaciente) qrPreviewContainerPaciente.style.display = 'none';
+        });
+    }
+    
+    // Guardar QR del paciente
+    if (guardarQrPaciente) {
+        guardarQrPaciente.addEventListener('click', async function() {
+            const patientId = getPatientIdFromUrl();
+            if (!patientId) {
+                alert('Error: No se encontró ID del paciente');
+                return;
+            }
+            
+            const submitBtn = guardarQrPaciente;
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+                
+                let qrFileName = null;
+                
+                // Si hay una nueva imagen seleccionada, subirla
+                if (imagenQrPaciente && imagenQrPaciente.files && imagenQrPaciente.files.length > 0) {
+                    const imagenQr = imagenQrPaciente.files[0];
+                    console.log(`📷 Subiendo imagen QR del paciente: ${imagenQr.name}`);
+                    
+                    const qrFormData = new FormData();
+                    qrFormData.append('archivo', imagenQr);
+                    
+                    const uploadQrResponse = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/archivos/subir`, {
+                        method: 'POST',
+                        headers: getAuthHeaders(),
+                        body: qrFormData
+                    });
+                    
+                    if (uploadQrResponse.ok) {
+                        const qrSubido = await uploadQrResponse.json();
+                        qrFileName = qrSubido.nombreArchivo || qrSubido.NombreArchivo;
+                        console.log(`✅ Imagen QR subida: ${qrFileName}`);
+                    } else {
+                        const errorText = await uploadQrResponse.text();
+                        console.error(`❌ Error al subir imagen QR:`, errorText);
+                        alert(`Error al subir imagen QR: ${errorText}`);
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                        return;
+                    }
+                }
+                
+                // Actualizar paciente con el QR
+                const updateData = {};
+                if (qrFileName) {
+                    updateData.imagenQr = qrFileName;
+                } else {
+                    // No hay cambios (no se seleccionó nueva imagen ni se eliminó)
+                    cerrarModalQr();
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    return;
+                }
+                
+                const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                if (response.ok) {
+                    console.log('✅ QR del paciente actualizado exitosamente');
+                    alert('QR del paciente guardado exitosamente');
+                    
+                    // Recargar datos del paciente para mostrar el nuevo QR
+                    await loadPatientData(patientId);
+                    
+                    cerrarModalQr();
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Error al actualizar QR:', errorText);
+                    alert(`Error al guardar QR: ${errorText}`);
+                }
+            } catch (error) {
+                console.error('❌ Error de conexión:', error);
+                alert(`Error de conexión: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+    }
+    
+    // Eliminar QR existente
+    if (eliminarQrPaciente) {
+        eliminarQrPaciente.addEventListener('click', async function() {
+            if (!confirm('¿Estás seguro de que deseas eliminar el QR del paciente?')) {
+                return;
+            }
+            
+            const patientId = getPatientIdFromUrl();
+            if (!patientId) {
+                alert('Error: No se encontró ID del paciente');
+                return;
+            }
+            
+            const submitBtn = this;
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
+                
+                // Enviar cadena vacía para eliminar el QR
+                const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({ imagenQr: "" })
+                });
+                
+                if (response.ok) {
+                    console.log('✅ QR del paciente eliminado exitosamente');
+                    alert('QR del paciente eliminado exitosamente');
+                    
+                    // Recargar datos del paciente
+                    await loadPatientData(patientId);
+                    
+                    cerrarModalQr();
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Error al eliminar QR:', errorText);
+                    alert(`Error al eliminar QR: ${errorText}`);
+                }
+            } catch (error) {
+                console.error('❌ Error de conexión:', error);
+                alert(`Error de conexión: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+    }
+    
+    console.log('✅ Modal QR del paciente inicializado');
+}
+
 // Inicialización principal
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('🚀 Inicializando aplicación de historia clínica...');
@@ -2220,6 +2699,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Inicializar modales
     initializeModal();
     initializeModalesMedicacionAntecedentes();
+    initializeModalQr();
     
     // Cargar datos del paciente
     const patientId = getPatientIdFromUrl();
@@ -2629,6 +3109,71 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.log('📎 Archivos existentes cargados:', archivosExistentesEditar);
         }
         
+        // Cargar imagen QR existente si hay
+        const imagenQrEditar = document.getElementById('imagenQrEditarConsulta');
+        const qrPreviewContainerEditar = document.getElementById('qrPreviewContainerEditar');
+        const qrPreviewEditar = document.getElementById('qrPreviewEditar');
+        
+        // Buscar imagen QR en los archivos existentes
+        const qrExistente = archivosExistentesEditar.find(a => 
+            a.esQr || (a.extension && ['.jpg', '.jpeg', '.png', '.gif'].includes(a.extension.toLowerCase()) && 
+            (a.nombreOriginal || a.NombreOriginal || '').toLowerCase().includes('qr'))
+        );
+        
+        if (qrExistente && qrPreviewEditar && qrPreviewContainerEditar) {
+            const qrUrl = qrExistente.urlDescarga || qrExistente.UrlDescarga || 
+                         `/api/pacientes/archivos/${qrExistente.nombreArchivo || qrExistente.NombreArchivo}`;
+            const fullUrl = `${window.CONFIG?.API_BASE_URL || window.location.origin}${qrUrl}`;
+            qrPreviewEditar.src = fullUrl;
+            qrPreviewContainerEditar.style.display = 'block';
+            console.log('📷 Imagen QR existente cargada');
+        } else if (qrPreviewContainerEditar) {
+            qrPreviewContainerEditar.style.display = 'none';
+        }
+        
+        // Configurar manejo de nueva imagen QR en modal de editar
+        if (imagenQrEditar) {
+            imagenQrEditar.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Validar que sea una imagen
+                    if (!file.type.startsWith('image/')) {
+                        alert('Por favor, selecciona un archivo de imagen válido');
+                        e.target.value = '';
+                        return;
+                    }
+
+                    // Validar tamaño (10MB)
+                    const maxSize = 10 * 1024 * 1024;
+                    if (file.size > maxSize) {
+                        alert('La imagen es demasiado grande. El tamaño máximo es 10MB');
+                        e.target.value = '';
+                        return;
+                    }
+
+                    // Mostrar vista previa
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (qrPreviewEditar) qrPreviewEditar.src = e.target.result;
+                        if (qrPreviewContainerEditar) qrPreviewContainerEditar.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                    console.log('📷 Nueva imagen QR seleccionada para editar:', file.name);
+                }
+            });
+        }
+
+        // Botón para eliminar imagen QR en modal de editar
+        const eliminarQrEditarBtn = document.getElementById('eliminarQrEditar');
+        if (eliminarQrEditarBtn) {
+            eliminarQrEditarBtn.addEventListener('click', function() {
+                if (imagenQrEditar) imagenQrEditar.value = '';
+                if (qrPreviewEditar) qrPreviewEditar.src = '';
+                if (qrPreviewContainerEditar) qrPreviewContainerEditar.style.display = 'none';
+                console.log('🗑️ Imagen QR eliminada en edición');
+            });
+        }
+        
         // Mostrar archivos en el modal
         mostrarArchivosSeleccionadosEditar();
     }
@@ -2647,6 +3192,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Limpiar archivos seleccionados y existentes
             archivosListEditar = [];
             archivosExistentesEditar = [];
+            // Limpiar imagen QR
+            const imagenQrEditar = document.getElementById('imagenQrEditarConsulta');
+            const qrPreviewContainerEditar = document.getElementById('qrPreviewContainerEditar');
+            const qrPreviewEditar = document.getElementById('qrPreviewEditar');
+            if (imagenQrEditar) imagenQrEditar.value = '';
+            if (qrPreviewEditar) qrPreviewEditar.src = '';
+            if (qrPreviewContainerEditar) qrPreviewContainerEditar.style.display = 'none';
             // Llamar a la función solo si existe
             if (typeof mostrarArchivosSeleccionadosEditar === 'function') {
                 mostrarArchivosSeleccionadosEditar();
@@ -2878,8 +3430,57 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             }
 
+            // Procesar imagen QR nueva si existe
+            const imagenQrEditar = document.getElementById('imagenQrEditarConsulta');
+            if (imagenQrEditar && imagenQrEditar.files && imagenQrEditar.files.length > 0) {
+                const imagenQr = imagenQrEditar.files[0];
+                console.log(`📷 Subiendo nueva imagen QR para consulta editada: ${imagenQr.name}`);
+                
+                const qrFormData = new FormData();
+                qrFormData.append('archivo', imagenQr);
+                
+                try {
+                    const uploadQrResponse = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/archivos/subir`, {
+                        method: 'POST',
+                        headers: getAuthHeaders(),
+                        body: qrFormData
+                    });
+                    
+                    if (uploadQrResponse.ok) {
+                        const qrSubido = await uploadQrResponse.json();
+                        // Marcar como QR para identificarlo
+                        qrSubido.esQr = true;
+                        archivosSubidos.push(qrSubido);
+                        console.log(`✅ Nueva imagen QR subida: ${qrSubido.nombreOriginal}`);
+                    } else {
+                        const errorText = await uploadQrResponse.text();
+                        console.error(`❌ Error al subir imagen QR:`, errorText);
+                        alert(`Error al subir imagen QR: ${errorText}`);
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                        return;
+                    }
+                } catch (error) {
+                    console.error(`❌ Error de conexión al subir imagen QR:`, error);
+                    alert(`Error de conexión al subir imagen QR`);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    return;
+                }
+            }
+
             // Combinar archivos existentes (que no se eliminaron) con los nuevos
-            const todosLosArchivos = [...archivosExistentesEditar, ...archivosSubidos];
+            // Filtrar QR existente si se subió uno nuevo (reemplazar)
+            let archivosExistentesFinales = archivosExistentesEditar;
+            if (imagenQrEditar && imagenQrEditar.files && imagenQrEditar.files.length > 0) {
+                // Si se subió un QR nuevo, eliminar el QR existente de los archivos existentes
+                archivosExistentesFinales = archivosExistentesEditar.filter(a => 
+                    !(a.esQr || (a.extension && ['.jpg', '.jpeg', '.png', '.gif'].includes(a.extension.toLowerCase()) && 
+                    (a.nombreOriginal || a.NombreOriginal || '').toLowerCase().includes('qr')))
+                );
+            }
+            
+            const todosLosArchivos = [...archivosExistentesFinales, ...archivosSubidos];
             console.log('📎 Archivos totales para guardar:', todosLosArchivos.length);
             console.log('   - Existentes:', archivosExistentesEditar.length);
             console.log('   - Nuevos:', archivosSubidos.length);
@@ -3081,4 +3682,101 @@ document.addEventListener('DOMContentLoaded', async function() {
             }, 100);
         });
     }
+
+    // ===== FUNCIONALIDAD DEL MODAL DE PLANILLAS =====
+    const planillasBtnNav = document.getElementById('planillasBtnNav');
+    const modalPlanillas = document.getElementById('modalPlanillas');
+    const closeModalPlanillas = document.getElementById('closeModalPlanillas');
+    const cerrarPlanillas = document.getElementById('cerrarPlanillas');
+    const planillaOptionBtns = document.querySelectorAll('.planilla-option-btn');
+
+    // Función para abrir el modal de planillas
+    function abrirModalPlanillas() {
+        if (modalPlanillas) {
+            modalPlanillas.classList.remove('hidden');
+            modalPlanillas.classList.add('show');
+            // Mostrar contenido por defecto al abrir
+            mostrarPlanilla('default');
+        }
+    }
+
+    // Función para cerrar el modal de planillas
+    function cerrarModalPlanillas() {
+        if (modalPlanillas) {
+            modalPlanillas.classList.remove('show');
+            modalPlanillas.classList.add('hidden');
+        }
+    }
+
+    // Función para mostrar el contenido de una planilla específica
+    function mostrarPlanilla(planillaId) {
+        // Ocultar todos los contenidos
+        const allContents = document.querySelectorAll('.planilla-detail');
+        allContents.forEach(content => {
+            content.style.display = 'none';
+        });
+
+        // Remover clase active de todos los botones
+        planillaOptionBtns.forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Mostrar el contenido correspondiente
+        if (planillaId === 'parkinson') {
+            const parkinsonContent = document.getElementById('planillaParkinsonContent');
+            if (parkinsonContent) {
+                parkinsonContent.style.display = 'block';
+            }
+            // Activar el botón correspondiente
+            const parkinsonBtn = document.querySelector('[data-planilla="parkinson"]');
+            if (parkinsonBtn) {
+                parkinsonBtn.classList.add('active');
+            }
+        } else {
+            // Mostrar contenido por defecto
+            const defaultContent = document.getElementById('planillaDefaultContent');
+            if (defaultContent) {
+                defaultContent.style.display = 'block';
+            }
+        }
+    }
+
+    // Event listeners
+    if (planillasBtnNav) {
+        planillasBtnNav.addEventListener('click', abrirModalPlanillas);
+    }
+
+    if (closeModalPlanillas) {
+        closeModalPlanillas.addEventListener('click', cerrarModalPlanillas);
+    }
+
+    if (cerrarPlanillas) {
+        cerrarPlanillas.addEventListener('click', cerrarModalPlanillas);
+    }
+
+    // Event listeners para los botones de opciones de planillas
+    planillaOptionBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const planillaId = this.getAttribute('data-planilla');
+            if (planillaId) {
+                mostrarPlanilla(planillaId);
+            }
+        });
+    });
+
+    // Cerrar modal al hacer clic fuera de él
+    if (modalPlanillas) {
+        modalPlanillas.addEventListener('click', function(e) {
+            if (e.target === modalPlanillas) {
+                cerrarModalPlanillas();
+            }
+        });
+    }
+
+    // Cerrar modal con tecla Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modalPlanillas && !modalPlanillas.classList.contains('hidden')) {
+            cerrarModalPlanillas();
+        }
+    });
 });

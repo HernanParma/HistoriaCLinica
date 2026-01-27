@@ -35,6 +35,7 @@ namespace HistoriaClinica.Services
                 Antecedentes = paciente.Antecedentes ?? "",
                 Medicacion = paciente.Medicacion ?? "",
                 DoctorCabecera = paciente.DoctorCabecera ?? "",
+                ImagenQr = paciente.ImagenQr,
                 Consultas = paciente.Consultas?.Select(MapearConsultaADto).ToList() ?? new List<ConsultaDto>()
             };
         }
@@ -197,6 +198,13 @@ namespace HistoriaClinica.Services
                 paciente.Altura = dto.Altura.Value;
             if (dto.Particular.HasValue)
                 paciente.Particular = dto.Particular.Value;
+            // Actualizar imagen QR: actualizar si el campo está presente y no es null
+            // Para eliminar el QR, el frontend debe enviar una cadena vacía ""
+            if (dto.ImagenQr != null)
+            {
+                // Si es cadena vacía, establecer como null (eliminar)
+                paciente.ImagenQr = string.IsNullOrWhiteSpace(dto.ImagenQr) ? null : dto.ImagenQr.Trim();
+            }
         }
 
         public void ActualizarConsultaDesdeDto(Consulta consulta, CrearConsultaDto dto)

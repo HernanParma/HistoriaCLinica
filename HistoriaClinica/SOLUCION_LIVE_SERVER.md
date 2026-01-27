@@ -113,3 +113,4 @@ Si todo está bien, deberías ver:
 
 **¿Sigue fallando?** Asegúrate de estar en la carpeta `HistoriaClinica\HistoriaClinica` (la subcarpeta, no la raíz).
 
+

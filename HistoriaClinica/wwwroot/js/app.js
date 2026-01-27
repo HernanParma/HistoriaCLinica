@@ -1,6 +1,17 @@
 // Asegurar que CONFIG exista
 if (typeof CONFIG === 'undefined') {
-    var CONFIG = { API_BASE_URL: window.location.origin };
+    // Si window.CONFIG existe, usarlo; si no, usar el origen actual
+    if (typeof window.CONFIG !== 'undefined' && window.CONFIG.API_BASE_URL) {
+        var CONFIG = { API_BASE_URL: window.CONFIG.API_BASE_URL };
+    } else {
+        // Si estamos en Live Server (puerto 5500), usar backend en 5000
+        const currentPort = window.location.port;
+        if (currentPort === '5500' || currentPort === '5501') {
+            var CONFIG = { API_BASE_URL: 'http://localhost:5000' };
+        } else {
+            var CONFIG = { API_BASE_URL: window.location.origin };
+        }
+    }
 }
 
 // Verificar si estamos en modo demo (usando window para evitar conflictos)
@@ -14,8 +25,25 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
         console.log('🎭 Modo demo: simulando llamada API a', endpoint);
         return await simulateApiCall(endpoint, method, data);
     } else {
-        // Llamada API real
-        const url = `${CONFIG.API_BASE_URL}${endpoint}`;
+        // Determinar la URL base de la API
+        let apiBaseUrl;
+        if (typeof window.CONFIG !== 'undefined' && window.CONFIG.API_BASE_URL) {
+            apiBaseUrl = window.CONFIG.API_BASE_URL;
+        } else if (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL) {
+            apiBaseUrl = CONFIG.API_BASE_URL;
+        } else {
+            // Fallback: si estamos en Live Server (puerto 5500), usar backend en 5000
+            const currentPort = window.location.port;
+            if (currentPort === '5500' || currentPort === '5501') {
+                apiBaseUrl = 'http://localhost:5000';
+            } else {
+                apiBaseUrl = window.location.origin;
+            }
+        }
+        
+        const url = `${apiBaseUrl}${endpoint}`;
+        console.log('🌐 Llamada API:', method, url);
+        
         const options = {
             method: method,
             headers: {

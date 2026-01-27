@@ -10,6 +10,88 @@
     <link rel="stylesheet" href="css/styles.css?v=1.0">
     <!-- Font Awesome local -->
     <link rel="stylesheet" href="lib/fontawesome/css/all.min.css">
+    <style>
+        /* Estilos para el Modal de Planillas */
+        .planillas-options {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .planilla-option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .planilla-option-btn {
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
+            color: #374151;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+            font-weight: 500;
+            text-align: left;
+            width: 100%;
+        }
+
+        .planilla-option-btn:hover {
+            background: #e5e7eb;
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .planilla-option-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .planilla-option-btn i {
+            font-size: 1.1em;
+        }
+
+        .planilla-content {
+            padding: 10px;
+        }
+
+        .planilla-detail {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .planilla-text p {
+            margin: 8px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .planilla-text p:last-child {
+            border-bottom: none;
+        }
+
+        .planilla-text p strong {
+            color: #1f2937;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -45,6 +127,10 @@
                         <i class="fas fa-id-card"></i>
                         CREDENCIAL
                     </a>
+                    <button id="planillasBtnNav" class="nav-btn btn-primary">
+                        <i class="fas fa-clipboard-list"></i>
+                        Planillas
+                    </button>
                 </div>
             </nav>
         </header>
@@ -175,6 +261,94 @@
         </div>
     </div>
 
+    <!-- Modal de Planillas -->
+    <div id="modalPlanillas" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-clipboard-list"></i> Planillas</h2>
+                <button id="closeModalPlanillas" class="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body" style="display: flex; gap: 20px; min-height: 500px;">
+                <!-- Panel lateral con opciones -->
+                <div class="planillas-options" style="width: 250px; border-right: 2px solid #e5e7eb; padding-right: 20px;">
+                    <h4 style="margin-bottom: 15px; color: #667eea;">Seleccionar Planilla:</h4>
+                    <div class="planilla-option-list">
+                        <button class="planilla-option-btn" data-planilla="parkinson">
+                            <i class="fas fa-brain"></i>
+                            Planilla Parkinson
+                        </button>
+                        <!-- Aquí se pueden agregar más opciones en el futuro -->
+                    </div>
+                </div>
+                <!-- Contenido de la planilla seleccionada -->
+                <div class="planilla-content" style="flex: 1; padding-left: 20px; max-height: 600px; overflow-y: auto;">
+                    <div id="planillaParkinsonContent" class="planilla-detail" style="display: none;">
+                        <h4 style="color: #667eea; margin-bottom: 20px;">Planilla Parkinson - UPDRS</h4>
+                        <div class="planilla-text" style="line-height: 1.8; color: #374151;">
+                            <p><strong>3.1 Lenguaje</strong></p>
+                            <p><strong>3.2 Expresión facial</strong></p>
+                            <p><strong>3.3b Rigidez – MSD</strong></p>
+                            <p><strong>3.3c Rigidez – MSI</strong></p>
+                            <p><strong>3.3d Rigidez – MID</strong></p>
+                            <p><strong>3.3e Rigidez – MII</strong></p>
+                            <p><strong>3.4a Golpeteo de dedos (tapping)– Mano dcha.</strong></p>
+                            <p><strong>3.4b Golpeteo de dedos (tapping)– Mano izda.</strong></p>
+                            <p><strong>3.5a Movimientos de las manos – Mano dcha.</strong></p>
+                            <p><strong>3.5b Movimientos de las manos – Mano izda.</strong></p>
+                            <p><strong>3.6a Pronación-supinación – Mano dcha.</strong></p>
+                            <p><strong>3.6b Pronación-supinación – Mano izda.</strong></p>
+                            <p><strong>3.7a Golpeteo con los dedos de los pies – Pie derecho</strong></p>
+                            <p><strong>3.7b Golpeteo con los dedos de los pies – Pie izquierdo</strong></p>
+                            <p><strong>3.8a Agilidad con las piernas – Pierna derecha</strong></p>
+                            <p><strong>3.8b Agilidad con las piernas – Pierna izquierda</strong></p>
+                            <p><strong>3.9 Levantarse de la silla</strong></p>
+                            <p><strong>3.10 Marcha</strong></p>
+                            <p><strong>3.11 Congelación de la marcha</strong></p>
+                            <p><strong>3.12 Estabilidad postural</strong></p>
+                            <p><strong>3.13 Postura</strong></p>
+                            <p><strong>3.14 Espontaneidad global de movimientos</strong></p>
+                            <p><strong>3.15a Temblor postural – Mano derecha</strong></p>
+                            <p><strong>3.15b Temblor postural – Mano izquierda</strong></p>
+                            <p><strong>3.16a Temblor de acción – Mano derecha</strong></p>
+                            <p><strong>3.16b Temblor de acción – Mano izquierda</strong></p>
+                            <p><strong>3.17a Amplitud del temblor de reposo – MSD</strong></p>
+                            <p><strong>3.17b Amplitud del temblor de reposo – MSI</strong></p>
+                            <p><strong>3.17c Amplitud del temblor de reposo – MID</strong></p>
+                            <p><strong>3.17d Amplitud del temblor de reposo – MII</strong></p>
+                            <p><strong>3.17e Amplitud del temblor de reposo – Labio/mandíbula</strong></p>
+                            <p><strong>3.18 Persistencia del temblor de reposo</strong></p>
+                            <p style="margin-top: 20px;"><strong>¿Discinesias presentes?</strong> No Si</p>
+                            <p><strong>¿Estos movimientos interfirieron con la exploración?</strong> No Sí</p>
+                            <p style="margin-top: 20px;"><strong>Estadios de Hoehn y Yahr</strong></p>
+                            <p><strong>3a ¿El paciente toma medicación?</strong> No Sí</p>
+                            <p><strong>3b Estado clínico del paciente</strong> Off On</p>
+                            <p><strong>3c ¿El paciente toma levodopa?</strong> No Sí</p>
+                            <p><strong>3.c1 Tiempo desde la última dosis:</strong></p>
+                            <p style="margin-top: 20px;"><strong>Parte IV</strong></p>
+                            <p><strong>4.1 Tiempo con discinesias</strong></p>
+                            <p><strong>4.2 Impacto funcional de las discinesias</strong></p>
+                            <p style="margin-top: 20px;"><strong>Parte III</strong></p>
+                            <p><strong>4.3 Tiempo en OFF</strong></p>
+                            <p><strong>4.4 Impacto funcional de las fluctuaciones</strong></p>
+                            <p><strong>4.5 Complejidad de las fluctuaciones motoras</strong></p>
+                            <p><strong>3.3a Rigidez - Cuello</strong></p>
+                            <p><strong>4.6 Distonías dolorosas en estado OFF</strong></p>
+                        </div>
+                    </div>
+                    <div id="planillaDefaultContent" class="planilla-detail" style="display: block; text-align: center; padding: 40px; color: #9ca3af;">
+                        <i class="fas fa-clipboard-list" style="font-size: 3em; margin-bottom: 20px; opacity: 0.5;"></i>
+                        <p>Seleccione una planilla del menú lateral</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions" style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end; padding: 16px 20px; border-top: 1px solid #e5e7eb;">
+                <button type="button" id="cerrarPlanillas" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
     // Verificar si se está abriendo desde file:// (directamente desde el explorador)
     if (window.location.protocol === 'file:') {
@@ -247,6 +421,122 @@
                 window.location.href = 'agregar.html';
             });
         }
+
+        // ===== FUNCIONALIDAD DEL MODAL DE PLANILLAS =====
+        const planillasBtnNav = document.getElementById('planillasBtnNav');
+        const modalPlanillas = document.getElementById('modalPlanillas');
+        const closeModalPlanillas = document.getElementById('closeModalPlanillas');
+        const cerrarPlanillas = document.getElementById('cerrarPlanillas');
+        const planillaOptionBtns = document.querySelectorAll('.planilla-option-btn');
+
+        // Función para abrir el modal de planillas
+        function abrirModalPlanillas() {
+            if (modalPlanillas) {
+                modalPlanillas.classList.remove('hidden');
+                // Asegurar que el contenido por defecto se muestre al abrir
+                setTimeout(() => {
+                    mostrarPlanilla('default');
+                }, 10);
+            }
+        }
+
+        // Función para cerrar el modal de planillas
+        function cerrarModalPlanillas() {
+            if (modalPlanillas) {
+                modalPlanillas.classList.add('hidden');
+            }
+        }
+
+        // Función para mostrar el contenido de una planilla específica
+        function mostrarPlanilla(planillaId) {
+            // Ocultar todos los contenidos
+            const allContents = document.querySelectorAll('.planilla-detail');
+            allContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // Remover clase active de todos los botones
+            planillaOptionBtns.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Mostrar el contenido correspondiente
+            if (planillaId === 'parkinson') {
+                const parkinsonContent = document.getElementById('planillaParkinsonContent');
+                if (parkinsonContent) {
+                    parkinsonContent.style.display = 'block';
+                }
+                // Activar el botón correspondiente
+                const parkinsonBtn = document.querySelector('[data-planilla="parkinson"]');
+                if (parkinsonBtn) {
+                    parkinsonBtn.classList.add('active');
+                }
+            } else {
+                // Mostrar contenido por defecto
+                const defaultContent = document.getElementById('planillaDefaultContent');
+                if (defaultContent) {
+                    defaultContent.style.display = 'block';
+                }
+            }
+        }
+
+        // Event listeners
+        if (planillasBtnNav) {
+            planillasBtnNav.addEventListener('click', function(e) {
+                e.preventDefault();
+                abrirModalPlanillas();
+            });
+        }
+
+        if (closeModalPlanillas) {
+            closeModalPlanillas.addEventListener('click', cerrarModalPlanillas);
+        }
+
+        if (cerrarPlanillas) {
+            cerrarPlanillas.addEventListener('click', cerrarModalPlanillas);
+        }
+
+        // Event listeners para los botones de opciones de planillas
+        // Usar delegación de eventos para asegurar que funcione incluso si los botones se agregan dinámicamente
+        const planillaOptionList = document.querySelector('.planilla-option-list');
+        if (planillaOptionList) {
+            planillaOptionList.addEventListener('click', function(e) {
+                const btn = e.target.closest('.planilla-option-btn');
+                if (btn) {
+                    const planillaId = btn.getAttribute('data-planilla');
+                    if (planillaId) {
+                        mostrarPlanilla(planillaId);
+                    }
+                }
+            });
+        }
+        
+        // También agregar listeners directos por si acaso
+        planillaOptionBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const planillaId = this.getAttribute('data-planilla');
+                if (planillaId) {
+                    mostrarPlanilla(planillaId);
+                }
+            });
+        });
+
+        // Cerrar modal al hacer clic fuera de él
+        if (modalPlanillas) {
+            modalPlanillas.addEventListener('click', function(e) {
+                if (e.target === modalPlanillas) {
+                    cerrarModalPlanillas();
+                }
+            });
+        }
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modalPlanillas && !modalPlanillas.classList.contains('hidden')) {
+                cerrarModalPlanillas();
+            }
+        });
     });
     </script>
     <script src="js/demo-mode.js"></script>

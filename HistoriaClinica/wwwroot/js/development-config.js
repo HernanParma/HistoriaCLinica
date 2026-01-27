@@ -1,9 +1,17 @@
 // js/development-config.js
 // Configuración específica para desarrollo local
+// En desarrollo, usar localhost:5000 (backend)
+const API_BASE_URL = 'http://localhost:5000';
+
+// Sobrescribir CONFIG si existe, o crearlo si no existe
+if (typeof window.CONFIG === 'undefined') {
+    window.CONFIG = {};
+}
+
+window.CONFIG.API_BASE_URL = API_BASE_URL;
+
+// También establecer CONFIG global para compatibilidad
 if (typeof CONFIG === 'undefined') {
-    // En desarrollo, usar localhost
-    const API_BASE_URL = 'http://localhost:5000';
-  
     var CONFIG = {
       API_BASE_URL,
       API_ENDPOINTS: {
@@ -69,9 +77,16 @@ if (typeof CONFIG === 'undefined') {
         PATIENT_REGISTRATION: 'patientRegistration'
       }
     };
-  }
+} else {
+    // Si CONFIG ya existe, actualizar solo API_BASE_URL
+    CONFIG.API_BASE_URL = API_BASE_URL;
+}
+
+console.log('🔧 Configuración de desarrollo cargada. API_BASE_URL:', API_BASE_URL);
+console.log('🔧 CONFIG.API_BASE_URL:', typeof CONFIG !== 'undefined' ? CONFIG.API_BASE_URL : 'no definido');
+console.log('🔧 window.CONFIG.API_BASE_URL:', window.CONFIG?.API_BASE_URL || 'no definido');
   
-  if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== 'undefined' && module.exports) {
     module.exports = { CONFIG };
-  }
+}
 
