@@ -91,6 +91,55 @@
             color: #1f2937;
             font-weight: 600;
         }
+
+        /* Pantalla completa listado QR */
+        #qrListScreen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1000;
+            background: #fff;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #qrListScreen.show { display: flex; }
+        #qrListScreen .qr-screen-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        #qrListScreen .qr-screen-header h2 { margin: 0; font-size: 1.35rem; display: flex; align-items: center; gap: 10px; }
+        #qrListScreen .qr-screen-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #qrListScreen .qr-screen-close:hover { background: rgba(255,255,255,0.3); }
+        #qrListScreen .qr-screen-body {
+            flex: 1;
+            overflow: auto;
+            padding: 24px;
+        }
+        #qrListTable { width: 100%; border-collapse: collapse; }
+        #qrListTable th, #qrListTable td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        #qrListTable th { background: #f3f4f6; font-weight: 600; color: #374151; }
+        #qrListTable tbody tr:hover { background: #f9fafb; }
+        .qr-eye-btn { background: none; border: none; color: #667eea; cursor: pointer; padding: 6px 10px; border-radius: 6px; }
+        .qr-eye-btn:hover { background: #eef2ff; color: #4f46e5; }
+        .qr-thumbnail-cell { width: 80px; text-align: center; vertical-align: middle; }
+        .qr-thumbnail-cell img { max-width: 56px; max-height: 56px; border-radius: 8px; border: 2px solid #667eea; object-fit: contain; }
+        .qr-thumbnail-cell .sin-qr { font-size: 0.75rem; color: #9ca3af; }
     </style>
 </head>
 <body>
@@ -122,6 +171,10 @@
                     <button id="newPatientBtnNav" class="nav-btn btn-primary">
                         <i class="fas fa-user-plus"></i>
                         Registrar Nuevo Paciente
+                    </button>
+                    <button id="qrBtnNav" class="nav-btn btn-primary" title="Ver QRs de pacientes">
+                        <i class="fas fa-qrcode"></i>
+                        QR
                     </button>
                     <a href="carnet.html" class="nav-btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
                         <i class="fas fa-id-card"></i>
@@ -285,54 +338,52 @@
                     <div id="planillaParkinsonContent" class="planilla-detail" style="display: none;">
                         <h4 style="color: #667eea; margin-bottom: 20px;">Planilla Parkinson - UPDRS</h4>
                         <div class="planilla-text" style="line-height: 1.8; color: #374151;">
-                            <p><strong>3.1 Lenguaje</strong></p>
-                            <p><strong>3.2 Expresión facial</strong></p>
-                            <p><strong>3.3b Rigidez – MSD</strong></p>
-                            <p><strong>3.3c Rigidez – MSI</strong></p>
-                            <p><strong>3.3d Rigidez – MID</strong></p>
-                            <p><strong>3.3e Rigidez – MII</strong></p>
-                            <p><strong>3.4a Golpeteo de dedos (tapping)– Mano dcha.</strong></p>
-                            <p><strong>3.4b Golpeteo de dedos (tapping)– Mano izda.</strong></p>
-                            <p><strong>3.5a Movimientos de las manos – Mano dcha.</strong></p>
-                            <p><strong>3.5b Movimientos de las manos – Mano izda.</strong></p>
-                            <p><strong>3.6a Pronación-supinación – Mano dcha.</strong></p>
-                            <p><strong>3.6b Pronación-supinación – Mano izda.</strong></p>
-                            <p><strong>3.7a Golpeteo con los dedos de los pies – Pie derecho</strong></p>
-                            <p><strong>3.7b Golpeteo con los dedos de los pies – Pie izquierdo</strong></p>
-                            <p><strong>3.8a Agilidad con las piernas – Pierna derecha</strong></p>
-                            <p><strong>3.8b Agilidad con las piernas – Pierna izquierda</strong></p>
-                            <p><strong>3.9 Levantarse de la silla</strong></p>
-                            <p><strong>3.10 Marcha</strong></p>
-                            <p><strong>3.11 Congelación de la marcha</strong></p>
-                            <p><strong>3.12 Estabilidad postural</strong></p>
-                            <p><strong>3.13 Postura</strong></p>
-                            <p><strong>3.14 Espontaneidad global de movimientos</strong></p>
-                            <p><strong>3.15a Temblor postural – Mano derecha</strong></p>
-                            <p><strong>3.15b Temblor postural – Mano izquierda</strong></p>
-                            <p><strong>3.16a Temblor de acción – Mano derecha</strong></p>
-                            <p><strong>3.16b Temblor de acción – Mano izquierda</strong></p>
-                            <p><strong>3.17a Amplitud del temblor de reposo – MSD</strong></p>
-                            <p><strong>3.17b Amplitud del temblor de reposo – MSI</strong></p>
-                            <p><strong>3.17c Amplitud del temblor de reposo – MID</strong></p>
-                            <p><strong>3.17d Amplitud del temblor de reposo – MII</strong></p>
-                            <p><strong>3.17e Amplitud del temblor de reposo – Labio/mandíbula</strong></p>
-                            <p><strong>3.18 Persistencia del temblor de reposo</strong></p>
+                            <p><strong>Lenguaje</strong></p>
+                            <p><strong>Expresión facial</strong></p>
+                            <p><strong>Rigidez – MSD</strong></p>
+                            <p><strong>Rigidez – MSI</strong></p>
+                            <p><strong>Rigidez – MID</strong></p>
+                            <p><strong>Rigidez – MII</strong></p>
+                            <p><strong>Golpeteo de dedos (tapping)– Mano dcha.</strong></p>
+                            <p><strong>Golpeteo de dedos (tapping)– Mano izda.</strong></p>
+                            <p><strong>Movimientos de las manos – Mano dcha.</strong></p>
+                            <p><strong>Movimientos de las manos – Mano izda.</strong></p>
+                            <p><strong>Pronación-supinación – Mano dcha.</strong></p>
+                            <p><strong>Pronación-supinación – Mano izda.</strong></p>
+                            <p><strong>Golpeteo con los dedos de los pies – Pie derecho</strong></p>
+                            <p><strong>Golpeteo con los dedos de los pies – Pie izquierdo</strong></p>
+                            <p><strong>Agilidad con las piernas – Pierna derecha</strong></p>
+                            <p><strong>Agilidad con las piernas – Pierna izquierda</strong></p>
+                            <p><strong>Levantarse de la silla</strong></p>
+                            <p><strong>Marcha</strong></p>
+                            <p><strong>Congelación de la marcha</strong></p>
+                            <p><strong>Estabilidad postural</strong></p>
+                            <p><strong>Postura</strong></p>
+                            <p><strong>Espontaneidad global de movimientos</strong></p>
+                            <p><strong>Temblor postural – Mano derecha</strong></p>
+                            <p><strong>Temblor postural – Mano izquierda</strong></p>
+                            <p><strong>Temblor de acción – Mano derecha</strong></p>
+                            <p><strong>Temblor de acción – Mano izquierda</strong></p>
+                            <p><strong>Amplitud del temblor de reposo – MSD</strong></p>
+                            <p><strong>Amplitud del temblor de reposo – MSI</strong></p>
+                            <p><strong>Amplitud del temblor de reposo – MID</strong></p>
+                            <p><strong>Amplitud del temblor de reposo – MII</strong></p>
+                            <p><strong>Amplitud del temblor de reposo – Labio/mandíbula</strong></p>
+                            <p><strong>Persistencia del temblor de reposo</strong></p>
                             <p style="margin-top: 20px;"><strong>¿Discinesias presentes?</strong> No Si</p>
                             <p><strong>¿Estos movimientos interfirieron con la exploración?</strong> No Sí</p>
                             <p style="margin-top: 20px;"><strong>Estadios de Hoehn y Yahr</strong></p>
-                            <p><strong>3a ¿El paciente toma medicación?</strong> No Sí</p>
-                            <p><strong>3b Estado clínico del paciente</strong> Off On</p>
-                            <p><strong>3c ¿El paciente toma levodopa?</strong> No Sí</p>
-                            <p><strong>3.c1 Tiempo desde la última dosis:</strong></p>
-                            <p style="margin-top: 20px;"><strong>Parte IV</strong></p>
-                            <p><strong>4.1 Tiempo con discinesias</strong></p>
-                            <p><strong>4.2 Impacto funcional de las discinesias</strong></p>
-                            <p style="margin-top: 20px;"><strong>Parte III</strong></p>
-                            <p><strong>4.3 Tiempo en OFF</strong></p>
-                            <p><strong>4.4 Impacto funcional de las fluctuaciones</strong></p>
-                            <p><strong>4.5 Complejidad de las fluctuaciones motoras</strong></p>
-                            <p><strong>3.3a Rigidez - Cuello</strong></p>
-                            <p><strong>4.6 Distonías dolorosas en estado OFF</strong></p>
+                            <p><strong>¿El paciente toma medicación?</strong> No Sí</p>
+                            <p><strong>Estado clínico del paciente</strong> Off On</p>
+                            <p><strong>¿El paciente toma levodopa?</strong> No Sí</p>
+                            <p><strong>Tiempo desde la última dosis:</strong></p>
+                            <p><strong>Tiempo con discinesias</strong></p>
+                            <p><strong>Impacto funcional de las discinesias</strong></p>
+                            <p><strong>Tiempo en OFF</strong></p>
+                            <p><strong>Impacto funcional de las fluctuaciones</strong></p>
+                            <p><strong>Complejidad de las fluctuaciones motoras</strong></p>
+                            <p><strong>Rigidez - Cuello</strong></p>
+                            <p><strong>Distonías dolorosas en estado OFF</strong></p>
                         </div>
                     </div>
                     <div id="planillaDefaultContent" class="planilla-detail" style="display: block; text-align: center; padding: 40px; color: #9ca3af;">
@@ -345,6 +396,43 @@
                 <button type="button" id="cerrarPlanillas" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Cerrar
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla completa listado QR de pacientes -->
+    <div id="qrListScreen">
+        <div class="qr-screen-header">
+            <h2><i class="fas fa-qrcode"></i> QRs de pacientes</h2>
+            <button type="button" id="closeModalQrList" class="qr-screen-close" title="Cerrar"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="qr-screen-body">
+            <div id="qrListLoading" class="loading" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Cargando pacientes...</span>
+            </div>
+            <div id="qrListContent" style="display: none;">
+                <table id="qrListTable" class="patients-table">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>DNI</th>
+                            <th>N° Afiliado</th>
+                            <th>Apellido</th>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Obra Social</th>
+                            <th>Ver QR</th>
+                            <th>QR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="qrListTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <div id="qrListEmpty" class="no-patients hidden" style="text-align: center; padding: 40px;">
+                <i class="fas fa-users-slash"></i>
+                <p>No hay pacientes registrados</p>
             </div>
         </div>
     </div>
@@ -531,10 +619,100 @@
             });
         }
 
-        // Cerrar modal con tecla Escape
+        // ===== PANTALLA COMPLETA LISTADO QR DE PACIENTES =====
+        const qrBtnNav = document.getElementById('qrBtnNav');
+        const qrListScreen = document.getElementById('qrListScreen');
+        const closeModalQrList = document.getElementById('closeModalQrList');
+        const qrListTableBody = document.getElementById('qrListTableBody');
+        const qrListLoading = document.getElementById('qrListLoading');
+        const qrListContent = document.getElementById('qrListContent');
+        const qrListEmpty = document.getElementById('qrListEmpty');
+
+        function getApiBase() {
+            if (typeof window.CONFIG !== 'undefined' && window.CONFIG.API_BASE_URL) return window.CONFIG.API_BASE_URL;
+            if (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL) return CONFIG.API_BASE_URL;
+            return window.location.origin;
+        }
+
+        function getAuthHeaders() {
+            const token = localStorage.getItem('jwtToken');
+            return token ? { 'Authorization': 'Bearer ' + token } : {};
+        }
+
+        function abrirPantallaQrList() {
+            if (!qrListScreen) return;
+            qrListScreen.classList.add('show');
+            if (qrListContent) qrListContent.style.display = 'none';
+            if (qrListEmpty) { qrListEmpty.classList.add('hidden'); qrListEmpty.style.display = 'none'; }
+            if (qrListLoading) qrListLoading.style.display = 'flex';
+            if (qrListTableBody) qrListTableBody.innerHTML = '';
+
+            const apiBase = getApiBase();
+            fetch(apiBase + '/api/pacientes/con-notificaciones', { headers: getAuthHeaders() })
+                .then(function(r) { return r.ok ? r.json() : []; })
+                .then(function(pacientes) {
+                    if (qrListLoading) qrListLoading.style.display = 'none';
+                    if (!pacientes || pacientes.length === 0) {
+                        if (qrListEmpty) { qrListEmpty.classList.remove('hidden'); qrListEmpty.style.display = 'block'; }
+                        return;
+                    }
+                    if (qrListContent) qrListContent.style.display = 'block';
+                    pacientes.forEach(function(p, idx) {
+                        var tr = document.createElement('tr');
+                        var n = (idx + 1);
+                        var imagenQr = p.imagenQr || p.ImagenQr || '';
+                        tr.innerHTML =
+                            '<td>' + n + '</td>' +
+                            '<td>' + (p.dni || '') + '</td>' +
+                            '<td>' + (p.numeroAfiliado || '') + '</td>' +
+                            '<td>' + (p.apellido || '') + '</td>' +
+                            '<td>' + (p.nombre || '') + '</td>' +
+                            '<td>' + (p.telefono || '') + '</td>' +
+                            '<td>' + (p.obraSocial || '') + '</td>' +
+                            '<td><button type="button" class="qr-eye-btn" data-patient-id="' + p.id + '" data-imagen-qr="' + (imagenQr ? imagenQr.replace(/"/g, '&quot;') : '') + '" title="Ver QR"><i class="fas fa-eye"></i></button></td>' +
+                            '<td class="qr-thumbnail-cell"></td>';
+                        qrListTableBody.appendChild(tr);
+                    });
+
+                    qrListTableBody.querySelectorAll('.qr-eye-btn').forEach(function(btn) {
+                        btn.addEventListener('click', function() {
+                            var cell = this.closest('tr').querySelector('.qr-thumbnail-cell');
+                            if (!cell) return;
+                            var imagenQr = this.getAttribute('data-imagen-qr') || '';
+                            cell.innerHTML = '';
+                            if (imagenQr) {
+                                var url = imagenQr.indexOf('http') === 0 ? imagenQr : (getApiBase() + '/api/pacientes/archivos/' + encodeURIComponent(imagenQr));
+                                var img = document.createElement('img');
+                                img.src = url;
+                                img.alt = 'QR';
+                                img.onerror = function() { cell.innerHTML = '<span class="sin-qr">Error</span>'; };
+                                cell.appendChild(img);
+                            } else {
+                                cell.innerHTML = '<span class="sin-qr">Sin QR</span>';
+                            }
+                        });
+                    });
+                })
+                .catch(function() {
+                    if (qrListLoading) qrListLoading.style.display = 'none';
+                    if (qrListEmpty) { qrListEmpty.classList.remove('hidden'); qrListEmpty.style.display = 'block'; if (qrListEmpty.querySelector('p')) qrListEmpty.querySelector('p').textContent = 'Error al cargar pacientes.'; }
+                });
+        }
+
+        function cerrarPantallaQrList() {
+            if (qrListScreen) qrListScreen.classList.remove('show');
+        }
+
+        if (qrBtnNav) qrBtnNav.addEventListener('click', function(e) { e.preventDefault(); abrirPantallaQrList(); });
+        if (closeModalQrList) closeModalQrList.addEventListener('click', cerrarPantallaQrList);
+
+        // Cerrar pantalla QR con tecla Escape
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && modalPlanillas && !modalPlanillas.classList.contains('hidden')) {
+            if (e.key !== 'Escape') return;
+            if (modalPlanillas && !modalPlanillas.classList.contains('hidden')) {
                 cerrarModalPlanillas();
+            } else if (qrListScreen && qrListScreen.classList.contains('show')) {
+                cerrarPantallaQrList();
             }
         });
     });

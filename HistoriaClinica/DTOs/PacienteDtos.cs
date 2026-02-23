@@ -108,6 +108,7 @@ namespace HistoriaClinica.DTOs
         public string? Antecedentes { get; set; }
         public string? Medicacion { get; set; }
         public string? DoctorCabecera { get; set; }
+        public string? ImagenQr { get; set; }
         public bool TieneNotificaciones { get; set; }
         public bool TieneRecetarPendiente { get; set; }
         public bool TieneOmePendiente { get; set; }
