@@ -134,12 +134,23 @@
         #qrListTable { width: 100%; border-collapse: collapse; }
         #qrListTable th, #qrListTable td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
         #qrListTable th { background: #f3f4f6; font-weight: 600; color: #374151; }
+        #qrListTable th.qr-sortable { cursor: pointer; user-select: none; white-space: nowrap; }
+        #qrListTable th.qr-sortable:hover { background: #e5e7eb; }
+        #qrListTable th .qr-sort-wrap { display: inline-flex; align-items: center; gap: 6px; }
+        #qrListTable th .qr-sort-arrows { display: inline-flex; flex-direction: column; gap: 0; line-height: 0.8; color: #9ca3af; font-size: 0.65rem; }
+        #qrListTable th.qr-sort-asc .qr-sort-arrows .fa-sort-up { color: #667eea; }
+        #qrListTable th.qr-sort-desc .qr-sort-arrows .fa-sort-down { color: #667eea; }
         #qrListTable tbody tr:hover { background: #f9fafb; }
         .qr-eye-btn { background: none; border: none; color: #667eea; cursor: pointer; padding: 6px 10px; border-radius: 6px; }
         .qr-eye-btn:hover { background: #eef2ff; color: #4f46e5; }
-        .qr-thumbnail-cell { width: 80px; text-align: center; vertical-align: middle; }
-        .qr-thumbnail-cell img { max-width: 56px; max-height: 56px; border-radius: 8px; border: 2px solid #667eea; object-fit: contain; }
+        .qr-add-btn { background: none; border: none; color: #10b981; cursor: pointer; padding: 6px 10px; border-radius: 6px; }
+        .qr-add-btn:hover { background: #d1fae5; color: #059669; }
+        .qr-add-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .qr-thumbnail-cell { width: 280px; min-width: 280px; text-align: center; vertical-align: middle; padding: 16px; }
+        .qr-thumbnail-cell img { max-width: 260px; max-height: 260px; border-radius: 12px; border: 3px solid #667eea; object-fit: contain; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25); }
         .qr-thumbnail-cell .sin-qr { font-size: 0.75rem; color: #9ca3af; }
+        .qr-search-wrap { position: relative; }
+        .qr-search-input:focus { outline: none; border-color: #667eea; }
     </style>
 </head>
 <body>
@@ -407,6 +418,15 @@
             <button type="button" id="closeModalQrList" class="qr-screen-close" title="Cerrar"><i class="fas fa-times"></i></button>
         </div>
         <div class="qr-screen-body">
+            <div class="qr-list-toolbar" style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap;">
+                <div class="qr-search-wrap" style="flex: 1; min-width: 220px; max-width: 400px;">
+                    <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; pointer-events: none;"></i>
+                    <input type="text" id="qrListSearch" class="qr-search-input" placeholder="Buscar por nombre, apellido o DNI..." autocomplete="off" style="width: 100%; padding: 10px 12px 10px 38px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 0.95rem;">
+                </div>
+                <button type="button" id="qrListRefreshBtn" class="btn btn-secondary" style="padding: 8px 14px;" title="Actualizar lista">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
+            </div>
             <div id="qrListLoading" class="loading" style="display: none;">
                 <i class="fas fa-spinner fa-spin"></i>
                 <span>Cargando pacientes...</span>
@@ -415,14 +435,15 @@
                 <table id="qrListTable" class="patients-table">
                     <thead>
                         <tr>
-                            <th>N°</th>
-                            <th>DNI</th>
-                            <th>N° Afiliado</th>
-                            <th>Apellido</th>
-                            <th>Nombre</th>
-                            <th>Teléfono</th>
-                            <th>Obra Social</th>
+                            <th class="qr-sortable" data-column="numero" title="Ordenar por N°"><span class="qr-sort-wrap">N° <span class="qr-sort-arrows"><i class="fas fa-sort-up"></i><i class="fas fa-sort-down"></i></span></span></th>
+                            <th class="qr-sortable" data-column="dni" title="Ordenar por DNI"><span class="qr-sort-wrap">DNI <span class="qr-sort-arrows"><i class="fas fa-sort-up"></i><i class="fas fa-sort-down"></i></span></span></th>
+                            <th class="qr-sortable" data-column="numeroAfiliado" title="Ordenar por N° Afiliado"><span class="qr-sort-wrap">N° Afiliado <span class="qr-sort-arrows"><i class="fas fa-sort-up"></i><i class="fas fa-sort-down"></i></span></span></th>
+                            <th class="qr-sortable" data-column="apellido" title="Ordenar por Apellido"><span class="qr-sort-wrap">Apellido <span class="qr-sort-arrows"><i class="fas fa-sort-up"></i><i class="fas fa-sort-down"></i></span></span></th>
+                            <th class="qr-sortable" data-column="nombre" title="Ordenar por Nombre"><span class="qr-sort-wrap">Nombre <span class="qr-sort-arrows"><i class="fas fa-sort-up"></i><i class="fas fa-sort-down"></i></span></span></th>
+                            <th class="qr-sortable" data-column="telefono" title="Ordenar por Teléfono"><span class="qr-sort-wrap">Teléfono <span class="qr-sort-arrows"><i class="fas fa-sort-up"></i><i class="fas fa-sort-down"></i></span></span></th>
+                            <th class="qr-sortable" data-column="obraSocial" title="Ordenar por Obra Social"><span class="qr-sort-wrap">Obra Social <span class="qr-sort-arrows"><i class="fas fa-sort-up"></i><i class="fas fa-sort-down"></i></span></span></th>
                             <th>Ver QR</th>
+                            <th>Agregar / Editar QR</th>
                             <th>QR</th>
                         </tr>
                     </thead>
@@ -430,6 +451,7 @@
                     </tbody>
                 </table>
             </div>
+            <input type="file" id="qrListFileInput" accept="image/*" style="display: none;">
             <div id="qrListEmpty" class="no-patients hidden" style="text-align: center; padding: 40px;">
                 <i class="fas fa-users-slash"></i>
                 <p>No hay pacientes registrados</p>
@@ -624,9 +646,20 @@
         const qrListScreen = document.getElementById('qrListScreen');
         const closeModalQrList = document.getElementById('closeModalQrList');
         const qrListTableBody = document.getElementById('qrListTableBody');
+        const qrListTable = document.getElementById('qrListTable');
         const qrListLoading = document.getElementById('qrListLoading');
         const qrListContent = document.getElementById('qrListContent');
         const qrListEmpty = document.getElementById('qrListEmpty');
+
+        var qrListPacientes = [];
+        var qrListPacientesCache = [];
+        var qrSearchTerm = '';
+        var qrSortColumn = 'numero';
+        var qrSortDir = 'asc';
+        var patientIdForQrUpload = null;
+        var qrListFileInput = document.getElementById('qrListFileInput');
+        var qrListSearch = document.getElementById('qrListSearch');
+        var qrListRefreshBtn = document.getElementById('qrListRefreshBtn');
 
         function getApiBase() {
             if (typeof window.CONFIG !== 'undefined' && window.CONFIG.API_BASE_URL) return window.CONFIG.API_BASE_URL;
@@ -639,59 +672,195 @@
             return token ? { 'Authorization': 'Bearer ' + token } : {};
         }
 
-        function abrirPantallaQrList() {
-            if (!qrListScreen) return;
-            qrListScreen.classList.add('show');
+        function getPatientValue(p, col) {
+            var v = p[col];
+            if (v === null || v === undefined) return '';
+            return String(v).toLowerCase().trim();
+        }
+
+        function getFilteredQrPacientes() {
+            var term = (qrSearchTerm || '').toLowerCase().trim();
+            if (!term) return qrListPacientes.slice();
+            return qrListPacientes.filter(function(p) {
+                var nombre = (p.nombre || '').toLowerCase();
+                var apellido = (p.apellido || '').toLowerCase();
+                var dni = (p.dni != null ? String(p.dni) : '').toLowerCase();
+                return nombre.indexOf(term) !== -1 || apellido.indexOf(term) !== -1 || dni.indexOf(term) !== -1;
+            });
+        }
+
+        function sortQrListPacientes(arr, column, dir) {
+            qrSortColumn = column;
+            qrSortDir = dir;
+            var list = arr.slice();
+            var mult = dir === 'asc' ? 1 : -1;
+            list.sort(function(a, b) {
+                var va, vb;
+                if (column === 'numero') {
+                    va = arr.indexOf(a);
+                    vb = arr.indexOf(b);
+                    return (va - vb) * mult;
+                }
+                va = getPatientValue(a, column);
+                vb = getPatientValue(b, column);
+                if (va < vb) return -1 * mult;
+                if (va > vb) return 1 * mult;
+                return 0;
+            });
+            return list;
+        }
+
+        function updateSortIndicatorsQr() {
+            if (!qrListTable) return;
+            qrListTable.querySelectorAll('th.qr-sortable').forEach(function(th) {
+                th.classList.remove('qr-sort-asc', 'qr-sort-desc');
+                if (th.getAttribute('data-column') === qrSortColumn) {
+                    th.classList.add(qrSortDir === 'asc' ? 'qr-sort-asc' : 'qr-sort-desc');
+                }
+            });
+        }
+
+        function renderQrListTableBody(pacientes) {
+            if (!qrListTableBody) return;
+            qrListTableBody.innerHTML = '';
+            pacientes.forEach(function(p, idx) {
+                var tr = document.createElement('tr');
+                var n = idx + 1;
+                var imagenQr = p.imagenQr || p.ImagenQr || '';
+                tr.innerHTML =
+                    '<td>' + n + '</td>' +
+                    '<td>' + (p.dni || '') + '</td>' +
+                    '<td>' + (p.numeroAfiliado || '') + '</td>' +
+                    '<td>' + (p.apellido || '') + '</td>' +
+                    '<td>' + (p.nombre || '') + '</td>' +
+                    '<td>' + (p.telefono || '') + '</td>' +
+                    '<td>' + (p.obraSocial || '') + '</td>' +
+                    '<td><button type="button" class="qr-eye-btn" data-patient-id="' + p.id + '" data-imagen-qr="' + (imagenQr ? imagenQr.replace(/"/g, '&quot;') : '') + '" title="Ver QR"><i class="fas fa-eye"></i></button></td>' +
+                    '<td><button type="button" class="qr-add-btn" data-patient-id="' + p.id + '" title="Agregar o cambiar QR"><i class="fas fa-plus"></i></button></td>' +
+                    '<td class="qr-thumbnail-cell"></td>';
+                qrListTableBody.appendChild(tr);
+            });
+            qrListTableBody.querySelectorAll('.qr-eye-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var cell = this.closest('tr').querySelector('.qr-thumbnail-cell');
+                    if (!cell) return;
+                    var imagenQr = this.getAttribute('data-imagen-qr') || '';
+                    if (cell.querySelector('img') || cell.querySelector('.sin-qr')) {
+                        cell.innerHTML = '';
+                        return;
+                    }
+                    if (imagenQr) {
+                        var url = imagenQr.indexOf('http') === 0 ? imagenQr : (getApiBase() + '/api/pacientes/archivos/' + encodeURIComponent(imagenQr));
+                        var img = document.createElement('img');
+                        img.src = url;
+                        img.alt = 'QR';
+                        img.onerror = function() { cell.innerHTML = '<span class="sin-qr">Error</span>'; };
+                        cell.appendChild(img);
+                    } else {
+                        cell.innerHTML = '<span class="sin-qr">Sin QR</span>';
+                    }
+                });
+            });
+            qrListTableBody.querySelectorAll('.qr-add-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var pid = this.getAttribute('data-patient-id');
+                    if (!pid || !qrListFileInput) return;
+                    patientIdForQrUpload = pid;
+                    qrListFileInput.value = '';
+                    qrListFileInput.click();
+                });
+            });
+        }
+
+        function setupQrListFileInput() {
+            if (!qrListFileInput) return;
+            qrListFileInput.addEventListener('change', function() {
+                var patientId = patientIdForQrUpload;
+                patientIdForQrUpload = null;
+                var file = this.files && this.files[0];
+                this.value = '';
+                if (!patientId || !file) return;
+                var btn = qrListTableBody ? qrListTableBody.querySelector('.qr-add-btn[data-patient-id="' + patientId + '"]') : null;
+                if (btn) btn.disabled = true;
+                var apiBase = getApiBase();
+                var formData = new FormData();
+                formData.append('archivo', file);
+                fetch(apiBase + '/api/pacientes/archivos/subir', {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: formData
+                }).then(function(r) { return r.ok ? r.json() : null; }).then(function(data) {
+                    if (!data) { if (btn) btn.disabled = false; return; }
+                    var qrFileName = data.nombreArchivo || data.NombreArchivo || '';
+                    if (!qrFileName) { if (btn) btn.disabled = false; return; }
+                    return fetch(apiBase + '/api/pacientes/' + patientId, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+                        body: JSON.stringify({ imagenQr: qrFileName })
+                    }).then(function(res) {
+                        if (!res.ok) return;
+                        var p = qrListPacientes.find(function(x) { return x.id == patientId; });
+                        if (p) p.imagenQr = qrFileName;
+                        var row = qrListTableBody ? qrListTableBody.querySelector('tr button[data-patient-id="' + patientId + '"]') : null;
+                        if (row) {
+                            row = row.closest('tr');
+                            var eyeBtn = row ? row.querySelector('.qr-eye-btn') : null;
+                            var thumbCell = row ? row.querySelector('.qr-thumbnail-cell') : null;
+                            if (eyeBtn) eyeBtn.setAttribute('data-imagen-qr', qrFileName);
+                            if (thumbCell && thumbCell.querySelector('img')) {
+                                thumbCell.querySelector('img').src = apiBase + '/api/pacientes/archivos/' + encodeURIComponent(qrFileName);
+                            }
+                        }
+                    }).finally(function() { if (btn) btn.disabled = false; });
+                }).catch(function() { if (btn) btn.disabled = false; });
+            });
+        }
+
+        function applySortAndRenderQr() {
+            var filtered = getFilteredQrPacientes();
+            var sorted = sortQrListPacientes(filtered, qrSortColumn, qrSortDir);
+            renderQrListTableBody(sorted);
+            updateSortIndicatorsQr();
+        }
+
+        function setupQrSortHeaders() {
+            if (!qrListTable) return;
+            qrListTable.querySelectorAll('th.qr-sortable').forEach(function(th) {
+                th.addEventListener('click', function() {
+                    var col = this.getAttribute('data-column');
+                    if (!col) return;
+                    if (col === qrSortColumn) {
+                        qrSortDir = qrSortDir === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        qrSortColumn = col;
+                        qrSortDir = 'asc';
+                    }
+                    applySortAndRenderQr();
+                });
+            });
+        }
+
+        function loadQrListPacientes(showLoading) {
+            if (showLoading && qrListLoading) qrListLoading.style.display = 'flex';
             if (qrListContent) qrListContent.style.display = 'none';
             if (qrListEmpty) { qrListEmpty.classList.add('hidden'); qrListEmpty.style.display = 'none'; }
-            if (qrListLoading) qrListLoading.style.display = 'flex';
-            if (qrListTableBody) qrListTableBody.innerHTML = '';
-
-            const apiBase = getApiBase();
+            var apiBase = getApiBase();
             fetch(apiBase + '/api/pacientes/con-notificaciones', { headers: getAuthHeaders() })
                 .then(function(r) { return r.ok ? r.json() : []; })
                 .then(function(pacientes) {
                     if (qrListLoading) qrListLoading.style.display = 'none';
                     if (!pacientes || pacientes.length === 0) {
-                        if (qrListEmpty) { qrListEmpty.classList.remove('hidden'); qrListEmpty.style.display = 'block'; }
+                        qrListPacientes = [];
+                        qrListPacientesCache = [];
+                        if (qrListEmpty) { qrListEmpty.classList.remove('hidden'); qrListEmpty.style.display = 'block'; if (qrListEmpty.querySelector('p')) qrListEmpty.querySelector('p').textContent = 'No hay pacientes registrados.'; }
                         return;
                     }
+                    qrListPacientes = pacientes;
+                    qrListPacientesCache = pacientes.slice();
+                    qrSortColumn = 'numero';
+                    qrSortDir = 'asc';
                     if (qrListContent) qrListContent.style.display = 'block';
-                    pacientes.forEach(function(p, idx) {
-                        var tr = document.createElement('tr');
-                        var n = (idx + 1);
-                        var imagenQr = p.imagenQr || p.ImagenQr || '';
-                        tr.innerHTML =
-                            '<td>' + n + '</td>' +
-                            '<td>' + (p.dni || '') + '</td>' +
-                            '<td>' + (p.numeroAfiliado || '') + '</td>' +
-                            '<td>' + (p.apellido || '') + '</td>' +
-                            '<td>' + (p.nombre || '') + '</td>' +
-                            '<td>' + (p.telefono || '') + '</td>' +
-                            '<td>' + (p.obraSocial || '') + '</td>' +
-                            '<td><button type="button" class="qr-eye-btn" data-patient-id="' + p.id + '" data-imagen-qr="' + (imagenQr ? imagenQr.replace(/"/g, '&quot;') : '') + '" title="Ver QR"><i class="fas fa-eye"></i></button></td>' +
-                            '<td class="qr-thumbnail-cell"></td>';
-                        qrListTableBody.appendChild(tr);
-                    });
-
-                    qrListTableBody.querySelectorAll('.qr-eye-btn').forEach(function(btn) {
-                        btn.addEventListener('click', function() {
-                            var cell = this.closest('tr').querySelector('.qr-thumbnail-cell');
-                            if (!cell) return;
-                            var imagenQr = this.getAttribute('data-imagen-qr') || '';
-                            cell.innerHTML = '';
-                            if (imagenQr) {
-                                var url = imagenQr.indexOf('http') === 0 ? imagenQr : (getApiBase() + '/api/pacientes/archivos/' + encodeURIComponent(imagenQr));
-                                var img = document.createElement('img');
-                                img.src = url;
-                                img.alt = 'QR';
-                                img.onerror = function() { cell.innerHTML = '<span class="sin-qr">Error</span>'; };
-                                cell.appendChild(img);
-                            } else {
-                                cell.innerHTML = '<span class="sin-qr">Sin QR</span>';
-                            }
-                        });
-                    });
+                    applySortAndRenderQr();
                 })
                 .catch(function() {
                     if (qrListLoading) qrListLoading.style.display = 'none';
@@ -699,10 +868,42 @@
                 });
         }
 
+        function abrirPantallaQrList() {
+            if (!qrListScreen) return;
+            qrListScreen.classList.add('show');
+            if (qrListSearch) qrListSearch.value = '';
+            qrSearchTerm = '';
+            if (qrListPacientesCache.length > 0) {
+                qrListPacientes = qrListPacientesCache.slice();
+                if (qrListLoading) qrListLoading.style.display = 'none';
+                if (qrListContent) qrListContent.style.display = 'block';
+                if (qrListEmpty) { qrListEmpty.classList.add('hidden'); qrListEmpty.style.display = 'none'; }
+                applySortAndRenderQr();
+                loadQrListPacientes(false);
+                return;
+            }
+            if (qrListTableBody) qrListTableBody.innerHTML = '';
+            loadQrListPacientes(true);
+        }
+
         function cerrarPantallaQrList() {
             if (qrListScreen) qrListScreen.classList.remove('show');
         }
 
+        setupQrListFileInput();
+        setupQrSortHeaders();
+        if (qrListSearch) {
+            qrListSearch.addEventListener('input', function() {
+                qrSearchTerm = this.value;
+                applySortAndRenderQr();
+            });
+        }
+        if (qrListRefreshBtn) {
+            qrListRefreshBtn.addEventListener('click', function() {
+                if (qrListTableBody) qrListTableBody.innerHTML = '';
+                loadQrListPacientes(true);
+            });
+        }
         if (qrBtnNav) qrBtnNav.addEventListener('click', function(e) { e.preventDefault(); abrirPantallaQrList(); });
         if (closeModalQrList) closeModalQrList.addEventListener('click', cerrarPantallaQrList);
 
