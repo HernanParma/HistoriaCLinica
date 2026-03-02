@@ -1,5 +1,6 @@
-﻿using HistoriaClinica.Models;
+using HistoriaClinica.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Collections.Generic;
 
 namespace HistoriaClinica.Data
@@ -9,6 +10,12 @@ namespace HistoriaClinica.Data
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.ConfigureWarnings(w =>
+                w.Ignore(RelationalEventId.PendingModelChangesWarning));
         }
         public DbSet<Usuario> Usuarios { get; set; }
 

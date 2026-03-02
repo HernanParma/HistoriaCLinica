@@ -3,15 +3,16 @@ if (typeof CONFIG === 'undefined') {
     // Si window.CONFIG existe, usarlo; si no, usar el origen actual
     if (typeof window.CONFIG !== 'undefined' && window.CONFIG.API_BASE_URL) {
         var CONFIG = { API_BASE_URL: window.CONFIG.API_BASE_URL };
-    } else {
-        // Si estamos en Live Server (puerto 5500), usar backend en 5000
-        const currentPort = window.location.port;
-        if (currentPort === '5500' || currentPort === '5501') {
-            var CONFIG = { API_BASE_URL: 'http://localhost:5000' };
         } else {
-            var CONFIG = { API_BASE_URL: window.location.origin };
+            // Si estamos en Live Server (puerto 5500), usar backend en 5000 (mismo hostname para evitar problemas)
+            const currentPort = window.location.port;
+            const host = window.location.hostname || 'localhost';
+            if (currentPort === '5500' || currentPort === '5501') {
+                var CONFIG = { API_BASE_URL: `http://${host}:5000` };
+            } else {
+                var CONFIG = { API_BASE_URL: window.location.origin };
+            }
         }
-    }
 }
 
 // Verificar si estamos en modo demo (usando window para evitar conflictos)
@@ -32,10 +33,11 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
         } else if (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL) {
             apiBaseUrl = CONFIG.API_BASE_URL;
         } else {
-            // Fallback: si estamos en Live Server (puerto 5500), usar backend en 5000
+            // Fallback: si estamos en Live Server (puerto 5500), usar backend en 5000 (mismo hostname)
             const currentPort = window.location.port;
+            const host = window.location.hostname || 'localhost';
             if (currentPort === '5500' || currentPort === '5501') {
-                apiBaseUrl = 'http://localhost:5000';
+                apiBaseUrl = `http://${host}:5000`;
             } else {
                 apiBaseUrl = window.location.origin;
             }

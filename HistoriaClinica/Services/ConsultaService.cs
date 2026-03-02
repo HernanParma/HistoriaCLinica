@@ -190,5 +190,26 @@ namespace HistoriaClinica.Services
             _logger.LogInformation("[SERVICE] Consulta {ConsultaId} actualizada exitosamente", consultaId);
             return true;
         }
+
+        public async Task<ConsultaDto?> ActualizarModalidadAsync(int pacienteId, int consultaId, ActualizarModalidadDto dto)
+        {
+            _logger.LogInformation("[SERVICE] Actualizando modalidad - Paciente: {PacienteId}, Consulta: {ConsultaId}, Modalidad: {Modalidad}",
+                pacienteId, consultaId, dto.Modalidad);
+
+            var consulta = await _context.Consultas
+                .FirstOrDefaultAsync(c => c.Id == consultaId && c.PacienteId == pacienteId);
+
+            if (consulta == null)
+            {
+                _logger.LogWarning("[SERVICE] Consulta {ConsultaId} no encontrada", consultaId);
+                return null;
+            }
+
+            consulta.Modalidad = string.IsNullOrWhiteSpace(dto.Modalidad) ? "Presencial" : dto.Modalidad.Trim();
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("[SERVICE] Modalidad actualizada a {Modalidad}", consulta.Modalidad);
+            return _mapeoService.MapearConsultaADto(consulta);
+        }
     }
 }

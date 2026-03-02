@@ -564,5 +564,23 @@ namespace HistoriaClinica.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor" });
             }
         }
+
+        [HttpPut("{pacienteId}/consultas/{consultaId}/modalidad")]
+        public async Task<ActionResult<ConsultaDto>> ActualizarModalidad(int pacienteId, int consultaId, [FromBody] ActualizarModalidadDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("[API] Actualizando modalidad - Paciente: {PacienteId}, Consulta: {ConsultaId}", pacienteId, consultaId);
+                var resultado = await _consultaService.ActualizarModalidadAsync(pacienteId, consultaId, dto);
+                if (resultado == null)
+                    return NotFound("Consulta no encontrada");
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[API] Error al actualizar modalidad");
+                return StatusCode(500, new { mensaje = "Error interno del servidor" });
+            }
+        }
     }
 }

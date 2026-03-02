@@ -1066,6 +1066,7 @@ function renderConsultas(consultas) {
         });
         
         console.log('📋 Consultas ordenadas:', consultasOrdenadas);
+        window._consultasActuales = consultasOrdenadas;
         const consultasHtml = consultasOrdenadas.map(consulta => `
             <div class="consulta-item">
                 <div class="consulta-header" onclick="toggleConsultaDetalle(this)">
@@ -1074,6 +1075,10 @@ function renderConsultas(consultas) {
                     <span>${new Date(consulta.fecha || consulta.Fecha).toLocaleDateString()}</span>
                     </div>
                     <div class="consulta-actions">
+                    <button class="btn-modalidad-consulta ${(consulta.modalidad || consulta.Modalidad || 'Presencial').toLowerCase() === 'virtual' ? 'btn-modalidad-virtual' : ''}" onclick="toggleModalidad(event, ${consulta.id || consulta.Id})" title="Cambiar modalidad">
+                        <i class="fas fa-${(consulta.modalidad || consulta.Modalidad || 'Presencial').toLowerCase() === 'virtual' ? 'video' : 'user'}"></i>
+                        <span class="modalidad-texto">${consulta.modalidad || consulta.Modalidad || 'Presencial'}</span>
+                    </button>
                     <button class="btn-editar-consulta" onclick="editarConsulta(${consulta.id || consulta.Id})" title="Editar consulta">
                         <i class="fas fa-edit"></i> Editar
                     </button>
@@ -1130,6 +1135,37 @@ function renderConsultas(consultas) {
             content.classList.remove('expanded');
             content.classList.add('collapsed');
             icon.style.transform = 'rotate(0deg)';
+        }
+    };
+
+    // Función para alternar modalidad Presencial/Virtual
+    window.toggleModalidad = async function(event, consultaId) {
+        event.stopPropagation();
+        const patientId = getPatientIdFromUrl();
+        const btn = event.currentTarget;
+        const span = btn.querySelector('.modalidad-texto');
+        const icon = btn.querySelector('i');
+        const actual = (span?.textContent || 'Presencial').trim();
+        const nueva = actual.toLowerCase() === 'presencial' ? 'Virtual' : 'Presencial';
+        try {
+            const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/consultas/${consultaId}/modalidad`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+                body: JSON.stringify({ modalidad: nueva })
+            });
+            if (!response.ok) throw new Error('Error al actualizar modalidad');
+            if (span) span.textContent = nueva;
+            if (icon) icon.className = nueva === 'Virtual' ? 'fas fa-video' : 'fas fa-user';
+            btn.classList.toggle('btn-modalidad-virtual', nueva === 'Virtual');
+            // Actualizar en el estado local de consultas si existe
+            const consultas = window._consultasActuales || [];
+            const idx = consultas.findIndex(c => (c.id || c.Id) === consultaId);
+            if (idx >= 0) {
+                consultas[idx].modalidad = consultas[idx].Modalidad = nueva;
+            }
+        } catch (err) {
+            console.error('Error al cambiar modalidad:', err);
+            alert('No se pudo actualizar la modalidad. Intente de nuevo.');
         }
     };
 
@@ -1309,6 +1345,34 @@ function initializeModal() {
         console.log('📅 Fecha configurada:', today);
     }
 
+    // Toggle secciones desplegables (Planilla Parkinson, Valores de Laboratorio)
+    document.addEventListener('click', function(e) {
+        const header = e.target.closest('.collapsible-header');
+        if (!header) return;
+        const targetId = header.getAttribute('data-toggle');
+        if (!targetId) return;
+        const content = document.getElementById(targetId);
+        const chevron = header.querySelector('.toggle-chevron');
+        if (content) {
+            const isHidden = content.style.display === 'none' || content.style.display === '';
+            content.style.display = isHidden ? 'block' : 'none';
+            if (chevron) chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
+        }
+    });
+
+    // Función para plegar laboratorio y planilla al abrir el modal
+    window.colapsarSeccionesNuevaConsulta = function() {
+        ['labGridNuevaConsultaWrap', 'planillaParkinsonContent', 'qrUploadNuevaConsultaWrap'].forEach(id => {
+            const el = document.getElementById(id);
+            const header = document.querySelector('.collapsible-header[data-toggle="' + id + '"]');
+            if (el) el.style.display = 'none';
+            if (header) {
+                const ch = header.querySelector('.toggle-chevron');
+                if (ch) ch.style.transform = 'rotate(-90deg)';
+            }
+        });
+    };
+
     // Configurar manejo de imagen QR
     const imagenQrInput = document.getElementById('imagenQrConsulta');
     const qrPreviewContainer = document.getElementById('qrPreviewContainer');
@@ -1371,6 +1435,7 @@ function initializeModal() {
                 console.log('📋 Modal encontrado, mostrando...');
                 modalNuevaConsulta.classList.remove('hidden');
                 modalNuevaConsulta.classList.add('show');
+                if (window.colapsarSeccionesNuevaConsulta) window.colapsarSeccionesNuevaConsulta();
                 // Enfocar el primer campo
                 const motivoField = document.getElementById('motivoConsulta');
                 if (motivoField) {

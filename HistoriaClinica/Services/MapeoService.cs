@@ -82,7 +82,8 @@ namespace HistoriaClinica.Services
                 FechaLaboratorio = consulta.FechaLaboratorio,
                 CamposResaltados = !string.IsNullOrEmpty(consulta.CamposResaltados) 
                     ? DeserializarCamposResaltados(consulta.CamposResaltados)
-                    : new List<string>()
+                    : new List<string>(),
+                Modalidad = consulta.Modalidad ?? "Presencial"
             };
             
             Console.WriteLine($"[MAPEO] T4L mapeado a DTO: {dto.T4L}");
@@ -164,7 +165,8 @@ namespace HistoriaClinica.Services
                 HBA1C = dto.HBA1C,
                 ValoresNoIncluidos = dto.ValoresNoIncluidos?.Trim(),
                 FechaLaboratorio = dto.FechaLaboratorio,
-                CamposResaltados = dto.CamposResaltados != null ? JsonSerializer.Serialize(dto.CamposResaltados) : null
+                CamposResaltados = dto.CamposResaltados != null ? JsonSerializer.Serialize(dto.CamposResaltados) : null,
+                Modalidad = !string.IsNullOrWhiteSpace(dto.Modalidad) ? dto.Modalidad.Trim() : "Presencial"
             };
         }
 
@@ -267,6 +269,8 @@ namespace HistoriaClinica.Services
                 consulta.CamposResaltados = camposJson;
                 Console.WriteLine($"[MAPEO] Campos resaltados serializados: {camposJson}");
             }
+            if (!string.IsNullOrWhiteSpace(dto.Modalidad))
+                consulta.Modalidad = dto.Modalidad.Trim();
         }
 
         private List<string> DeserializarCamposResaltados(string camposJson)

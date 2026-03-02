@@ -58,6 +58,9 @@ namespace HistoriaClinica.Models
         // Campos resaltados (valores fuera de rango)
         public string? CamposResaltados { get; set; } // JSON con lista de campos resaltados
 
+        // Presencial o Virtual
+        public string Modalidad { get; set; } = "Presencial";
+
         // Relación con Paciente
         public int PacienteId { get; set; }
         public Paciente? Paciente { get; set; }

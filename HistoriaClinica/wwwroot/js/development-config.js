@@ -1,7 +1,8 @@
 // js/development-config.js
 // Configuración específica para desarrollo local
-// En desarrollo, usar localhost:5000 (backend)
-const API_BASE_URL = 'http://localhost:5000';
+// Usar el mismo hostname que la página (127.0.0.1 o localhost) para evitar problemas de CORS/conexión
+const host = window.location.hostname || 'localhost';
+const API_BASE_URL = `http://${host}:5000`;
 
 // Sobrescribir CONFIG si existe, o crearlo si no existe
 if (typeof window.CONFIG === 'undefined') {

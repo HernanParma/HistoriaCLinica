@@ -41,6 +41,7 @@ namespace HistoriaClinica.DTOs
         public string? ValoresNoIncluidos { get; set; }
         public DateTime? FechaLaboratorio { get; set; }
         public List<string>? CamposResaltados { get; set; }
+        public string? Modalidad { get; set; }
     }
 
     public class CrearConsultaDto
@@ -79,6 +80,12 @@ namespace HistoriaClinica.DTOs
         public DateTime? FechaLaboratorio { get; set; }
         public List<string>? CamposResaltados { get; set; }
         public List<ArchivoConsultaDto>? Archivos { get; set; }
+        public string? Modalidad { get; set; }
+    }
+
+    public class ActualizarModalidadDto
+    {
+        public string Modalidad { get; set; } = "Presencial";
     }
 
     public class MarcarRevisadoDto

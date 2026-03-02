@@ -11,5 +11,6 @@ namespace HistoriaClinica.Services.Interfaces
         Task<ConsultaDto> ActualizarConsultaAsync(int pacienteId, int consultaId, CrearConsultaDto actualizarConsultaDto);
         Task<bool> EliminarConsultaAsync(int pacienteId, int consultaId);
         Task<bool> MarcarComoRevisadoAsync(int pacienteId, int consultaId, MarcarRevisadoDto dto);
+        Task<ConsultaDto?> ActualizarModalidadAsync(int pacienteId, int consultaId, ActualizarModalidadDto dto);
     }
 }

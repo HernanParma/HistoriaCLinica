@@ -138,6 +138,17 @@
         transform: scale(1) !important;
     }
 
+    /* Modal de nueva consulta - 40% más ancho que el default (960 * 1.4 ≈ 1344) */
+    #modalNuevaConsulta .modal-content {
+        max-width: 1350px !important;
+        width: 95% !important;
+    }
+
+    /* Motivo de consulta - 40% más grande (≈168px vs ~120px base) */
+    #modalNuevaConsulta #motivoConsulta {
+        min-height: 170px !important;
+    }
+
     /* Estilo específico para el modal de editar consulta - más ancho */
     #modalEditarConsulta .modal-content {
         max-width: 1200px !important;
@@ -1452,6 +1463,34 @@
     }
 
     /* Estilos para botones de consulta */
+    .btn-modalidad-consulta {
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+        color: white !important;
+        border: none !important;
+        padding: 6px 10px !important;
+        border-radius: 6px !important;
+        font-weight: 600 !important;
+        font-size: 11px !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        margin-right: 6px !important;
+        box-shadow: 0 2px 8px rgba(13, 148, 136, 0.2) !important;
+    }
+    .btn-modalidad-consulta:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3) !important;
+    }
+    .btn-modalidad-consulta.btn-modalidad-virtual {
+        background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%) !important;
+        color: #1f2937 !important;
+        box-shadow: 0 2px 8px rgba(234, 179, 8, 0.3) !important;
+    }
+    .btn-modalidad-consulta.btn-modalidad-virtual:hover {
+        box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4) !important;
+    }
     .btn-editar-consulta {
         background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
         color: white !important;
@@ -2468,7 +2507,7 @@
                     
                     <div class="form-group">
                         <label for="motivoConsulta">Motivo de Consulta: *</label>
-                        <textarea id="motivoConsulta" name="motivo" rows="3" placeholder="Describa el motivo de la consulta..." required></textarea>
+                        <textarea id="motivoConsulta" name="motivo" rows="8" placeholder="Describa el motivo de la consulta..." required style="min-height: 170px;"></textarea>
                     </div>
                     
                     <div class="form-group">
@@ -2496,9 +2535,71 @@
                         <textarea id="notasConsulta" name="notas" rows="3" placeholder="Observaciones, recomendaciones..."></textarea>
                     </div>
                     
-                    <!-- Sección de Imagen QR -->
+                    <!-- Planilla Parkinson -->
+                    <div class="form-section planilla-parkinson-section">
+                        <h4 class="collapsible-header" data-toggle="planillaParkinsonContent" style="cursor: pointer; display: flex; align-items: center; gap: 8px; user-select: none;">
+                            <i class="fas fa-chevron-down toggle-chevron" style="transition: transform 0.2s; transform: rotate(-90deg);"></i>
+                            <i class="fas fa-brain"></i> Planilla Parkinson - UPDRS
+                        </h4>
+                        <div id="planillaParkinsonContent" class="planilla-detail collapsible-content" style="display: none; margin-top: 12px; padding: 12px; background: #f8fafc; border-radius: 8px; max-height: 400px; overflow-y: auto;">
+                            <div class="planilla-text" style="line-height: 1.8; color: #374151;">
+                                <p><strong>Lenguaje</strong></p>
+                                <p><strong>Expresión facial</strong></p>
+                                <p><strong>Rigidez – MSD</strong></p>
+                                <p><strong>Rigidez – MSI</strong></p>
+                                <p><strong>Rigidez – MID</strong></p>
+                                <p><strong>Rigidez – MII</strong></p>
+                                <p><strong>Golpeteo de dedos (tapping)– Mano dcha.</strong></p>
+                                <p><strong>Golpeteo de dedos (tapping)– Mano izda.</strong></p>
+                                <p><strong>Movimientos de las manos – Mano dcha.</strong></p>
+                                <p><strong>Movimientos de las manos – Mano izda.</strong></p>
+                                <p><strong>Pronación-supinación – Mano dcha.</strong></p>
+                                <p><strong>Pronación-supinación – Mano izda.</strong></p>
+                                <p><strong>Golpeteo con los dedos de los pies – Pie derecho</strong></p>
+                                <p><strong>Golpeteo con los dedos de los pies – Pie izquierdo</strong></p>
+                                <p><strong>Agilidad con las piernas – Pierna derecha</strong></p>
+                                <p><strong>Agilidad con las piernas – Pierna izquierda</strong></p>
+                                <p><strong>Levantarse de la silla</strong></p>
+                                <p><strong>Marcha</strong></p>
+                                <p><strong>Congelación de la marcha</strong></p>
+                                <p><strong>Estabilidad postural</strong></p>
+                                <p><strong>Postura</strong></p>
+                                <p><strong>Espontaneidad global de movimientos</strong></p>
+                                <p><strong>Temblor postural – Mano derecha</strong></p>
+                                <p><strong>Temblor postural – Mano izquierda</strong></p>
+                                <p><strong>Temblor de acción – Mano derecha</strong></p>
+                                <p><strong>Temblor de acción – Mano izquierda</strong></p>
+                                <p><strong>Amplitud del temblor de reposo – MSD</strong></p>
+                                <p><strong>Amplitud del temblor de reposo – MSI</strong></p>
+                                <p><strong>Amplitud del temblor de reposo – MID</strong></p>
+                                <p><strong>Amplitud del temblor de reposo – MII</strong></p>
+                                <p><strong>Amplitud del temblor de reposo – Labio/mandíbula</strong></p>
+                                <p><strong>Persistencia del temblor de reposo</strong></p>
+                                <p style="margin-top: 20px;"><strong>¿Discinesias presentes?</strong> No Si</p>
+                                <p><strong>¿Estos movimientos interfirieron con la exploración?</strong> No Sí</p>
+                                <p style="margin-top: 20px;"><strong>Estadios de Hoehn y Yahr</strong></p>
+                                <p><strong>¿El paciente toma medicación?</strong> No Sí</p>
+                                <p><strong>Estado clínico del paciente</strong> Off On</p>
+                                <p><strong>¿El paciente toma levodopa?</strong> No Sí</p>
+                                <p><strong>Tiempo desde la última dosis:</strong></p>
+                                <p><strong>Tiempo con discinesias</strong></p>
+                                <p><strong>Impacto funcional de las discinesias</strong></p>
+                                <p><strong>Tiempo en OFF</strong></p>
+                                <p><strong>Impacto funcional de las fluctuaciones</strong></p>
+                                <p><strong>Complejidad de las fluctuaciones motoras</strong></p>
+                                <p><strong>Rigidez - Cuello</strong></p>
+                                <p><strong>Distonías dolorosas en estado OFF</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección de Imagen QR (desplegable) -->
                     <div class="form-section">
-                        <h4><i class="fas fa-qrcode"></i> Imagen QR</h4>
+                        <h4 class="collapsible-header" data-toggle="qrUploadNuevaConsultaWrap" style="cursor: pointer; display: flex; align-items: center; gap: 8px; user-select: none;">
+                            <i class="fas fa-chevron-down toggle-chevron" style="transition: transform 0.2s; transform: rotate(-90deg);"></i>
+                            <i class="fas fa-qrcode"></i> Imagen QR
+                        </h4>
+                        <div id="qrUploadNuevaConsultaWrap" class="collapsible-qr-wrap" style="display: none; margin-top: 12px;">
                         <div class="qr-upload-area">
                             <div class="file-input-container">
                                 <input type="file" id="imagenQrConsulta" name="imagenQr" accept="image/*" class="file-input">
@@ -2518,12 +2619,17 @@
                                 <p class="qr-preview-text">Vista previa de la imagen QR seleccionada</p>
                             </div>
                         </div>
+                        </div>
                     </div>
                     
-                    <!-- Campos de Laboratorio -->
+                    <!-- Campos de Laboratorio (desplegable) -->
                     <div class="form-section">
-                        <h4><i class="fas fa-flask"></i> Valores de Laboratorio <span class="date-inline">Fecha: <input type="date" id="fechaLaboratorioConsulta" name="fechaLaboratorio"></span></h4>
-                        <div class="lab-grid" data-lab-scope>
+                        <h4 class="collapsible-header" data-toggle="labGridNuevaConsultaWrap" style="cursor: pointer; display: flex; align-items: center; gap: 8px; user-select: none;">
+                            <i class="fas fa-chevron-down toggle-chevron" style="transition: transform 0.2s; transform: rotate(-90deg);"></i>
+                            <i class="fas fa-flask"></i> Valores de Laboratorio <span class="date-inline" onclick="event.stopPropagation();">Fecha: <input type="date" id="fechaLaboratorioConsulta" name="fechaLaboratorio"></span>
+                        </h4>
+                        <div id="labGridNuevaConsultaWrap" class="collapsible-lab-wrap" style="display: none; margin-top: 12px;">
+                        <div id="labGridNuevaConsulta" class="lab-grid" data-lab-scope>
                             <!-- Primera fila -->
                             <div class="form-group">
                                 <label for="grConsulta">GR:</label>
@@ -2632,6 +2738,7 @@
                                 <input type="text" id="valoresNoIncluidosConsulta" name="valoresNoIncluidos" placeholder="Otros valores de laboratorio no incluidos">
                             </div>
 
+                        </div>
                         </div>
                     </div>
                     
