@@ -767,6 +767,11 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
         doctorCabeceraCell.textContent = correctedPatient.doctorCabecera || '';
         doctorCabeceraCell.setAttribute('data-column', 'doctorCabecera');
         
+        const fechaUltimaConsulta = patient.fechaUltimaConsulta || correctedPatient.fechaUltimaConsulta;
+        const fechaUltimaConsultaCell = document.createElement('td');
+        fechaUltimaConsultaCell.textContent = fechaUltimaConsulta ? new Date(fechaUltimaConsulta).toLocaleDateString() : '—';
+        fechaUltimaConsultaCell.setAttribute('data-column', 'fechaUltimaConsulta');
+        
         const accionesCell = document.createElement('td');
         accionesCell.className = 'actions';
         accionesCell.setAttribute('data-column', 'acciones');
@@ -787,8 +792,9 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
         row.appendChild(telefonoCell);      // Columna 7: Teléfono
         row.appendChild(obraSocialCell);    // Columna 8: Obra Social
         row.appendChild(fechaNacCell);      // Columna 9: Fecha Nac.
-        row.appendChild(doctorCabeceraCell); // Columna 10: Doctor Cabecera
-        row.appendChild(accionesCell);      // Columna 11: Acciones
+        row.appendChild(doctorCabeceraCell);     // Columna 10: Doctor Cabecera
+        row.appendChild(fechaUltimaConsultaCell); // Columna 11: Fecha Últ. Consulta
+        row.appendChild(accionesCell);          // Columna 12: Acciones
         
         // Verificar que las celdas contengan los datos correctos
         console.log(`🔍 Verificación de celdas para paciente ${correctedPatient.id}:`);
@@ -901,6 +907,15 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
         if (a.tieneNotificaciones && !b.tieneNotificaciones) return -1;
         if (!a.tieneNotificaciones && b.tieneNotificaciones) return 1;
         
+        // Columna fecha última consulta: comparar como fechas (los sin consulta van al final)
+        if (column === 'fechaUltimaConsulta') {
+          const aDate = a.fechaUltimaConsulta ? new Date(a.fechaUltimaConsulta).getTime() : 0;
+          const bDate = b.fechaUltimaConsulta ? new Date(b.fechaUltimaConsulta).getTime() : 0;
+          if (aDate < bDate) return direction === 'asc' ? -1 : 1;
+          if (aDate > bDate) return direction === 'asc' ? 1 : -1;
+          return 0;
+        }
+        
         // Si ambos tienen o no tienen notificaciones, ordenar por la columna seleccionada
         let aValue = a[column];
         let bValue = b[column];
@@ -926,7 +941,7 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
 
       const headers = table.querySelectorAll('th');
       headers.forEach((header, index) => {
-        const columnMap = ['numero', 'dni', 'numeroAfiliado', 'apellido', 'nombre', 'particular', 'telefono', 'obraSocial', 'fechaNacimiento', 'doctorCabecera', 'acciones'];
+        const columnMap = ['numero', 'dni', 'numeroAfiliado', 'apellido', 'nombre', 'particular', 'telefono', 'obraSocial', 'fechaNacimiento', 'doctorCabecera', 'fechaUltimaConsulta', 'acciones'];
         const column = columnMap[index];
         
         if (column) {
@@ -961,7 +976,7 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
       if (!table) return;
 
       const headers = table.querySelectorAll('th');
-      const columnMap = ['numero', 'dni', 'numeroAfiliado', 'apellido', 'nombre', 'particular', 'telefono', 'obraSocial', 'fechaNacimiento', 'doctorCabecera', 'acciones'];
+      const columnMap = ['numero', 'dni', 'numeroAfiliado', 'apellido', 'nombre', 'particular', 'telefono', 'obraSocial', 'fechaNacimiento', 'doctorCabecera', 'fechaUltimaConsulta', 'acciones'];
       
       headers.forEach((header, index) => {
         const column = columnMap[index];

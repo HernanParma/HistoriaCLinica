@@ -1462,34 +1462,59 @@
         box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3) !important;
     }
 
-    /* Estilos para botones de consulta */
-    .btn-modalidad-consulta {
-        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
-        color: white !important;
-        border: none !important;
-        padding: 6px 10px !important;
-        border-radius: 6px !important;
-        font-weight: 600 !important;
-        font-size: 11px !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
+    /* Desplegable modalidad: Presencial / Virtual / Audio (aspecto claro de lista desplegable) */
+    .modalidad-consulta-wrap {
         display: inline-flex !important;
         align-items: center !important;
-        gap: 4px !important;
-        margin-right: 6px !important;
-        box-shadow: 0 2px 8px rgba(13, 148, 136, 0.2) !important;
+        gap: 6px !important;
+        margin-right: 8px !important;
     }
-    .btn-modalidad-consulta:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3) !important;
+    .modalidad-consulta-wrap label {
+        font-size: 10px !important;
+        font-weight: 600 !important;
+        color: #6b7280 !important;
+        white-space: nowrap !important;
     }
-    .btn-modalidad-consulta.btn-modalidad-virtual {
+    .select-modalidad-consulta {
+        padding: 8px 32px 8px 12px !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        font-size: 12px !important;
+        cursor: pointer !important;
+        min-width: 130px !important;
+        border: 2px solid #e5e7eb !important;
+        transition: all 0.2s ease !important;
+        appearance: auto !important;
+        -webkit-appearance: menulist !important;
+        -moz-appearance: menulist !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    }
+    .select-modalidad-consulta:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+    }
+    .select-modalidad-consulta:focus {
+        outline: none !important;
+        border-color: #667eea !important;
+    }
+    .select-modalidad-consulta.modalidad-blanco {
+        background: #ffffff !important;
+        color: #6b7280 !important;
+        border-color: #d1d5db !important;
+    }
+    .select-modalidad-consulta.modalidad-presencial {
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+        color: white !important;
+        border-color: #0f766e !important;
+    }
+    .select-modalidad-consulta.modalidad-virtual {
         background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%) !important;
         color: #1f2937 !important;
-        box-shadow: 0 2px 8px rgba(234, 179, 8, 0.3) !important;
+        border-color: #ca8a04 !important;
     }
-    .btn-modalidad-consulta.btn-modalidad-virtual:hover {
-        box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4) !important;
+    .select-modalidad-consulta.modalidad-audio {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+        color: white !important;
+        border-color: #7c3aed !important;
     }
     .btn-editar-consulta {
         background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;

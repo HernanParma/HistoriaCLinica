@@ -205,7 +205,7 @@ namespace HistoriaClinica.Services
                 return null;
             }
 
-            consulta.Modalidad = string.IsNullOrWhiteSpace(dto.Modalidad) ? "Presencial" : dto.Modalidad.Trim();
+            consulta.Modalidad = string.IsNullOrWhiteSpace(dto.Modalidad) ? "" : dto.Modalidad.Trim();
             await _context.SaveChangesAsync();
 
             _logger.LogInformation("[SERVICE] Modalidad actualizada a {Modalidad}", consulta.Modalidad);

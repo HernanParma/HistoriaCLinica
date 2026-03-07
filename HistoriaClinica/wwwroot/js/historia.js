@@ -1075,10 +1075,15 @@ function renderConsultas(consultas) {
                     <span>${new Date(consulta.fecha || consulta.Fecha).toLocaleDateString()}</span>
                     </div>
                     <div class="consulta-actions">
-                    <button class="btn-modalidad-consulta ${(consulta.modalidad || consulta.Modalidad || 'Presencial').toLowerCase() === 'virtual' ? 'btn-modalidad-virtual' : ''}" onclick="toggleModalidad(event, ${consulta.id || consulta.Id})" title="Cambiar modalidad">
-                        <i class="fas fa-${(consulta.modalidad || consulta.Modalidad || 'Presencial').toLowerCase() === 'virtual' ? 'video' : 'user'}"></i>
-                        <span class="modalidad-texto">${consulta.modalidad || consulta.Modalidad || 'Presencial'}</span>
-                    </button>
+                    <div class="modalidad-consulta-wrap">
+                        <label for="modalidad-${consulta.id || consulta.Id}">Modalidad:</label>
+                        <select id="modalidad-${consulta.id || consulta.Id}" class="select-modalidad-consulta" data-consulta-id="${consulta.id || consulta.Id}" title="Presencial, Virtual o Audio" onchange="cambiarModalidad(event, ${consulta.id || consulta.Id})">
+                            <option value="">En blanco</option>
+                            <option value="Presencial" ${(consulta.modalidad || consulta.Modalidad || '').toString().toLowerCase() === 'presencial' ? 'selected' : ''}>Presencial</option>
+                            <option value="Virtual" ${(consulta.modalidad || consulta.Modalidad || '').toString().toLowerCase() === 'virtual' ? 'selected' : ''}>Virtual</option>
+                            <option value="Audio" ${(consulta.modalidad || consulta.Modalidad || '').toString().toLowerCase() === 'audio' ? 'selected' : ''}>Audio</option>
+                        </select>
+                    </div>
                     <button class="btn-editar-consulta" onclick="editarConsulta(${consulta.id || consulta.Id})" title="Editar consulta">
                         <i class="fas fa-edit"></i> Editar
                     </button>
@@ -1119,6 +1124,7 @@ function renderConsultas(consultas) {
         `).join('');
         
         hcBody.innerHTML = consultasHtml;
+        document.querySelectorAll('.select-modalidad-consulta').forEach(applyModalidadSelectStyle);
         console.log('✅ Consultas renderizadas exitosamente. HTML generado:', consultasHtml.length, 'caracteres');
     }
 
@@ -1138,15 +1144,12 @@ function renderConsultas(consultas) {
         }
     };
 
-    // Función para alternar modalidad Presencial/Virtual
-    window.toggleModalidad = async function(event, consultaId) {
+    // Función para cambiar modalidad (desplegable: En blanco, Presencial, Virtual, Audio)
+    window.cambiarModalidad = async function(event, consultaId) {
         event.stopPropagation();
         const patientId = getPatientIdFromUrl();
-        const btn = event.currentTarget;
-        const span = btn.querySelector('.modalidad-texto');
-        const icon = btn.querySelector('i');
-        const actual = (span?.textContent || 'Presencial').trim();
-        const nueva = actual.toLowerCase() === 'presencial' ? 'Virtual' : 'Presencial';
+        const select = event.currentTarget;
+        const nueva = (select.value || '').trim();
         try {
             const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/consultas/${consultaId}/modalidad`, {
                 method: 'PUT',
@@ -1154,10 +1157,7 @@ function renderConsultas(consultas) {
                 body: JSON.stringify({ modalidad: nueva })
             });
             if (!response.ok) throw new Error('Error al actualizar modalidad');
-            if (span) span.textContent = nueva;
-            if (icon) icon.className = nueva === 'Virtual' ? 'fas fa-video' : 'fas fa-user';
-            btn.classList.toggle('btn-modalidad-virtual', nueva === 'Virtual');
-            // Actualizar en el estado local de consultas si existe
+            applyModalidadSelectStyle(select);
             const consultas = window._consultasActuales || [];
             const idx = consultas.findIndex(c => (c.id || c.Id) === consultaId);
             if (idx >= 0) {
@@ -1168,6 +1168,16 @@ function renderConsultas(consultas) {
             alert('No se pudo actualizar la modalidad. Intente de nuevo.');
         }
     };
+
+    function applyModalidadSelectStyle(select) {
+        select.classList.remove('modalidad-presencial', 'modalidad-virtual', 'modalidad-audio', 'modalidad-blanco');
+        const v = (select.value || '').toLowerCase();
+        if (v === 'virtual') select.classList.add('modalidad-virtual');
+        else if (v === 'audio') select.classList.add('modalidad-audio');
+        else if (v === 'presencial') select.classList.add('modalidad-presencial');
+        else select.classList.add('modalidad-blanco');
+    }
+    window.applyModalidadSelectStyle = applyModalidadSelectStyle;
 
     // Función para eliminar consulta
     window.eliminarConsulta = async function(consultaId) {

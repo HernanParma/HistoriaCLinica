@@ -56,7 +56,8 @@ namespace HistoriaClinica.Services
                     ),
                     TieneOmePendiente = p.Consultas.Any(c => 
                         c.Ome != null && c.Ome.Trim() != "" && !c.OmeRevisado
-                    )
+                    ),
+                    FechaUltimaConsulta = p.Consultas.Any() ? p.Consultas.Max(c => c.Fecha) : (DateTime?)null
                 })
                 .ToListAsync();
         }

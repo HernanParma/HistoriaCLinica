@@ -112,6 +112,8 @@ namespace HistoriaClinica.DTOs
         public bool TieneNotificaciones { get; set; }
         public bool TieneRecetarPendiente { get; set; }
         public bool TieneOmePendiente { get; set; }
+        /// <summary>Fecha de la última consulta del paciente (null si no tiene consultas).</summary>
+        public DateTime? FechaUltimaConsulta { get; set; }
     }
 }
 

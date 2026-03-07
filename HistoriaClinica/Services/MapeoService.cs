@@ -83,7 +83,7 @@ namespace HistoriaClinica.Services
                 CamposResaltados = !string.IsNullOrEmpty(consulta.CamposResaltados) 
                     ? DeserializarCamposResaltados(consulta.CamposResaltados)
                     : new List<string>(),
-                Modalidad = consulta.Modalidad ?? "Presencial"
+                Modalidad = consulta.Modalidad ?? ""
             };
             
             Console.WriteLine($"[MAPEO] T4L mapeado a DTO: {dto.T4L}");
