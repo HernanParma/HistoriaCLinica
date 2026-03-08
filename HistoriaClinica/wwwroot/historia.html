@@ -1210,6 +1210,88 @@
         font-style: italic !important;
     }
     
+    /* Tabla de medicación actual */
+    #medicacionContenedor {
+        overflow-x: auto;
+        overflow-y: visible;
+        max-width: 100%;
+        min-height: 120px;
+    }
+    .tabla-medicacion {
+        width: 100%;
+        min-width: 400px;
+        border-collapse: collapse;
+        font-size: 0.95em;
+        background: #fff;
+        border-radius: 8px;
+        overflow: visible;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        table-layout: auto;
+    }
+    .tabla-medicacion th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        padding: 10px 8px;
+        text-align: left;
+        font-weight: 600;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+    .tabla-medicacion th.col-num { width: 3em; min-width: 2.5em; text-align: center; }
+    .tabla-medicacion td {
+        padding: 8px;
+        border-bottom: 1px solid #e2e8f0;
+        white-space: normal;
+        word-wrap: break-word;
+        word-break: break-word;
+        min-width: 80px;
+        vertical-align: top;
+    }
+    .tabla-medicacion td.col-num { min-width: 2.5em; text-align: center; font-weight: 600; color: #64748b; }
+    .tabla-medicacion tbody tr:last-child td { border-bottom: none; }
+    .tabla-medicacion tbody tr:hover { background: #f8fafc; }
+    .tabla-medicacion input {
+        width: 100%;
+        min-width: 60px;
+        padding: 6px 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 0.9em;
+        box-sizing: border-box;
+    }
+    .tabla-medicacion input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+    }
+    .btn-agregar-fila-medicacion {
+        padding: 8px 16px;
+        background: #667eea;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9em;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .btn-agregar-fila-medicacion:hover { background: #5a67d8; }
+    .btn-agregar-fila-medicacion.hidden { display: none !important; }
+    /* Columna y botón eliminar fila (solo en modo edición) */
+    .tabla-medicacion .col-eliminar { width: 2.5em; text-align: center; padding: 6px 4px; }
+    .btn-eliminar-fila-medicacion {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        padding: 4px 6px;
+        border-radius: 4px;
+        font-size: 0.95em;
+    }
+    .btn-eliminar-fila-medicacion:hover { color: #ef4444; background: #fef2f2; }
+    #medicacionContenedor .tabla-medicacion { align-self: flex-start; }
+    
     /* Acciones del modal */
     .modal-actions {
         display: flex !important;
@@ -2809,12 +2891,15 @@
             </div>
             <div class="modal-body">
                 <div class="medicacion-content">
-                    <div class="medicacion-info">
+                    <div class="medicacion-info" id="medicacionContenedor">
                         <p id="medicacionTexto">No hay información de medicación registrada.</p>
                     </div>
                     <div class="modal-actions">
                         <button type="button" class="btn btn-primary" id="editarModalMedicacion">
                             <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button type="button" class="btn btn-agregar-fila-medicacion hidden" id="btnAgregarFilaMedicacion" aria-hidden="true">
+                            <i class="fas fa-plus"></i> Agregar fila
                         </button>
                         <button type="button" class="btn btn-secondary" id="cerrarModalMedicacion">
                             <i class="fas fa-times"></i> Cerrar

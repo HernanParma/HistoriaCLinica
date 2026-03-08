@@ -166,7 +166,7 @@ namespace HistoriaClinica.Services
                 ValoresNoIncluidos = dto.ValoresNoIncluidos?.Trim(),
                 FechaLaboratorio = dto.FechaLaboratorio,
                 CamposResaltados = dto.CamposResaltados != null ? JsonSerializer.Serialize(dto.CamposResaltados) : null,
-                Modalidad = !string.IsNullOrWhiteSpace(dto.Modalidad) ? dto.Modalidad.Trim() : "Presencial"
+                Modalidad = !string.IsNullOrWhiteSpace(dto.Modalidad) ? dto.Modalidad.Trim() : ""
             };
         }
 

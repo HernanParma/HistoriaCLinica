@@ -1688,6 +1688,20 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
           }
         });
         
+        // Medicación: si existe la tabla de medicación (nuevo paciente), leer todas las filas como JSON
+        var tbodyMed = document.getElementById('tbodyMedicacionNuevoPaciente');
+        if (tbodyMed) {
+          var filas = [];
+          tbodyMed.querySelectorAll('tr').forEach(function(tr) {
+            var droga = (tr.querySelector('.med-droga') || {}).value || '';
+            var marca = (tr.querySelector('.med-marca') || {}).value || '';
+            var mg = (tr.querySelector('.med-mg') || {}).value || '';
+            var cantCaja = (tr.querySelector('.med-cantCaja') || {}).value || '';
+            filas.push({ droga: droga.trim(), marca: marca.trim(), mg: mg.trim(), cantCaja: cantCaja.trim() });
+          });
+          patientData.medicacion = JSON.stringify(filas);
+        }
+        
         // Manejar específicamente el checkbox "particular"
         const particularCheckbox = addPatientForm.querySelector('input[name="particular"]');
         if (particularCheckbox) {

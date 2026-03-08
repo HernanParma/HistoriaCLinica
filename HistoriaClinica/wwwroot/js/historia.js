@@ -1077,8 +1077,8 @@ function renderConsultas(consultas) {
                     <div class="consulta-actions">
                     <div class="modalidad-consulta-wrap">
                         <label for="modalidad-${consulta.id || consulta.Id}">Modalidad:</label>
-                        <select id="modalidad-${consulta.id || consulta.Id}" class="select-modalidad-consulta" data-consulta-id="${consulta.id || consulta.Id}" title="Presencial, Virtual o Audio" onchange="cambiarModalidad(event, ${consulta.id || consulta.Id})">
-                            <option value="">En blanco</option>
+                        <select id="modalidad-${consulta.id || consulta.Id}" class="select-modalidad-consulta" data-consulta-id="${consulta.id || consulta.Id}" title="En blanco, Presencial, Virtual o Audio" onchange="cambiarModalidad(event, ${consulta.id || consulta.Id})">
+                            <option value="" ${!(consulta.modalidad || consulta.Modalidad || '').toString().trim() ? 'selected' : ''}>En blanco</option>
                             <option value="Presencial" ${(consulta.modalidad || consulta.Modalidad || '').toString().toLowerCase() === 'presencial' ? 'selected' : ''}>Presencial</option>
                             <option value="Virtual" ${(consulta.modalidad || consulta.Modalidad || '').toString().toLowerCase() === 'virtual' ? 'selected' : ''}>Virtual</option>
                             <option value="Audio" ${(consulta.modalidad || consulta.Modalidad || '').toString().toLowerCase() === 'audio' ? 'selected' : ''}>Audio</option>
@@ -1611,6 +1611,7 @@ function initializeModal() {
                     fecha: formData.get('fecha') || new Date().toISOString().split('T')[0],
                     fechaLaboratorio: formData.get('fechaLaboratorio') ? new Date(formData.get('fechaLaboratorio')).toISOString() : null,
                     motivo: formData.get('motivo'),
+                    modalidad: '',
                     recetar: formData.get('recetar') || null,
                     ome: formData.get('ome') || null,
                     notas: formData.get('notas') || null,
@@ -1960,6 +1961,146 @@ window.savePatientField = async function(fieldName, inputId) {
 
 // ===== FUNCIONALIDAD DE MODALES DE MEDICACIÓN Y ANTECEDENTES =====
 
+const MEDICACION_FILAS_DEFAULT = 6;
+const MEDICACION_PREFIJOS_INPUT = 'med-';
+
+/** Parsea el valor de medicación: JSON array o texto legacy (todo en columna Droga). */
+function parseMedicacion(val) {
+    const v = (val || '').trim();
+    if (!v) return [];
+    if (v.startsWith('[')) {
+        try {
+            const arr = JSON.parse(v);
+            return Array.isArray(arr) ? arr.map(r => ({
+                droga: r.droga != null ? String(r.droga) : '',
+                marca: r.marca != null ? String(r.marca) : '',
+                mg: r.mg != null ? String(r.mg) : '',
+                cantCaja: r.cantCaja != null ? String(r.cantCaja) : ''
+            })) : [{ droga: v, marca: '', mg: '', cantCaja: '' }];
+        } catch (_) {
+            return [{ droga: v, marca: '', mg: '', cantCaja: '' }];
+        }
+    }
+    return [{ droga: v, marca: '', mg: '', cantCaja: '' }];
+}
+
+/**
+ * Construye HTML de la tabla en modo vista.
+ * @param {Array} filas - Datos de cada fila
+ * @param {boolean} [exacto=false] - Si true, muestra solo las filas guardadas (tras guardar). Si false, mínimo 6 filas al abrir el modal.
+ */
+function buildTablaVistaMedicacion(filas, exacto) {
+    const thead = '<thead><tr><th class="col-num">Nº</th><th>Droga</th><th>Marca</th><th>Mg</th><th>Cant. caja</th></tr></thead>';
+    const numFilas = exacto ? filas.length : Math.max(6, filas.length);
+    let tbody = '<tbody>';
+    if (exacto && numFilas === 0) {
+        tbody += '<tr><td colspan="5" style="text-align:center;color:#9ca3af;font-style:italic;">No hay información de medicación registrada.</td></tr>';
+    } else {
+        for (let i = 0; i < numFilas; i++) {
+            const f = filas[i] || { droga: '', marca: '', mg: '', cantCaja: '' };
+            const droga = (f.droga || '').trim();
+            const marca = (f.marca || '').trim();
+            const mg = (f.mg || '').trim();
+            const cantCaja = (f.cantCaja || '').trim();
+            const n = i + 1;
+            tbody += `<tr><td class="col-num">${n}</td><td>${escapeHtml(droga)}</td><td>${escapeHtml(marca)}</td><td>${escapeHtml(mg)}</td><td>${escapeHtml(cantCaja)}</td></tr>`;
+        }
+    }
+    tbody += '</tbody>';
+    return `<table class="tabla-medicacion">${thead}${tbody}</table>`;
+}
+
+function escapeHtml(s) {
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+}
+function escapeAttr(s) {
+    return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+/** Construye HTML de la tabla en modo edición (siempre mínimo 6 filas, con columna eliminar). */
+function buildTablaEdicionMedicacion(filas) {
+    const numFilas = Math.max(6, MEDICACION_FILAS_DEFAULT, filas.length);
+    const thead = '<thead><tr><th class="col-num">Nº</th><th>Droga</th><th>Marca</th><th>Mg</th><th>Cant. caja</th><th class="col-eliminar"></th></tr></thead>';
+    let tbody = '<tbody id="medicacionTbody">';
+    for (let i = 0; i < numFilas; i++) {
+        const f = filas[i] || { droga: '', marca: '', mg: '', cantCaja: '' };
+        const n = i + 1;
+        tbody += `<tr>
+            <td class="col-num">${n}</td>
+            <td><input type="text" name="${MEDICACION_PREFIJOS_INPUT}droga" value="${escapeAttr(f.droga)}" placeholder="Droga"></td>
+            <td><input type="text" name="${MEDICACION_PREFIJOS_INPUT}marca" value="${escapeAttr(f.marca)}" placeholder="Marca"></td>
+            <td><input type="text" name="${MEDICACION_PREFIJOS_INPUT}mg" value="${escapeAttr(f.mg)}" placeholder="Mg"></td>
+            <td><input type="text" name="${MEDICACION_PREFIJOS_INPUT}cantCaja" value="${escapeAttr(f.cantCaja)}" placeholder="Cant. caja"></td>
+            <td class="col-eliminar"><button type="button" class="btn-eliminar-fila-medicacion" title="Eliminar fila"><i class="fas fa-trash-alt"></i></button></td>
+        </tr>`;
+    }
+    tbody += '</tbody>';
+    return `<table class="tabla-medicacion">${thead}${tbody}</table>`;
+}
+
+/** Obtiene todas las filas desde la tabla de edición (incluidas vacías) para conservar el número de filas. */
+function leerFilasDesdeTablaEdicion() {
+    const tbody = document.getElementById('medicacionTbody');
+    if (!tbody) return [];
+    const filas = [];
+    const trs = tbody.querySelectorAll('tr');
+    trs.forEach(tr => {
+        const droga = (tr.querySelector('input[name="' + MEDICACION_PREFIJOS_INPUT + 'droga"]') || {}).value || '';
+        const marca = (tr.querySelector('input[name="' + MEDICACION_PREFIJOS_INPUT + 'marca"]') || {}).value || '';
+        const mg = (tr.querySelector('input[name="' + MEDICACION_PREFIJOS_INPUT + 'mg"]') || {}).value || '';
+        const cantCaja = (tr.querySelector('input[name="' + MEDICACION_PREFIJOS_INPUT + 'cantCaja"]') || {}).value || '';
+        filas.push({
+            droga: droga.trim(),
+            marca: marca.trim(),
+            mg: mg.trim(),
+            cantCaja: cantCaja.trim()
+        });
+    });
+    return filas;
+}
+
+/** Añade una fila al final de la tabla de edición y renumerar. */
+function agregarFilaMedicacion() {
+    const tbody = document.getElementById('medicacionTbody');
+    if (!tbody) return;
+    const trs = tbody.querySelectorAll('tr');
+    const n = trs.length + 1;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td class="col-num">${n}</td>
+        <td><input type="text" name="${MEDICACION_PREFIJOS_INPUT}droga" placeholder="Droga"></td>
+        <td><input type="text" name="${MEDICACION_PREFIJOS_INPUT}marca" placeholder="Marca"></td>
+        <td><input type="text" name="${MEDICACION_PREFIJOS_INPUT}mg" placeholder="Mg"></td>
+        <td><input type="text" name="${MEDICACION_PREFIJOS_INPUT}cantCaja" placeholder="Cant. caja"></td>
+        <td class="col-eliminar"><button type="button" class="btn-eliminar-fila-medicacion" title="Eliminar fila"><i class="fas fa-trash-alt"></i></button></td>`;
+    tbody.appendChild(tr);
+}
+
+/** Handler del botón Agregar fila (nombre fijo para poder hacer removeEventListener). */
+function handleClickAgregarFilaMedicacion(e) {
+    if (e) e.preventDefault();
+    agregarFilaMedicacion();
+    renumerarFilasMedicacion();
+}
+
+/** Handler para eliminar fila (delegado desde el contenedor). */
+function handleClickEliminarFilaMedicacion(e) {
+    const btn = e.target && (e.target.closest && e.target.closest('.btn-eliminar-fila-medicacion'));
+    if (!btn) return;
+    e.preventDefault();
+    const tr = btn.closest('tr');
+    if (tr && tr.parentNode && tr.parentNode.id === 'medicacionTbody') {
+        tr.remove();
+        renumerarFilasMedicacion();
+    }
+}
+
 // Función para abrir modal de medicación
 window.abrirModalMedicacion = function() {
     console.log('💊 Abriendo modal de medicación...');
@@ -1967,57 +2108,22 @@ window.abrirModalMedicacion = function() {
     const modal = document.getElementById('modalMedicacion');
     const medicacionField = document.getElementById('edit-medicacion');
     const editarBtn = document.getElementById('editarModalMedicacion');
+    const contenedor = document.getElementById('medicacionContenedor');
     
-    if (!modal || !medicacionField || !editarBtn) {
+    if (!modal || !medicacionField || !editarBtn || !contenedor) {
         console.error('❌ Elementos del modal de medicación no encontrados');
         return;
     }
     
-    // Asegurar que el modal esté en estado inicial
     restaurarEstadoModalMedicacion();
     
-    // Obtener el elemento de texto (puede ser párrafo o textarea)
-    let medicacionTexto = document.getElementById('medicacionTexto');
+    const filas = parseMedicacion(medicacionField.value);
+    contenedor.innerHTML = buildTablaVistaMedicacion(filas);
     
-    // Si no existe el párrafo, crearlo
-    if (!medicacionTexto) {
-        const textarea = modal.querySelector('textarea');
-        if (textarea) {
-            // Crear nuevo párrafo
-            medicacionTexto = document.createElement('p');
-            medicacionTexto.id = 'medicacionTexto';
-            textarea.parentNode.replaceChild(medicacionTexto, textarea);
-        } else {
-            // Buscar el contenedor y crear el párrafo
-            const contenedor = modal.querySelector('.medicacion-info');
-            if (contenedor) {
-                medicacionTexto = document.createElement('p');
-                medicacionTexto.id = 'medicacionTexto';
-                contenedor.appendChild(medicacionTexto);
-            }
-        }
-    }
-    
-    if (medicacionTexto) {
-        // Obtener el texto de medicación
-        const medicacion = medicacionField.value.trim();
-        
-        if (medicacion) {
-            medicacionTexto.textContent = medicacion;
-            medicacionTexto.style.color = '#374151';
-            medicacionTexto.style.fontStyle = 'normal';
-        } else {
-            medicacionTexto.textContent = 'No hay información de medicación registrada.';
-            medicacionTexto.style.color = '#9ca3af';
-            medicacionTexto.style.fontStyle = 'italic';
-        }
-    }
-    
-    // Asegurar que el botón esté en estado "Editar"
+    const btnAgregar = document.getElementById('btnAgregarFilaMedicacion');
+    if (btnAgregar) { btnAgregar.classList.add('hidden'); btnAgregar.setAttribute('aria-hidden', 'true'); }
     editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
     editarBtn.disabled = false;
-    
-    // Mostrar modal
     modal.classList.remove('hidden');
     modal.classList.add('show');
     
@@ -2028,80 +2134,73 @@ window.abrirModalMedicacion = function() {
 window.editarModalMedicacion = function(event) {
     console.log('✏️ Editando medicación...');
     
-    // Prevenir la propagación del evento para evitar que se cierre el modal
     if (event) {
         event.preventDefault();
         event.stopPropagation();
     }
     
-    const medicacionTexto = document.getElementById('medicacionTexto');
+    const medicacionField = document.getElementById('edit-medicacion');
     const editarBtn = document.getElementById('editarModalMedicacion');
+    const contenedor = document.getElementById('medicacionContenedor');
     
-    console.log('🔍 Elementos encontrados:', {
-        medicacionTexto: !!medicacionTexto,
-        editarBtn: !!editarBtn
-    });
-    
-    if (!medicacionTexto || !editarBtn) {
+    if (!medicacionField || !editarBtn || !contenedor) {
         console.error('❌ Elementos para editar medicación no encontrados');
         return;
     }
     
-    // Crear textarea para edición
-    const textarea = document.createElement('textarea');
-    textarea.value = medicacionTexto.textContent === 'No hay información de medicación registrada.' ? '' : medicacionTexto.textContent;
-    textarea.style.width = '100%';
-    textarea.style.minHeight = '150px';
-    textarea.style.padding = '15px';
-    textarea.style.border = '2px solid #667eea';
-    textarea.style.borderRadius = '8px';
-    textarea.style.fontSize = '1em';
-    textarea.style.fontFamily = 'inherit';
-    textarea.style.resize = 'vertical';
-    textarea.placeholder = 'Ingrese la medicación actual del paciente...';
+    const filas = parseMedicacion(medicacionField.value);
+    contenedor.innerHTML = buildTablaEdicionMedicacion(filas);
     
-    // Reemplazar el párrafo con el textarea
-    medicacionTexto.parentNode.replaceChild(textarea, medicacionTexto);
-    
-    // Cambiar botón a "Guardar"
+    // Botón "Agregar fila" solo visible en edición
+    const btnAgregar = document.getElementById('btnAgregarFilaMedicacion');
+    if (btnAgregar) {
+        btnAgregar.classList.remove('hidden');
+        btnAgregar.removeAttribute('aria-hidden');
+        btnAgregar.removeEventListener('click', handleClickAgregarFilaMedicacion);
+        btnAgregar.addEventListener('click', handleClickAgregarFilaMedicacion);
+    }
+    // Delegación para eliminar fila (icono papelera)
+    contenedor.removeEventListener('click', handleClickEliminarFilaMedicacion);
+    contenedor.addEventListener('click', handleClickEliminarFilaMedicacion);
     editarBtn.innerHTML = '<i class="fas fa-save"></i> Guardar';
-    
-    // Enfocar el textarea
-    textarea.focus();
-    
     console.log('✅ Modo de edición activado para medicación');
+}
+
+function renumerarFilasMedicacion() {
+    const tbody = document.getElementById('medicacionTbody');
+    if (!tbody) return;
+    tbody.querySelectorAll('tr').forEach((tr, i) => {
+        const tdNum = tr.querySelector('td.col-num');
+        if (tdNum) tdNum.textContent = i + 1;
+    });
 }
 
 // Función para guardar medicación
 window.guardarMedicacion = async function(event) {
     console.log('💾 Guardando medicación...');
     
-    // Prevenir la propagación del evento para evitar que se cierre el modal
     if (event) {
         event.preventDefault();
         event.stopPropagation();
     }
     
-    const textarea = document.querySelector('#modalMedicacion textarea');
     const editarBtn = document.getElementById('editarModalMedicacion');
     const medicacionField = document.getElementById('edit-medicacion');
+    const contenedor = document.getElementById('medicacionContenedor');
     
-    if (!textarea || !editarBtn || !medicacionField) {
+    if (!editarBtn || !medicacionField || !contenedor) {
         console.error('❌ Elementos para guardar medicación no encontrados');
         return;
     }
     
-    const nuevaMedicacion = textarea.value.trim();
+    const filas = leerFilasDesdeTablaEdicion();
+    const nuevaMedicacion = JSON.stringify(filas);
+    medicacionField.value = nuevaMedicacion;
     
     try {
-        // Mostrar loading en el botón
         editarBtn.disabled = true;
         editarBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
         
-        // Actualizar el campo oculto
-        medicacionField.value = nuevaMedicacion;
-        
-        // Guardar en la base de datos
         const patientId = getPatientIdFromUrl();
         const response = await fetch(`${window.CONFIG.API_BASE_URL}/api/pacientes/${patientId}/actualizar`, {
             method: 'POST',
@@ -2113,37 +2212,18 @@ window.guardarMedicacion = async function(event) {
         });
         
         if (response.ok) {
-            // Crear nuevo párrafo con el contenido actualizado
-            const nuevoParrafo = document.createElement('p');
-            nuevoParrafo.id = 'medicacionTexto';
-            
-            if (nuevaMedicacion) {
-                nuevoParrafo.textContent = nuevaMedicacion;
-                nuevoParrafo.style.color = '#374151';
-                nuevoParrafo.style.fontStyle = 'normal';
-            } else {
-                nuevoParrafo.textContent = 'No hay información de medicación registrada.';
-                nuevoParrafo.style.color = '#9ca3af';
-                nuevoParrafo.style.fontStyle = 'italic';
-            }
-            
-            // Reemplazar textarea con el párrafo
-            textarea.parentNode.replaceChild(nuevoParrafo, textarea);
-            
-            // Restaurar botón
+            contenedor.innerHTML = buildTablaVistaMedicacion(filas, true);
+            const btnAgregar = document.getElementById('btnAgregarFilaMedicacion');
+            if (btnAgregar) { btnAgregar.classList.add('hidden'); btnAgregar.setAttribute('aria-hidden', 'true'); }
             editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
             editarBtn.disabled = false;
-            
             console.log('✅ Medicación guardada exitosamente');
         } else {
             throw new Error('Error al guardar medicación');
         }
-        
     } catch (error) {
         console.error('❌ Error al guardar medicación:', error);
         alert('Error al guardar la medicación');
-        
-        // Restaurar botón
         editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
         editarBtn.onclick = editarModalMedicacion;
         editarBtn.disabled = false;
@@ -2357,40 +2437,20 @@ function cerrarModalMedicacion() {
 function restaurarEstadoModalMedicacion() {
     console.log('🔄 Restaurando estado del modal de medicación...');
     
-    const modal = document.getElementById('modalMedicacion');
     const editarBtn = document.getElementById('editarModalMedicacion');
     const medicacionField = document.getElementById('edit-medicacion');
+    const contenedor = document.getElementById('medicacionContenedor');
     
-    if (!modal || !editarBtn || !medicacionField) {
+    if (!editarBtn || !medicacionField || !contenedor) {
         console.error('❌ Elementos para restaurar modal de medicación no encontrados');
         return;
     }
     
-    // Verificar si hay un textarea (modo edición) y restaurarlo a párrafo
-    const textarea = modal.querySelector('textarea');
-    if (textarea) {
-        console.log('📝 Restaurando textarea a párrafo...');
-        
-        // Crear nuevo párrafo
-        const nuevoParrafo = document.createElement('p');
-        nuevoParrafo.id = 'medicacionTexto';
-        
-        const medicacion = textarea.value.trim();
-        if (medicacion) {
-            nuevoParrafo.textContent = medicacion;
-            nuevoParrafo.style.color = '#374151';
-            nuevoParrafo.style.fontStyle = 'normal';
-        } else {
-            nuevoParrafo.textContent = 'No hay información de medicación registrada.';
-            nuevoParrafo.style.color = '#9ca3af';
-            nuevoParrafo.style.fontStyle = 'italic';
-        }
-        
-        // Reemplazar textarea con párrafo
-        textarea.parentNode.replaceChild(nuevoParrafo, textarea);
-    }
-    
-    // Restaurar botón a estado "Editar"
+    const filas = parseMedicacion(medicacionField.value);
+    contenedor.innerHTML = buildTablaVistaMedicacion(filas);
+    contenedor.removeEventListener('click', handleClickEliminarFilaMedicacion);
+    const btnAgregar = document.getElementById('btnAgregarFilaMedicacion');
+    if (btnAgregar) { btnAgregar.classList.add('hidden'); btnAgregar.setAttribute('aria-hidden', 'true'); }
     editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
     editarBtn.onclick = editarModalMedicacion;
     editarBtn.disabled = false;
@@ -2491,6 +2551,7 @@ function initializeModalesMedicacionAntecedentes() {
         });
         console.log('✅ Event listener agregado para botón editar medicación');
     }
+    // El botón "Agregar fila" recibe su listener en editarModalMedicacion al entrar en modo edición
     
     // Cerrar modal al hacer clic fuera - DESHABILITADO
     // if (modalMedicacion) {

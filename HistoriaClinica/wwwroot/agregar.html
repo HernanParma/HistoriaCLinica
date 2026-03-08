@@ -7,6 +7,19 @@
     <link rel="stylesheet" href="css/styles.css">
     <!-- Font Awesome local -->
     <link rel="stylesheet" href="lib/fontawesome/css/all.min.css">
+    <style>
+        .tabla-medicacion { width: 100%; border-collapse: collapse; font-size: 0.95em; background: #fff; border-radius: 8px; overflow: visible; box-shadow: 0 1px 3px rgba(0,0,0,0.06); table-layout: auto; }
+        .tabla-medicacion th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 10px 8px; text-align: left; font-weight: 600; }
+        .tabla-medicacion th.col-num { width: 3em; min-width: 2.5em; text-align: center; }
+        .tabla-medicacion td { padding: 8px; border-bottom: 1px solid #e2e8f0; min-width: 80px; vertical-align: top; }
+        .tabla-medicacion td.col-num { min-width: 2.5em; text-align: center; font-weight: 600; color: #64748b; }
+        .tabla-medicacion .col-eliminar { width: 2.5em; text-align: center; padding: 6px 4px; }
+        .tabla-medicacion input { width: 100%; min-width: 60px; padding: 6px 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9em; box-sizing: border-box; }
+        .btn-agregar-fila-medicacion { margin-top: 10px; padding: 8px 16px; background: #667eea; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9em; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-agregar-fila-medicacion:hover { background: #5a67d8; }
+        .btn-eliminar-fila-medicacion { background: none; border: none; color: #9ca3af; cursor: pointer; padding: 4px 6px; border-radius: 4px; font-size: 0.95em; }
+        .btn-eliminar-fila-medicacion:hover { color: #ef4444; background: #fef2f2; }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -95,8 +108,74 @@
                             <textarea id="antecedentes" name="antecedentes" rows="4" placeholder="Ingrese los antecedentes médicos del paciente..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="medicacion">Medicación Actual:</label>
-                            <textarea id="medicacion" name="medicacion" rows="4" placeholder="Ingrese la medicación actual del paciente..."></textarea>
+                            <label>Medicación Actual:</label>
+                            <div class="tabla-medicacion-wrap">
+                                <table class="tabla-medicacion" id="tablaMedicacionNuevoPaciente">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-num">Nº</th>
+                                            <th>Droga</th>
+                                            <th>Marca</th>
+                                            <th>Mg</th>
+                                            <th>Cant. caja</th>
+                                            <th class="col-eliminar"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyMedicacionNuevoPaciente">
+                                        <tr>
+                                            <td class="col-num">1</td>
+                                            <td><input type="text" class="med-droga" placeholder="Droga"></td>
+                                            <td><input type="text" class="med-marca" placeholder="Marca"></td>
+                                            <td><input type="text" class="med-mg" placeholder="Mg"></td>
+                                            <td><input type="text" class="med-cantCaja" placeholder="Cant. caja"></td>
+                                            <td class="col-eliminar"><button type="button" class="btn-eliminar-fila-medicacion" title="Eliminar fila"><i class="fas fa-trash-alt"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-num">2</td>
+                                            <td><input type="text" class="med-droga" placeholder="Droga"></td>
+                                            <td><input type="text" class="med-marca" placeholder="Marca"></td>
+                                            <td><input type="text" class="med-mg" placeholder="Mg"></td>
+                                            <td><input type="text" class="med-cantCaja" placeholder="Cant. caja"></td>
+                                            <td class="col-eliminar"><button type="button" class="btn-eliminar-fila-medicacion" title="Eliminar fila"><i class="fas fa-trash-alt"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-num">3</td>
+                                            <td><input type="text" class="med-droga" placeholder="Droga"></td>
+                                            <td><input type="text" class="med-marca" placeholder="Marca"></td>
+                                            <td><input type="text" class="med-mg" placeholder="Mg"></td>
+                                            <td><input type="text" class="med-cantCaja" placeholder="Cant. caja"></td>
+                                            <td class="col-eliminar"><button type="button" class="btn-eliminar-fila-medicacion" title="Eliminar fila"><i class="fas fa-trash-alt"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-num">4</td>
+                                            <td><input type="text" class="med-droga" placeholder="Droga"></td>
+                                            <td><input type="text" class="med-marca" placeholder="Marca"></td>
+                                            <td><input type="text" class="med-mg" placeholder="Mg"></td>
+                                            <td><input type="text" class="med-cantCaja" placeholder="Cant. caja"></td>
+                                            <td class="col-eliminar"><button type="button" class="btn-eliminar-fila-medicacion" title="Eliminar fila"><i class="fas fa-trash-alt"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-num">5</td>
+                                            <td><input type="text" class="med-droga" placeholder="Droga"></td>
+                                            <td><input type="text" class="med-marca" placeholder="Marca"></td>
+                                            <td><input type="text" class="med-mg" placeholder="Mg"></td>
+                                            <td><input type="text" class="med-cantCaja" placeholder="Cant. caja"></td>
+                                            <td class="col-eliminar"><button type="button" class="btn-eliminar-fila-medicacion" title="Eliminar fila"><i class="fas fa-trash-alt"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-num">6</td>
+                                            <td><input type="text" class="med-droga" placeholder="Droga"></td>
+                                            <td><input type="text" class="med-marca" placeholder="Marca"></td>
+                                            <td><input type="text" class="med-mg" placeholder="Mg"></td>
+                                            <td><input type="text" class="med-cantCaja" placeholder="Cant. caja"></td>
+                                            <td class="col-eliminar"><button type="button" class="btn-eliminar-fila-medicacion" title="Eliminar fila"><i class="fas fa-trash-alt"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <button type="button" class="btn-agregar-fila-medicacion" id="btnAgregarFilaMedicacionNuevo">
+                                    <i class="fas fa-plus"></i> Agregar fila
+                                </button>
+                            </div>
                         </div>
                         <div class="form-group doctor-cabecera-group">
                             <label for="doctorCabecera">
@@ -136,12 +215,36 @@
     <script src="js/app.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Redirección al hacer clic en logo o título
         var logo = document.querySelector('.logo');
         if (logo) {
             logo.style.cursor = 'pointer';
-            logo.addEventListener('click', function() {
-                window.location.href = 'index.html';
+            logo.addEventListener('click', function() { window.location.href = 'index.html'; });
+        }
+        // Tabla medicación nuevo paciente: agregar fila
+        var tbodyMed = document.getElementById('tbodyMedicacionNuevoPaciente');
+        var btnAgregar = document.getElementById('btnAgregarFilaMedicacionNuevo');
+        if (btnAgregar && tbodyMed) {
+            btnAgregar.addEventListener('click', function() {
+                var n = tbodyMed.querySelectorAll('tr').length + 1;
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td class="col-num">' + n + '</td>' +
+                    '<td><input type="text" class="med-droga" placeholder="Droga"></td>' +
+                    '<td><input type="text" class="med-marca" placeholder="Marca"></td>' +
+                    '<td><input type="text" class="med-mg" placeholder="Mg"></td>' +
+                    '<td><input type="text" class="med-cantCaja" placeholder="Cant. caja"></td>' +
+                    '<td class="col-eliminar"><button type="button" class="btn-eliminar-fila-medicacion" title="Eliminar fila"><i class="fas fa-trash-alt"></i></button></td>';
+                tbodyMed.appendChild(tr);
+                tbodyMed.querySelectorAll('tr').forEach(function(row, i) { row.querySelector('.col-num').textContent = i + 1; });
+            });
+        }
+        // Eliminar fila (delegación)
+        var wrapMed = document.querySelector('.tabla-medicacion-wrap');
+        if (wrapMed) {
+            wrapMed.addEventListener('click', function(e) {
+                var btn = e.target && (e.target.closest && e.target.closest('.btn-eliminar-fila-medicacion'));
+                if (!btn) return;
+                var tr = btn.closest('tr');
+                if (tr && tbodyMed) { tr.remove(); tbodyMed.querySelectorAll('tr').forEach(function(row, i) { row.querySelector('.col-num').textContent = i + 1; }); }
             });
         }
     });
