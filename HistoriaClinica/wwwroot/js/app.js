@@ -562,6 +562,9 @@ async function makeApiCall(endpoint, method = 'GET', data = null) {
           
           currentPage = 1;
           updatePatientsTable();
+          if (typeof window.refreshWhatsappPendientesIndex === 'function') {
+            window.refreshWhatsappPendientesIndex();
+          }
         } else {
           showMessage(patientsMessage, 'Error al cargar los pacientes', 'error');
         }

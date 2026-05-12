@@ -260,10 +260,156 @@ body {
     margin: 0;
 }
 
-/* Solo auth */
+/* Solo auth — separación respecto a la navbar y tarjeta centrada */
+.auth-page .main-content {
+    padding: 28px 16px 32px;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 120px);
+}
+
 .auth-page .form-container {
-    max-width: 600px;
+    max-width: 392px;
     margin: 0 auto;
+}
+
+.auth-page .form-card {
+    padding: 26px 24px 28px;
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.09);
+}
+
+.auth-page .form-card h2 {
+    font-size: 1.35rem;
+    margin-bottom: 20px;
+}
+
+/* Login: tarjeta más baja y campos más finos */
+.auth-page #loginForm .form-card {
+    padding: 18px 20px 14px;
+}
+
+.auth-page #loginForm .form-card h2 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+}
+
+.auth-page #loginForm .form-group {
+    margin-bottom: 10px;
+}
+
+.auth-page #loginForm .form-group label {
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+}
+
+.auth-page #loginForm .form-group input {
+    padding: 8px 38px 8px 11px;
+    font-size: 0.9rem;
+    border-radius: 9px;
+}
+
+.auth-page #loginForm .btn-primary {
+    width: 100%;
+    margin-top: 10px;
+    padding: 9px 16px;
+    font-size: 0.92rem;
+    border-radius: 9px;
+}
+
+.auth-page #loginForm .message {
+    margin-top: 8px;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+}
+
+/* Registro + blanquear en una sola línea */
+.auth-page .register-link.auth-login-links {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.4rem 0.55rem;
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: #555;
+    line-height: 1.3;
+    text-align: center;
+}
+
+.auth-page #loginForm .auth-login-credencial-wrap {
+    margin-top: 12px;
+    text-align: center;
+}
+
+.auth-page #loginForm .auth-login-credencial-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    margin-top: 0;
+    padding: 9px 20px;
+    border-radius: 9px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.25s ease;
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.28);
+    gap: 8px;
+}
+
+.auth-page #loginForm .auth-login-credencial-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(102, 126, 234, 0.35);
+}
+
+.auth-page #loginForm .demo-section {
+    margin-top: 12px;
+}
+
+.auth-page #loginForm .demo-divider {
+    margin: 8px 0;
+}
+
+.auth-page #loginForm .btn-demo {
+    padding: 9px 22px;
+    font-size: 0.92rem;
+    margin: 4px 0;
+}
+
+.auth-page #loginForm .demo-description {
+    margin-top: 4px;
+    font-size: 0.76rem;
+}
+
+.auth-page .register-link.auth-login-links a {
+    color: #667eea;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.auth-page .register-link.auth-login-links a:hover {
+    text-decoration: underline;
+}
+
+.auth-page .auth-login-links-sep {
+    color: #c5cad3;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.auth-page .auth-login-links-text {
+    white-space: nowrap;
+}
+
+@media (max-width: 380px) {
+    .auth-page .register-link.auth-login-links {
+        font-size: 0.68rem;
+        gap: 0.25rem 0.35rem;
+    }
 }
 
 
@@ -904,9 +1050,17 @@ body {
     .form-card {
         padding: 20px 15px;
     }
+
+    .auth-page .form-card {
+        padding: 22px 18px 24px;
+    }
     
     .form-card h2 {
         font-size: 1.5rem;
+    }
+
+    .auth-page .form-card h2 {
+        font-size: 1.22rem;
     }
     
     .btn {

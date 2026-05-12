@@ -1,4 +1,5 @@
 using HistoriaClinica.Data;
+using HistoriaClinica.Models;
 using HistoriaClinica.Services;
 using HistoriaClinica.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,9 @@ builder.Services.AddScoped<IConsultaService, ConsultaService>();
 builder.Services.AddScoped<IArchivoService, ArchivoService>();
 builder.Services.AddScoped<IMapeoService, MapeoService>();
 builder.Services.AddScoped<IDemoService, DemoService>();
+builder.Services.Configure<MetaWhatsAppOptions>(builder.Configuration.GetSection(MetaWhatsAppOptions.SectionName));
+builder.Services.AddHttpClient("MetaWhatsApp");
+builder.Services.AddScoped<IWhatsAppBotService, WhatsAppBotService>();
 
 // CORS: en dev podés permitir Live Server; en prod, restringí a tu dominio real.
 builder.Services.AddCors(options =>

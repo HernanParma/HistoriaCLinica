@@ -151,6 +151,27 @@
         .qr-thumbnail-cell .sin-qr { font-size: 0.75rem; color: #9ca3af; }
         .qr-search-wrap { position: relative; }
         .qr-search-input:focus { outline: none; border-color: #667eea; }
+        .nav-whatsapp-wrap { position: relative; display: inline-flex; align-items: center; }
+        .nav-whatsapp-btn {
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            color: white; border: none; border-radius: 10px; padding: 10px 14px;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+            font-weight: 600; font-size: 0.95em;
+        }
+        .nav-whatsapp-btn:hover { filter: brightness(1.05); }
+        .whatsapp-pendientes-badge {
+            position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px;
+            padding: 0 6px; border-radius: 999px; background: #ef4444; color: white;
+            font-size: 0.72rem; font-weight: 700; display: none; align-items: center; justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .whatsapp-pendientes-badge.show { display: inline-flex; }
+        #modalBotConsultas .bot-requests-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+        #modalBotConsultas .bot-requests-table th, #modalBotConsultas .bot-requests-table td {
+            padding: 10px 8px; text-align: left; border-bottom: 1px solid #e5e7eb; vertical-align: top;
+        }
+        #modalBotConsultas .bot-requests-table th { background: #f3f4f6; color: #374151; }
+        #modalBotConsultas .bot-row-new { background: #fef3c7; }
     </style>
 </head>
 <body>
@@ -195,6 +216,16 @@
                         <i class="fas fa-clipboard-list"></i>
                         Planillas
                     </button>
+                    <button type="button" id="btnBotNav" class="nav-btn btn-primary" title="Consultas ingresadas por WhatsApp">
+                        <i class="fas fa-robot"></i>
+                        BOT
+                    </button>
+                    <div class="nav-whatsapp-wrap">
+                        <button type="button" id="navWhatsappBtn" class="nav-whatsapp-btn" title="Mensajes WhatsApp pendientes" aria-label="WhatsApp pendientes">
+                            <i class="fab fa-whatsapp" style="font-size:1.25em;"></i>
+                        </button>
+                        <span class="whatsapp-pendientes-badge" id="whatsappPendientesBadge" aria-live="polite"></span>
+                    </div>
                 </div>
             </nav>
         </header>
@@ -347,56 +378,10 @@
                 </div>
                 <!-- Contenido de la planilla seleccionada -->
                 <div class="planilla-content" style="flex: 1; padding-left: 20px; max-height: 600px; overflow-y: auto;">
-                    <div id="planillaParkinsonContent" class="planilla-detail" style="display: none;">
-                        <h4 style="color: #667eea; margin-bottom: 20px;">Planilla Parkinson - UPDRS</h4>
-                        <div class="planilla-text" style="line-height: 1.8; color: #374151;">
-                            <p><strong>Lenguaje</strong></p>
-                            <p><strong>Expresión facial</strong></p>
-                            <p><strong>Rigidez – MSD</strong></p>
-                            <p><strong>Rigidez – MSI</strong></p>
-                            <p><strong>Rigidez – MID</strong></p>
-                            <p><strong>Rigidez – MII</strong></p>
-                            <p><strong>Golpeteo de dedos (tapping)– Mano dcha.</strong></p>
-                            <p><strong>Golpeteo de dedos (tapping)– Mano izda.</strong></p>
-                            <p><strong>Movimientos de las manos – Mano dcha.</strong></p>
-                            <p><strong>Movimientos de las manos – Mano izda.</strong></p>
-                            <p><strong>Pronación-supinación – Mano dcha.</strong></p>
-                            <p><strong>Pronación-supinación – Mano izda.</strong></p>
-                            <p><strong>Golpeteo con los dedos de los pies – Pie derecho</strong></p>
-                            <p><strong>Golpeteo con los dedos de los pies – Pie izquierdo</strong></p>
-                            <p><strong>Agilidad con las piernas – Pierna derecha</strong></p>
-                            <p><strong>Agilidad con las piernas – Pierna izquierda</strong></p>
-                            <p><strong>Levantarse de la silla</strong></p>
-                            <p><strong>Marcha</strong></p>
-                            <p><strong>Congelación de la marcha</strong></p>
-                            <p><strong>Estabilidad postural</strong></p>
-                            <p><strong>Postura</strong></p>
-                            <p><strong>Espontaneidad global de movimientos</strong></p>
-                            <p><strong>Temblor postural – Mano derecha</strong></p>
-                            <p><strong>Temblor postural – Mano izquierda</strong></p>
-                            <p><strong>Temblor de acción – Mano derecha</strong></p>
-                            <p><strong>Temblor de acción – Mano izquierda</strong></p>
-                            <p><strong>Amplitud del temblor de reposo – MSD</strong></p>
-                            <p><strong>Amplitud del temblor de reposo – MSI</strong></p>
-                            <p><strong>Amplitud del temblor de reposo – MID</strong></p>
-                            <p><strong>Amplitud del temblor de reposo – MII</strong></p>
-                            <p><strong>Amplitud del temblor de reposo – Labio/mandíbula</strong></p>
-                            <p><strong>Persistencia del temblor de reposo</strong></p>
-                            <p style="margin-top: 20px;"><strong>¿Discinesias presentes?</strong> No Si</p>
-                            <p><strong>¿Estos movimientos interfirieron con la exploración?</strong> No Sí</p>
-                            <p style="margin-top: 20px;"><strong>Estadios de Hoehn y Yahr</strong></p>
-                            <p><strong>¿El paciente toma medicación?</strong> No Sí</p>
-                            <p><strong>Estado clínico del paciente</strong> Off On</p>
-                            <p><strong>¿El paciente toma levodopa?</strong> No Sí</p>
-                            <p><strong>Tiempo desde la última dosis:</strong></p>
-                            <p><strong>Tiempo con discinesias</strong></p>
-                            <p><strong>Impacto funcional de las discinesias</strong></p>
-                            <p><strong>Tiempo en OFF</strong></p>
-                            <p><strong>Impacto funcional de las fluctuaciones</strong></p>
-                            <p><strong>Complejidad de las fluctuaciones motoras</strong></p>
-                            <p><strong>Rigidez - Cuello</strong></p>
-                            <p><strong>Distonías dolorosas en estado OFF</strong></p>
-                        </div>
+                    <div id="planillaParkinsonContentModal" class="planilla-detail" style="display: none;">
+                        <h4 style="color: #667eea; margin-bottom: 12px;">Planilla Parkinson - URDRS</h4>
+                        <p style="color: #6b7280; line-height: 1.6; margin-bottom: 12px;">La planilla editable <strong>Neurología - Trastornos de movimiento</strong> se completa en la historia clínica al crear una <strong>Nueva consulta</strong>. Cada ítem tiene su casilla en blanco; el contenido se guarda en las notas de la consulta.</p>
+                        <p style="color: #374151; line-height: 1.7; font-size: 0.95em;"><strong>Incluye:</strong> antecedentes, MH, síntomas no motores, examen neurológico, estudios complementarios, diagnóstico y plan.</p>
                     </div>
                     <div id="planillaDefaultContent" class="planilla-detail" style="display: block; text-align: center; padding: 40px; color: #9ca3af;">
                         <i class="fas fa-clipboard-list" style="font-size: 3em; margin-bottom: 20px; opacity: 0.5;"></i>
@@ -408,6 +393,38 @@
                 <button type="button" id="cerrarPlanillas" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Cerrar
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal consultas BOT (WhatsApp) -->
+    <div id="modalBotConsultas" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 960px;">
+            <div class="modal-header">
+                <h2><i class="fab fa-whatsapp" style="color:#25d366;"></i> Consultas BOT (WhatsApp)</h2>
+                <button type="button" id="closeModalBotConsultas" class="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body" style="max-height:70vh; overflow:auto;">
+                <p style="color:#6b7280; margin-bottom:12px;">Solicitudes completadas por el flujo automático (nombre, afiliado, tipo y detalle). Las filas en amarillo están sin marcar como leídas.</p>
+                <table class="bot-requests-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Nombre (WA)</th>
+                            <th>Afiliado</th>
+                            <th>Tipo</th>
+                            <th>Detalle</th>
+                            <th>Paciente</th>
+                            <th>WA ID</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="botRequestsTableBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-actions" style="margin-top: 12px; display: flex; gap: 10px; justify-content: flex-end; padding: 12px 20px; border-top: 1px solid #e5e7eb;">
+                <button type="button" id="cerrarModalBotConsultasFooter" class="btn btn-secondary"><i class="fas fa-times"></i> Cerrar</button>
             </div>
         </div>
     </div>
@@ -573,7 +590,7 @@
 
             // Mostrar el contenido correspondiente
             if (planillaId === 'parkinson') {
-                const parkinsonContent = document.getElementById('planillaParkinsonContent');
+                const parkinsonContent = document.getElementById('planillaParkinsonContentModal');
                 if (parkinsonContent) {
                     parkinsonContent.style.display = 'block';
                 }
@@ -641,6 +658,121 @@
                 }
             });
         }
+
+        // ===== MODAL BOT / WhatsApp pendientes =====
+        (function botWhatsappUi() {
+            const modalBot = document.getElementById('modalBotConsultas');
+            const tbody = document.getElementById('botRequestsTableBody');
+            const badge = document.getElementById('whatsappPendientesBadge');
+            const btnBot = document.getElementById('btnBotNav');
+            const btnWa = document.getElementById('navWhatsappBtn');
+            const close1 = document.getElementById('closeModalBotConsultas');
+            const close2 = document.getElementById('cerrarModalBotConsultasFooter');
+
+            function getApiBase() {
+                if (typeof window.CONFIG !== 'undefined' && window.CONFIG.API_BASE_URL) return window.CONFIG.API_BASE_URL;
+                if (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL) return CONFIG.API_BASE_URL;
+                return window.location.origin;
+            }
+            function authH() {
+                const t = localStorage.getItem('jwtToken');
+                return t ? { 'Authorization': 'Bearer ' + t } : {};
+            }
+            function tipoLabel(t) {
+                if (t === 'MedicacionOrdenes') return 'Medicación / órdenes';
+                if (t === 'Otro') return 'Otro';
+                return t || '—';
+            }
+            function fmtDate(iso) {
+                if (!iso) return '—';
+                try {
+                    const d = new Date(iso);
+                    return isNaN(d.getTime()) ? iso : d.toLocaleString('es-AR');
+                } catch (e) { return iso; }
+            }
+
+            window.refreshWhatsappPendientesIndex = async function() {
+                if (!badge) return;
+                try {
+                    const r = await fetch(getApiBase() + '/api/whatsapp/pendientes/count', { headers: authH() });
+                    if (!r.ok) return;
+                    const j = await r.json();
+                    const n = typeof j.count === 'number' ? j.count : 0;
+                    badge.textContent = n > 99 ? '99+' : String(n);
+                    if (n > 0) badge.classList.add('show');
+                    else badge.classList.remove('show');
+                } catch (e) { console.warn('WhatsApp count', e); }
+            };
+
+            async function cargarTablaBot() {
+                if (!tbody) return;
+                tbody.innerHTML = '<tr><td colspan="9">Cargando…</td></tr>';
+                try {
+                    const r = await fetch(getApiBase() + '/api/whatsapp/pendientes?limit=100', { headers: authH() });
+                    if (!r.ok) { tbody.innerHTML = '<tr><td colspan="9">Error al cargar</td></tr>'; return; }
+                    const rows = await r.json();
+                    if (!Array.isArray(rows) || rows.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="9">No hay solicitudes registradas.</td></tr>';
+                        return;
+                    }
+                    tbody.innerHTML = rows.map(function(row) {
+                        var trClass = row.status === 'New' ? ' class="bot-row-new"' : '';
+                        var pac = '—';
+                        if (row.pacienteId && row.pacienteNombre) {
+                            pac = '<a href="historia.html?id=' + row.pacienteId + '">' + escapeHtml(row.pacienteNombre) + '</a> <small>(#' + row.pacienteId + ')</small>';
+                        } else if (row.pacienteNombre) {
+                            pac = escapeHtml(row.pacienteNombre);
+                        }
+                        return '<tr' + trClass + '>' +
+                            '<td>' + fmtDate(row.createdAtUtc) + '</td>' +
+                            '<td>' + escapeHtml(row.status || '') + '</td>' +
+                            '<td>' + escapeHtml(row.nombreCompleto || '') + '</td>' +
+                            '<td>' + escapeHtml(row.numeroAfiliado || '') + '</td>' +
+                            '<td>' + escapeHtml(tipoLabel(row.tipoConsulta)) + '</td>' +
+                            '<td>' + escapeHtml((row.detalle || '').substring(0, 200)) + '</td>' +
+                            '<td>' + pac + '</td>' +
+                            '<td><small>' + escapeHtml(row.metaWaId || '') + '</small></td>' +
+                            '<td>' + (row.status === 'New' ? '<button type="button" class="btn btn-secondary btn-sm" data-bot-marcar="' + row.id + '">Marcar leído</button>' : '') + '</td>' +
+                            '</tr>';
+                    }).join('');
+                    tbody.querySelectorAll('[data-bot-marcar]').forEach(function(b) {
+                        b.addEventListener('click', async function() {
+                            var id = b.getAttribute('data-bot-marcar');
+                            try {
+                                await fetch(getApiBase() + '/api/whatsapp/pendientes/' + id + '/marcar-leido', { method: 'POST', headers: authH() });
+                                await cargarTablaBot();
+                                await window.refreshWhatsappPendientesIndex();
+                            } catch (e) { alert('No se pudo marcar como leído'); }
+                        });
+                    });
+                } catch (e) {
+                    tbody.innerHTML = '<tr><td colspan="9">Error de conexión</td></tr>';
+                }
+            }
+            function escapeHtml(s) {
+                if (!s) return '';
+                return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+            }
+            function abrirBot() {
+                if (!modalBot) return;
+                modalBot.classList.remove('hidden');
+                cargarTablaBot();
+            }
+            function cerrarBot() {
+                if (modalBot) modalBot.classList.add('hidden');
+            }
+            if (btnBot) btnBot.addEventListener('click', function(e) { e.preventDefault(); abrirBot(); });
+            if (btnWa) btnWa.addEventListener('click', function(e) { e.preventDefault(); abrirBot(); });
+            if (close1) close1.addEventListener('click', cerrarBot);
+            if (close2) close2.addEventListener('click', cerrarBot);
+            if (modalBot) {
+                modalBot.addEventListener('click', function(e) {
+                    if (e.target === modalBot) cerrarBot();
+                });
+            }
+            window.refreshWhatsappPendientesIndex();
+            setInterval(function() { window.refreshWhatsappPendientesIndex(); }, 60000);
+        })();
 
         // ===== PANTALLA COMPLETA LISTADO QR DE PACIENTES =====
         const qrBtnNav = document.getElementById('qrBtnNav');

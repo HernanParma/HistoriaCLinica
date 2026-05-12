@@ -40,15 +40,15 @@
                         </button>
                     </form>
                     <div id="loginMessage" class="message"></div>
-                    <div class="register-link">
-                        ¿No tienes una cuenta? <a href="#" id="showRegister">Regístrate aquí</a>
-                        <br>
-                        <a href="#" id="showResetPassword">Blanquear clave</a>
+                    <div class="register-link auth-login-links">
+                        <span class="auth-login-links-text">¿No tienes una cuenta? <a href="#" id="showRegister">Regístrate aquí</a></span>
+                        <span class="auth-login-links-sep" aria-hidden="true">·</span>
+                        <a href="#" id="showResetPassword" class="auth-login-reset">Blanquear clave</a>
                     </div>
                     
                     <!-- Botón de Credencial -->
-                    <div style="margin-top: 20px; text-align: center;">
-                        <a href="carnet.html" class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; display: inline-block; padding: 12px 24px; border-radius: 10px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);">
+                    <div class="auth-login-credencial-wrap">
+                        <a href="carnet.html" class="btn auth-login-credencial-btn">
                             <i class="fas fa-id-card"></i> CREDENCIAL
                         </a>
                     </div>

@@ -127,6 +127,115 @@ function getAuthHeaders() {
     return token ? { 'Authorization': `Bearer ${token}` } : {};
 }
 
+function escapeHtmlBot(s) {
+    if (!s) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function whatsappTipoLabel(t) {
+    if (t === 'MedicacionOrdenes') return 'Medicación / órdenes';
+    if (t === 'Otro') return 'Otro';
+    return t || '—';
+}
+function whatsappFmtDate(iso) {
+    if (!iso) return '—';
+    try {
+        const d = new Date(iso);
+        return isNaN(d.getTime()) ? iso : d.toLocaleString('es-AR');
+    } catch (e) { return iso; }
+}
+
+async function refreshWhatsappPendientesBadgeHistoria() {
+    const badge = document.getElementById('whatsappPendientesBadge');
+    if (!badge || !window.CONFIG?.API_BASE_URL) return;
+    try {
+        const r = await fetch(`${window.CONFIG.API_BASE_URL}/api/whatsapp/pendientes/count`, { headers: getAuthHeaders() });
+        if (!r.ok) return;
+        const j = await r.json();
+        const n = typeof j.count === 'number' ? j.count : 0;
+        badge.textContent = n > 99 ? '99+' : String(n);
+        badge.classList.toggle('show', n > 0);
+    } catch (e) { console.warn('WhatsApp badge', e); }
+}
+
+async function cargarTablaBotConsultasHistoria() {
+    const tbody = document.getElementById('botRequestsTableBody');
+    if (!tbody || !window.CONFIG?.API_BASE_URL) return;
+    tbody.innerHTML = '<tr><td colspan="9">Cargando…</td></tr>';
+    try {
+        const r = await fetch(`${window.CONFIG.API_BASE_URL}/api/whatsapp/pendientes?limit=100`, { headers: getAuthHeaders() });
+        if (!r.ok) { tbody.innerHTML = '<tr><td colspan="9">Error al cargar</td></tr>'; return; }
+        const rows = await r.json();
+        if (!Array.isArray(rows) || rows.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9">No hay solicitudes registradas.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = rows.map(row => {
+            const trClass = row.status === 'New' ? ' class="bot-row-new"' : '';
+            let pacCell = '—';
+            if (row.pacienteId && row.pacienteNombre) {
+                pacCell = `<a href="historia.html?id=${row.pacienteId}">${escapeHtmlBot(row.pacienteNombre)}</a> <small>(#${row.pacienteId})</small>`;
+            } else if (row.pacienteNombre) {
+                pacCell = escapeHtmlBot(row.pacienteNombre);
+            }
+            const btn = row.status === 'New'
+                ? `<button type="button" class="btn btn-secondary btn-sm" data-bot-marcar="${row.id}">Marcar leído</button>`
+                : '';
+            return `<tr${trClass}>
+                <td>${whatsappFmtDate(row.createdAtUtc)}</td>
+                <td>${escapeHtmlBot(row.status || '')}</td>
+                <td>${escapeHtmlBot(row.nombreCompleto || '')}</td>
+                <td>${escapeHtmlBot(row.numeroAfiliado || '')}</td>
+                <td>${escapeHtmlBot(whatsappTipoLabel(row.tipoConsulta))}</td>
+                <td>${escapeHtmlBot((row.detalle || '').substring(0, 200))}</td>
+                <td>${pacCell}</td>
+                <td><small>${escapeHtmlBot(row.metaWaId || '')}</small></td>
+                <td>${btn}</td>
+            </tr>`;
+        }).join('');
+        tbody.querySelectorAll('[data-bot-marcar]').forEach(b => {
+            b.addEventListener('click', async () => {
+                const id = b.getAttribute('data-bot-marcar');
+                try {
+                    await fetch(`${window.CONFIG.API_BASE_URL}/api/whatsapp/pendientes/${id}/marcar-leido`, {
+                        method: 'POST',
+                        headers: getAuthHeaders()
+                    });
+                    await cargarTablaBotConsultasHistoria();
+                    await refreshWhatsappPendientesBadgeHistoria();
+                } catch (e) { alert('No se pudo marcar como leído'); }
+            });
+        });
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="9">Error de conexión</td></tr>';
+    }
+}
+
+function initializeWhatsappBotModalHistoria() {
+    const modal = document.getElementById('modalBotConsultas');
+    const close1 = document.getElementById('closeModalBotConsultas');
+    const close2 = document.getElementById('cerrarModalBotConsultasFooter');
+    const openers = ['btnBotNav', 'navWhatsappBtn', 'btnBotHeader'].map(id => document.getElementById(id)).filter(Boolean);
+    function abrir() {
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        modal.classList.add('show');
+        cargarTablaBotConsultasHistoria();
+    }
+    function cerrar() {
+        if (!modal) return;
+        modal.classList.remove('show');
+        modal.classList.add('hidden');
+    }
+    openers.forEach(b => b.addEventListener('click', (e) => { e.preventDefault(); abrir(); }));
+    if (close1) close1.addEventListener('click', cerrar);
+    if (close2) close2.addEventListener('click', cerrar);
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) cerrar();
+        });
+    }
+}
+
 // Helper GET con manejo de errores detallado
 async function apiGet(path) {
     console.log('🌐 Haciendo petición a:', `${window.CONFIG.API_BASE_URL}${path}`);
@@ -589,6 +698,7 @@ async function loadPatientData(patientId) {
         }
                 
         await loadPatientConsultations(patientId);
+        await refreshWhatsappPendientesBadgeHistoria();
     } catch (err) {
         console.error('❌ Error al cargar datos del paciente:', err);
         showSidebarError(`Error al cargar datos del paciente: ${String(err.message)}`);
@@ -1326,6 +1436,61 @@ function handleArchivosSeleccionadosEditar(event) {
     mostrarArchivosSeleccionadosEditar();
 }
 
+/** Texto de la planilla neurológica (URDRS) para guardar en notas de la consulta (solo campos con valor). */
+function collectPlanillaParkinsonNotasFromForm(formId = 'planillaParkinsonForm') {
+    const form = document.getElementById(formId);
+    if (!form) return '';
+    const filled = [];
+    form.querySelectorAll('.pp-input').forEach(inp => {
+        const label = inp.getAttribute('data-label') || '';
+        const v = (inp.value || '').trim();
+        if (v) filled.push(`${label}: ${v}`);
+    });
+    if (filled.length === 0) return '';
+    return ['=== Planilla Parkinson URDRS ===', ...filled].join('\n');
+}
+
+function splitNotasPlanillaYAdicionales(notasRaw) {
+    const notas = (notasRaw || '').toString();
+    const header = '=== Planilla Parkinson URDRS ===';
+    const separador = '\n\n--- Notas adicionales ---\n';
+    if (!notas.includes(header)) {
+        return { planilla: '', adicionales: notas };
+    }
+    const idxSep = notas.indexOf(separador);
+    if (idxSep === -1) {
+        return { planilla: notas.trim(), adicionales: '' };
+    }
+    return {
+        planilla: notas.substring(0, idxSep).trim(),
+        adicionales: notas.substring(idxSep + separador.length).trim()
+    };
+}
+
+function fillPlanillaParkinsonFormFromText(formId, planillaTexto) {
+    const form = document.getElementById(formId);
+    if (!form) return;
+
+    const inputMap = new Map();
+    form.querySelectorAll('.pp-input').forEach(inp => {
+        const label = (inp.getAttribute('data-label') || '').trim();
+        if (label) inputMap.set(label, inp);
+        inp.value = '';
+    });
+
+    if (!planillaTexto) return;
+    const lines = planillaTexto.split('\n');
+    lines.forEach(line => {
+        if (!line || line.startsWith('===')) return;
+        const idx = line.indexOf(':');
+        if (idx <= 0) return;
+        const label = line.substring(0, idx).trim();
+        const value = line.substring(idx + 1).trim();
+        const input = inputMap.get(label);
+        if (input) input.value = value;
+    });
+}
+
 // Inicializar funcionalidad del modal
 function initializeModal() {
     console.log('🔧 Inicializando funcionalidad del modal de nueva consulta...');
@@ -1355,7 +1520,7 @@ function initializeModal() {
         console.log('📅 Fecha configurada:', today);
     }
 
-    // Toggle secciones desplegables (Planilla Parkinson, Valores de Laboratorio)
+    // Toggle secciones desplegables (Planilla, laboratorio, QR y archivos)
     document.addEventListener('click', function(e) {
         const header = e.target.closest('.collapsible-header');
         if (!header) return;
@@ -1370,11 +1535,23 @@ function initializeModal() {
         }
     });
 
-    // Función para plegar laboratorio y planilla al abrir el modal
+    // Función para plegar secciones al abrir el modal
     window.colapsarSeccionesNuevaConsulta = function() {
-        ['labGridNuevaConsultaWrap', 'planillaParkinsonContent', 'qrUploadNuevaConsultaWrap'].forEach(id => {
+        ['labGridNuevaConsultaWrap', 'planillaParkinsonContent', 'qrUploadNuevaConsultaWrap', 'archivosNuevaConsultaWrap'].forEach(id => {
             const el = document.getElementById(id);
             const header = document.querySelector('.collapsible-header[data-toggle="' + id + '"]');
+            if (el) el.style.display = 'none';
+            if (header) {
+                const ch = header.querySelector('.toggle-chevron');
+                if (ch) ch.style.transform = 'rotate(-90deg)';
+            }
+        });
+    };
+
+    window.colapsarSeccionesEditarConsulta = function() {
+        ['labGridEditarConsultaWrap', 'planillaParkinsonEditarContent', 'qrUploadEditarConsultaWrap', 'archivosEditarConsultaWrap'].forEach(id => {
+            const el = document.getElementById(id);
+            const header = document.querySelector('#modalEditarConsulta .collapsible-header[data-toggle="' + id + '"]');
             if (el) el.style.display = 'none';
             if (header) {
                 const ch = header.querySelector('.toggle-chevron');
@@ -1607,6 +1784,16 @@ function initializeModal() {
                     }
                 }
                 
+                const planillaParkinsonTexto = collectPlanillaParkinsonNotasFromForm().trim();
+                const notasAdicionales = (formData.get('notas') || '').trim();
+                let notasCombinadas = null;
+                if (planillaParkinsonTexto && notasAdicionales) {
+                    notasCombinadas = `${planillaParkinsonTexto}\n\n--- Notas adicionales ---\n${notasAdicionales}`;
+                } else if (planillaParkinsonTexto) {
+                    notasCombinadas = planillaParkinsonTexto;
+                } else if (notasAdicionales) {
+                    notasCombinadas = notasAdicionales;
+                }
                 const consultaData = {
                     fecha: formData.get('fecha') || new Date().toISOString().split('T')[0],
                     fechaLaboratorio: formData.get('fechaLaboratorio') ? new Date(formData.get('fechaLaboratorio')).toISOString() : null,
@@ -1614,7 +1801,7 @@ function initializeModal() {
                     modalidad: '',
                     recetar: formData.get('recetar') || null,
                     ome: formData.get('ome') || null,
-                    notas: formData.get('notas') || null,
+                    notas: notasCombinadas,
                     // Valores de laboratorio completos (convertir comas a puntos para el backend)
                     gr: formData.get('gr') ? parseFloat(formData.get('gr').replace(',', '.')) : null,
                     hto: formData.get('hto') ? parseFloat(formData.get('hto').replace(',', '.')) : null,
@@ -2836,6 +3023,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     initializeModal();
     initializeModalesMedicacionAntecedentes();
     initializeModalQr();
+    initializeWhatsappBotModalHistoria();
+    refreshWhatsappPendientesBadgeHistoria();
+    setInterval(() => { refreshWhatsappPendientesBadgeHistoria(); }, 60000);
     
     // Cargar datos del paciente
     const patientId = getPatientIdFromUrl();
@@ -3158,6 +3348,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Mostrar modal
             modal.classList.remove('hidden');
             modal.classList.add('show');
+            if (window.colapsarSeccionesEditarConsulta) window.colapsarSeccionesEditarConsulta();
             
             // Configurar event listeners para los campos de laboratorio en el modal
             setTimeout(() => {
@@ -3187,7 +3378,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('motivoEditarConsulta').value = consulta.motivo || consulta.Motivo || '';
         document.getElementById('recetarEditarConsulta').value = consulta.recetar || consulta.Recetar || '';
         document.getElementById('omeEditarConsulta').value = consulta.ome || consulta.Ome || '';
-        document.getElementById('notasEditarConsulta').value = consulta.notas || consulta.Notas || '';
+        const notasRaw = consulta.notas || consulta.Notas || '';
+        const notasSeparadas = splitNotasPlanillaYAdicionales(notasRaw);
+        document.getElementById('notasEditarConsulta').value = notasSeparadas.adicionales || '';
+        fillPlanillaParkinsonFormFromText('planillaParkinsonFormEditar', notasSeparadas.planilla);
         
         // Valores de laboratorio
         document.getElementById('grEditarConsulta').value = consulta.gr || consulta.GR || '';
@@ -3494,7 +3688,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 motivo: formData.get('motivo'),
                 recetar: formData.get('recetar') || null,
                 ome: formData.get('ome') || null,
-                notas: formData.get('notas') || null,
+                notas: null,
                 // Valores de laboratorio (convertir comas a puntos para el backend)
                 gr: formData.get('gr') ? parseFloat(formData.get('gr').replace(',', '.')) : null,
                 hto: formData.get('hto') ? parseFloat(formData.get('hto').replace(',', '.')) : null,
@@ -3536,6 +3730,18 @@ document.addEventListener('DOMContentLoaded', async function() {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
                 return;
+            }
+
+            const planillaParkinsonTexto = collectPlanillaParkinsonNotasFromForm('planillaParkinsonFormEditar').trim();
+            const notasAdicionales = (formData.get('notas') || '').trim();
+            if (planillaParkinsonTexto && notasAdicionales) {
+                consultaData.notas = `${planillaParkinsonTexto}\n\n--- Notas adicionales ---\n${notasAdicionales}`;
+            } else if (planillaParkinsonTexto) {
+                consultaData.notas = planillaParkinsonTexto;
+            } else if (notasAdicionales) {
+                consultaData.notas = notasAdicionales;
+            } else {
+                consultaData.notas = null;
             }
 
             // Subir archivos nuevos si hay archivos seleccionados
@@ -3859,7 +4065,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // Mostrar el contenido correspondiente
         if (planillaId === 'parkinson') {
-            const parkinsonContent = document.getElementById('planillaParkinsonContent');
+            const parkinsonContent = document.getElementById('planillaParkinsonContentModal');
             if (parkinsonContent) {
                 parkinsonContent.style.display = 'block';
             }

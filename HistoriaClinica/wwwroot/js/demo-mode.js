@@ -587,6 +587,12 @@ function simulateApiCall(endpoint, method = 'GET', data = null) {
                     const id = parseInt(endpoint.match(/\/pacientes\/(\d+)\/consultas/)[1]);
                     response = getDemoConsultas(id);
                 }
+            } else if (endpoint.includes('/api/whatsapp/pendientes/count')) {
+                response = { count: 0 };
+            } else if (endpoint.includes('marcar-leido') && method === 'POST') {
+                response = { ok: true };
+            } else if (endpoint.includes('/api/whatsapp/pendientes')) {
+                response = [];
             } else if (endpoint.includes('/api/usuarios/login')) {
                 // Simular login exitoso en modo demo
                 response = {

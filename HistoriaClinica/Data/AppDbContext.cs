@@ -22,6 +22,11 @@ namespace HistoriaClinica.Data
         public DbSet<Paciente> Pacientes { get; set; }
 
         public DbSet<Consulta> Consultas { get; set; }
+
+        public DbSet<WhatsAppConversation> WhatsAppConversations { get; set; }
+        public DbSet<WhatsAppMessage> WhatsAppMessages { get; set; }
+        public DbSet<WhatsAppBotRequest> WhatsAppBotRequests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -37,6 +42,39 @@ namespace HistoriaClinica.Data
                 .HasForeignKey(p => p.UsuarioId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
+
+            modelBuilder.Entity<WhatsAppConversation>()
+                .HasIndex(c => c.MetaWaId)
+                .IsUnique();
+
+            modelBuilder.Entity<WhatsAppMessage>()
+                .HasIndex(m => m.MetaMessageId)
+                .IsUnique()
+                .HasFilter("[MetaMessageId] IS NOT NULL");
+
+            modelBuilder.Entity<WhatsAppConversation>()
+                .HasOne(c => c.Paciente)
+                .WithMany()
+                .HasForeignKey(c => c.PacienteId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<WhatsAppBotRequest>()
+                .HasOne(r => r.Conversation)
+                .WithMany(c => c.BotRequests)
+                .HasForeignKey(r => r.WhatsAppConversationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<WhatsAppBotRequest>()
+                .HasOne(r => r.Paciente)
+                .WithMany()
+                .HasForeignKey(r => r.PacienteId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<WhatsAppMessage>()
+                .HasOne(m => m.Conversation)
+                .WithMany(c => c.Messages)
+                .HasForeignKey(m => m.WhatsAppConversationId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
